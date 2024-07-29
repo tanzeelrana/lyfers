@@ -17,6 +17,7 @@ import Chat from "../pages/Chat/Chat";
 import Security from "../pages/AccountSettings/Security";
 import Notification from "../pages/AccountSettings/Notifications";
 import TestDrives from "../pages/TestDrives/TestDrives";
+import ContactUs from "../pages/ContactUs/ContactUs";
 
 const routes = [
   {
@@ -27,6 +28,11 @@ const routes = [
   {
     path: "/home",
     component: <HomePage />,
+    ispublic: true,
+  },
+  {
+    path: "/contact-us",
+    component: <ContactUs />,
     ispublic: true,
   },
   {
@@ -52,19 +58,19 @@ const routes = [
   {
     path: "/availableListing",
     component: <AvailableListing />,
-    ispublic:false
+    ispublic: false,
   },
 
   {
     path: "/myGarage/saleDetails",
-    component: <SaleDetails/>,
-    ispublic:false
+    component: <SaleDetails />,
+    ispublic: false,
   },
 
   {
-    path:"/availableListing/carDetails",
-    component:<CarDetails/>,
-    ispublic:false
+    path: "/availableListing/carDetails",
+    component: <CarDetails />,
+    ispublic: false,
   },
 
   {
