@@ -78,7 +78,6 @@ const ContactUs = () => {
             justifyContent={"center"}
             alignItems={"center"}
             display={"flex"}
-            bgcolor={"red"}
           >
             <Paper
               elevation={10}
