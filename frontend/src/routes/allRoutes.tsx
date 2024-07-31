@@ -18,6 +18,7 @@ import Security from "../pages/AccountSettings/Security";
 import Notification from "../pages/AccountSettings/Notifications";
 import TestDrives from "../pages/TestDrives/TestDrives";
 import ContactUs from "../pages/ContactUs/ContactUs";
+import BecomeALyfer from "../pages/BecomeALyfer/BecomeALyfer";
 
 const routes = [
   {
@@ -28,6 +29,11 @@ const routes = [
   {
     path: "/home",
     component: <HomePage />,
+    ispublic: true,
+  },
+  {
+    path: "/become-a-lyfer",
+    component: <BecomeALyfer />,
     ispublic: true,
   },
   {
