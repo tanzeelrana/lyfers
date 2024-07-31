@@ -11,15 +11,26 @@ return (
   <Box 
     sx={{ 
       backgroundImage: 'url("https://lyfers.com/wp-content/uploads/2024/05/AdobeStock_385837423-scaled-1.jpeg")',
-      backgroundSize: 'cover',
-      backgroundPosition: 'center',
-      width: '100%',
-      height: 'auto',
+      backgroundPosition: "center",
+      backgroundRepeat: "no-repeat",
+      backgroundSize: "cover",
+      position: "relative",
+      height: "550px", // Adjust height as needed
+      "&::before": {
+          content: '""',
+          position: "absolute",
+          top: 0,
+          left: 0,
+          width: "100%",
+          height: "100%",
+          backgroundColor: "rgba(0, 0, 0, 0.5)", // Adjust the opacity as needed
+          zIndex: 1,
+      },
     }}
   >
     <Grid 
       container 
-      height={isMobile ? 'auto' : 500}
+      height={isMobile ? 'auto' : 600}
       display={'flex'}
       alignItems={'center'}
       flexDirection={isMobile ? 'column' : 'row'}
@@ -37,6 +48,7 @@ return (
           container
           spacing={isMobile ? 2 : 0}
           marginLeft={isMobile ? 0 : '150px'}
+          zIndex={3}
         >
           <Grid 
             item 
@@ -67,7 +79,8 @@ return (
                 fontFamily: '"Urbanist", Sans-serif',
                 fontSize: isMobile ? '24px' : '39px',
                 fontWeight: '500',
-                textAlign: isMobile ? 'center' : 'left'
+                textAlign: isMobile ? 'center' : 'left',
+                color:'white',
               }}
             >
               Love without limits, Youthful in spirit, Forgiving and free,<br /> Empowering each other, Resilient and Strong against all odds.
@@ -83,13 +96,15 @@ return (
         marginTop={isMobile ? 2 : 0}
       >
         <Button 
+        
           variant="contained" 
           size={isMobile ? 'medium' : 'large'} 
           sx={{
             color: 'white', 
             backgroundColor: '#FF5A00', 
             fontWeight: '500',
-            padding: isMobile ? '8px 16px' : '12px 24px'
+            padding: isMobile ? '8px 16px' : '17px 45px',
+            zIndex: 2,
           }}
         >
           Join us

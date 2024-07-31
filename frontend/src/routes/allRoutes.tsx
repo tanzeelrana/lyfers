@@ -18,6 +18,8 @@ import Security from "../pages/AccountSettings/Security";
 import Notification from "../pages/AccountSettings/Notifications";
 import TestDrives from "../pages/TestDrives/TestDrives";
 import SixPiller from "../pages/SixPiller/SixPiller";
+import ContactUs from "../pages/ContactUs/ContactUs";
+import BecomeALyfer from "../pages/BecomeALyfer/BecomeALyfer";
 
 const routes = [
   {
@@ -33,6 +35,16 @@ const routes = [
   {
     path: "/six-piller",
     component: <SixPiller />,
+    ispublic: true,
+  },
+  {
+    path: "/become-a-lyfer",
+    component: <BecomeALyfer />,
+    ispublic: true,
+  },
+  {
+    path: "/contact-us",
+    component: <ContactUs />,
     ispublic: true,
   },
   {
@@ -58,19 +70,19 @@ const routes = [
   {
     path: "/availableListing",
     component: <AvailableListing />,
-    ispublic:false
+    ispublic: false,
   },
 
   {
     path: "/myGarage/saleDetails",
-    component: <SaleDetails/>,
-    ispublic:false
+    component: <SaleDetails />,
+    ispublic: false,
   },
 
   {
-    path:"/availableListing/carDetails",
-    component:<CarDetails/>,
-    ispublic:false
+    path: "/availableListing/carDetails",
+    component: <CarDetails />,
+    ispublic: false,
   },
 
   {
