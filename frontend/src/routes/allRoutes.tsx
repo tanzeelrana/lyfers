@@ -17,16 +17,22 @@ import Chat from "../pages/Chat/Chat";
 import Security from "../pages/AccountSettings/Security";
 import Notification from "../pages/AccountSettings/Notifications";
 import TestDrives from "../pages/TestDrives/TestDrives";
+import SixPiller from "../pages/SixPiller/SixPiller";
 
 const routes = [
   {
-    path: "/",
+    path: "/login",
     component: <Login />,
     ispublic: true,
   },
   {
-    path: "/home",
+    path: "/",
     component: <HomePage />,
+    ispublic: true,
+  },
+  {
+    path: "/six-piller",
+    component: <SixPiller />,
     ispublic: true,
   },
   {

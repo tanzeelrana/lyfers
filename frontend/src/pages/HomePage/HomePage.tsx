@@ -1,65 +1,78 @@
-import { FC, useEffect } from "react";
-import { Box, Button, Grid, Typography } from "@mui/material";
-import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
-import { logout } from "../../store/auth/actions";
-import { useDispatch } from "react-redux";
-import axios from "axios";
-import Header from '../common/Header';
-import Paper from '@mui/material/Paper';
-import { styled } from '@mui/material/styles';
-import { Container, fontSize, maxHeight } from "@mui/system";
-import HeroSection from "../heroSection/HeroSection";
-import MobileStepper from '@mui/material/MobileStepper';
-import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';
-import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
-import { useTheme } from '@mui/material/styles';
-import * as React from 'react';
+  import React, { FC } from "react";
+  import { Box, Button, Typography, Container } from "@mui/material";
+  import { useNavigate } from "react-router-dom";
+  import { useDispatch } from "react-redux";
+  import HeroSection from "./HeroSection";
+  import { useTheme, keyframes } from '@mui/material/styles';
+  import SixPillerSlider from "./SixPillerSlider";
+  import ProductSlider from "./ProductSlider";
+  import ExploreSection from "./ExploreSection";
 
+  const zoomIn = keyframes`
+    0% {
+      background-size: 100%;
+    }
+    100% {
+      background-size: 120%;
+    }
+  `;
 
+  const HomePage: FC = () => {
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
 
-const HomePage: FC = () => {
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
+    return (
+      <>
+        <HeroSection />
 
-  const logoutHandler = () => {
-    toast.success("Logout successfully");
-    dispatch(logout());
-    navigate("/login")
-  }
-  const theme = useTheme();
+        <Box width={'100%'} >
+          <Typography 
+            sx={{ 
+              textAlign: 'center', 
+              color: '#000000', 
+              fontFamily: 'cursive', 
+              fontSize: { xs: '28px', sm: '36px', md: '52px' }, 
+              fontWeight: '400' 
+            }}
+          >
+            Illuminating The World Through The Six Pillars
+          </Typography>
+        </Box>
 
+        <SixPillerSlider></SixPillerSlider>
 
+        <Box component="section" sx={{ p: 2 }}>
+          <Container sx={{ backgroundColor: '#FAFAFA' }}>
+            <Box
+              sx={{
+                backgroundImage: 'url("https://lyfers.com/wp-content/uploads/2024/05/AdobeStock_385837423-scaled-1.jpeg")',
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                backgroundRepeat: 'no-repeat',
+                width: '100%',
+                height: { xs: 150, sm: 200, md: 200 },
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                padding: 2,
+                zIndex: 1200,
+                animation: `${zoomIn} 3s infinite alternate`,
+              }}
+            />
+            <Box>
+              <Typography sx={{ textAlign: 'center', my: 3 }}>
+                Get a deeper understanding of what Lyfers is all about and discover how our six pillars—Love, Youthfulness, Forgiveness, Empowerment, Resilience, and Strength—can positively impact your life!
+              </Typography>
+            </Box>
+            <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
+              <Button variant="contained">Learn More</Button>
+            </Box>
+          </Container>
+        </Box>
+        <ExploreSection/>
+      <ProductSlider/>
+      </>
+    );
+  };
 
-
-  // useEffect(() => {
-  //   // Define the async function to fetch data
-  //   const fetchData = async () => {
-  //     try {
-  //       const response = await axios.get('http://localhost:3001/');
-  //       console.log(response);
-  //     } catch (error) {
-
-  //     }
-  //   };
-
-  //   // Call the fetch function
-  //   fetchData();
-  // }, []);
-
-
-
-  return (
-    <>
-      <HeroSection></HeroSection>
-      <Box sx={{margin:'50px'}}>
-        <Typography sx={{textAlign:'center',color:'#000000',fontFamily:'cursive', fontSize:'52px', fontWeight:'400'}}>
-        Illuminating The World Through The Six Pillars
-        </Typography>
-      </Box>
-      
-    </>
-  );
-};
-
-export default HomePage;
+  export default HomePage;

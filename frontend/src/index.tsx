@@ -11,7 +11,6 @@ import "react-toastify/dist/ReactToastify.css";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { ThemeProvider } from '@mui/material/styles';
 import theme from './theme/Theme';
-
 const queryClient = new QueryClient({});
 
 const root = ReactDOM.createRoot(

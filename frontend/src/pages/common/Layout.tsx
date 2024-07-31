@@ -23,7 +23,7 @@ export default function Layout(props: Props) {
     
         {children}
 
-    <Box sx={{left:'0',bottom:'0',width:'100%',}}>
+    <Box>
         <Footer ></Footer>
     </Box>
     
