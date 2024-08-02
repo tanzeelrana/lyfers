@@ -1,198 +1,227 @@
-  import { Button, IconButton, Typography, Box, Container } from '@mui/material';
-  import React from 'react';
-  import FacebookIcon from '@mui/icons-material/Facebook';
-  import YouTubeIcon from '@mui/icons-material/YouTube';
-  import InstagramIcon from '@mui/icons-material/Instagram';
-  import './Common.css';
-
-  function Footer() {
-    return (
-      <>
-        <div className="elementor-shape elementor-shape-top" data-negative="false">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 100" preserveAspectRatio="none">
-            <path className="elementor-shape-fill" d="M194,99c186.7,0.7,305-78.3,306-97.2c1,18.9,119.3,97.9,306,97.2c114.3-0.3,194,0.3,194,0.3s0-91.7,0-100c0,0,0,0,0-0 L0,0v99.3C0,99.3,79.7,98.7,194,99z"></path>
-          </svg>
-        </div>
-        <Box 
-          width="100%" 
+import {
+  Button,
+  IconButton,
+  Typography,
+  Box,
+  Container,
+  Grid,
+  Divider,
+} from "@mui/material";
+import React from "react";
+import FacebookIcon from "@mui/icons-material/Facebook";
+import YouTubeIcon from "@mui/icons-material/YouTube";
+import InstagramIcon from "@mui/icons-material/Instagram";
+import "./Common.css";
+import styles from "./footer.module.css";
+import SvgIcon from "@mui/material/SvgIcon";
+import LogoBlack from "../../assets/logos/LogoBlack";
+import { ReactComponent as LogoBlackSvg } from "../../assets/logos/LogoBlack.svg";
+function Footer() {
+  return (
+    <Grid container id={styles.mainContainer}>
+      <Grid
+        item
+        xs={12}
+        sm={12}
+        md={12}
+        xl={12}
+        sx={{
+          paddingTop: 10,
+          paddingBottom: 4,
+          paddingLeft: {
+            xs: 3,
+            sm: 3,
+            md: 4,
+            lg: 4,
+            xl: 4,
+          },
+        }}
+      >
+        <Box
+          width={"100%"}
+          display={"flex"}
+          justifyContent={"start"}
+          alignSelf={"center"}
           sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-            backgroundImage: 'url("https://lyfers.com/wp-content/uploads/2024/05/AdobeStock_385837423-scaled-1.jpeg")',
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            height: 380,
+            height: {
+              xs: 80,
+              sm: 90,
+              md: 100,
+              lg: 100,
+              xl: 120,
+            },
           }}
         >
-          <Box 
-            component="img"
-            marginTop={'80px'}
-            sx={{ height: 40, width: 150, marginBottom: 2 }}
-            alt="Logo"
-            src="https://i0.wp.com/lyfers.com/wp-content/uploads/2024/05/Lyfers_Color_OW.webp?w=1536&ssl=1"
-          />
-          <Box
-            sx={{
-              display: 'flex',
-              gap: 2,
-              marginBottom: 2,
-            }}
+          <Box height={"inherit"} component={LogoBlackSvg} />
+        </Box>
+      </Grid>
+      <Grid item xs={12} sm={12} md={12} xl={12}>
+        <Divider variant="middle" />
+        <Grid
+          container
+          sx={{ padding: 2 }}
+          justifyContent={"center"}
+          alignItems={"center"}
+          display={"flex"}
+        >
+          <Grid
+            item
+            xs={0}
+            sm={0}
+            md={0}
+            lg={1.5}
+            xl={1.5}
+            justifyContent={"center"}
+            alignItems={"center"}
+            display={"flex"}
+          ></Grid>
+          <Grid
+            item
+            xs={12}
+            sm={2.4}
+            md={2.4}
+            lg={1.5}
+            xl={1.5}
+            justifyContent={"center"}
+            alignItems={"center"}
+            display={"flex"}
           >
-            <IconButton
-              sx={{
-                backgroundColor: 'black',
-                borderRadius: '50%',
-                padding: 1,
-                '&:hover': {
-                  backgroundColor: '#333',
-                },
-              }}
-              href="https://www.facebook.com"
-              target="_blank"
-              aria-label="Facebook"
-            >
-              <FacebookIcon sx={{ color: 'white' }} />
-            </IconButton>
-            <IconButton
-              sx={{
-                backgroundColor: 'black',
-                borderRadius: '50%',
-                padding: 1,
-                '&:hover': {
-                  backgroundColor: '#333',
-                },
-              }}
-              href="https://www.youtube.com"
-              target="_blank"
-              aria-label="YouTube"
-            >
-              <YouTubeIcon sx={{ color: 'white' }} />
-            </IconButton>
-            <IconButton
-              sx={{
-                backgroundColor: 'black',
-                borderRadius: '50%',
-                padding: 1,
-                '&:hover': {
-                  backgroundColor: '#333',
-                },
-              }}
-              href="https://www.instagram.com"
-              target="_blank"
-              aria-label="Instagram"
-            >
-              <InstagramIcon sx={{ color: 'white' }} />
-            </IconButton>
-          </Box>
-          <Box sx={{ flexGrow: 1 }} /> {/* This Box pushes the Container to the bottom */}
-          <Container
-            sx={{
-              display: 'flex',
-              flexWrap: 'wrap',
-              justifyContent: 'center',
-              gap: 1,
-              marginBottom: 2,
-              backgroundColor: 'black',
-              height: 80,
-              alignItems: 'center',
-              padding: 1,
-            }}
+            <Typography component={"span"} id={styles.clickAbleText}>
+              Become a Lyfer
+            </Typography>
+          </Grid>
+          <Grid
+            item
+            xs={12}
+            sm={2.4}
+            md={2.4}
+            lg={1}
+            xl={1}
+            justifyContent={"center"}
+            alignItems={"center"}
+            display={"flex"}
           >
-            <Button
-              sx={{
-                color: 'white',
-                fontFamily: '"Montserrat", Sans-serif',
-                fontSize: '15px',
-                backgroundColor: 'transparent',
-                border: 'none',
-                '&:hover': {
-                  backgroundColor: 'transparent',
-                },
-              }}
-            >
-              Home
-            </Button>
-            <Button
-              sx={{
-                color: 'white',
-                fontFamily: '"Montserrat", Sans-serif',
-                fontSize: '15px',
-                backgroundColor: 'transparent',
-                border: 'none',
-                '&:hover': {
-                  backgroundColor: 'transparent',
-                },
-              }}
-            >
-              The 6 Pillars
-            </Button>
-            <Button
-              sx={{
-                color: 'white',
-                fontFamily: '"Montserrat", Sans-serif',
-                fontSize: '15px',
-                backgroundColor: 'transparent',
-                border: 'none',
-                '&:hover': {
-                  backgroundColor: 'transparent',
-                },
-              }}
-            >
-              Events
-            </Button>
-            <Button
-              sx={{
-                color: 'white',
-                fontFamily: '"Montserrat", Sans-serif',
-                fontSize: '15px',
-                backgroundColor: 'transparent',
-                border: 'none',
-                '&:hover': {
-                  backgroundColor: 'transparent',
-                },
-              }}
-            >
-              Community
-            </Button>
-            <Button
-              sx={{
-                color: 'white',
-                fontFamily: '"Montserrat", Sans-serif',
-                fontSize: '15px',
-                backgroundColor: 'transparent',
-                border: 'none',
-                '&:hover': {
-                  backgroundColor: 'transparent',
-                },
-              }}
-            >
-              Become A Lyfer
-            </Button>
-            <Button
-              sx={{
-                color: 'white',
-                fontFamily: '"Montserrat", Sans-serif',
-                fontSize: '15px',
-                backgroundColor: 'transparent',
-                border: 'none',
-                '&:hover': {
-                  backgroundColor: 'transparent',
-                },
-              }}
-            >
+            <Typography component={"span"} id={styles.clickAbleText}>
               Shop
-            </Button>
-          </Container>
-        </Box>
-        <Box width="100%" sx={{ backgroundColor: '#FF5413', paddingTop: '5px', paddingBottom: '5px' }}>
-          <Typography sx={{ textAlign: 'center' }}>
-            Copyright © 2024 LYFERS. All Rights Reserved.
-          </Typography>
-        </Box>
-      </>
-    );
-  }
+            </Typography>
+          </Grid>
+          <Grid
+            item
+            xs={12}
+            sm={2.4}
+            md={2.4}
+            lg={1}
+            xl={1}
+            justifyContent={"center"}
+            alignItems={"center"}
+            display={"flex"}
+          >
+            <Typography component={"span"} id={styles.clickAbleText}>
+              Community
+            </Typography>
+          </Grid>
+          <Grid
+            item
+            xs={12}
+            sm={2.4}
+            md={2.4}
+            lg={1}
+            xl={1}
+            justifyContent={"center"}
+            alignItems={"center"}
+            display={"flex"}
+          >
+            <Typography component={"span"} id={styles.clickAbleText}>
+              Events
+            </Typography>
+          </Grid>
 
-  export default Footer;
+          <Grid
+            item
+            xs={12}
+            sm={2.4}
+            md={2.4}
+            lg={1.5}
+            xl={1.5}
+            justifyContent={"center"}
+            alignItems={"center"}
+            display={"flex"}
+          >
+            <Typography component={"span"} id={styles.clickAbleText}>
+              Contact
+            </Typography>
+          </Grid>
+          <Grid
+            item
+            xs={0}
+            sm={0}
+            md={0}
+            lg={1.5}
+            xl={1.5}
+            justifyContent={"center"}
+            alignItems={"center"}
+            display={"flex"}
+          ></Grid>
+        </Grid>
+        <Divider variant="middle" flexItem />
+      </Grid>
+      <Grid item xs={12} sm={12} md={12} xl={12}>
+        <Grid
+          container
+          sx={{ padding: 2 }}
+          justifyContent={"center"}
+          alignItems={"center"}
+          display={"flex"}
+        >
+          <Grid
+            item
+            xs={12}
+            sm={2.4}
+            md={2.4}
+            lg={1.5}
+            xl={2}
+            justifyContent={"center"}
+            alignItems={"center"}
+            display={"flex"}
+          >
+            <Typography component={"span"} id={styles.secondaryContainer}>
+              © 2024 LYFERS
+            </Typography>
+          </Grid>
+          <Grid
+            item
+            xs={12}
+            sm={2.4}
+            md={2.4}
+            lg={1.5}
+            xl={2}
+            justifyContent={"center"}
+            alignItems={"center"}
+            display={"flex"}
+          >
+            <Typography component={"span"} id={styles.secondaryContainer}>
+              Terms & Conditions
+            </Typography>
+          </Grid>
+          <Grid
+            item
+            xs={12}
+            sm={2.4}
+            md={2.4}
+            lg={1.5}
+            xl={2}
+            justifyContent={"center"}
+            alignItems={"center"}
+            display={"flex"}
+          >
+            <Typography component={"span"} id={styles.secondaryContainer}>
+              Privacy Policy
+            </Typography>
+          </Grid>
+        </Grid>
+      </Grid>
+    </Grid>
+  );
+}
+
+export default Footer;
