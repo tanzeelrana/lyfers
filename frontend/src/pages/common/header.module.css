@@ -22,3 +22,20 @@
 
     font-weight: 600;
 }
+#headerButtonText {
+    color: #000;
+    text-align: center;
+    font-style: normal;
+    font-weight: 600;
+}
+
+#cartButton {
+    color: var(--Base-Base-White, #FAFAFA);
+    text-align: center;
+    font-family: Outfit;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 120%;
+    /* 16.8px */
+}

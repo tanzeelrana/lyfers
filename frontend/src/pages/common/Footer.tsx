@@ -1,22 +1,16 @@
 import {
-  Button,
-  IconButton,
   Typography,
   Box,
-  Container,
   Grid,
   Divider,
 } from "@mui/material";
-import React from "react";
-import FacebookIcon from "@mui/icons-material/Facebook";
-import YouTubeIcon from "@mui/icons-material/YouTube";
-import InstagramIcon from "@mui/icons-material/Instagram";
+import { useNavigate } from "react-router-dom";
 import "./Common.css";
 import styles from "./footer.module.css";
-import SvgIcon from "@mui/material/SvgIcon";
-import LogoBlack from "../../assets/logos/LogoBlack";
 import { ReactComponent as LogoBlackSvg } from "../../assets/logos/LogoBlack.svg";
 function Footer() {
+  const navigate = useNavigate(); 
+
   return (
     <Grid container id={styles.mainContainer}>
       <Grid
@@ -52,7 +46,7 @@ function Footer() {
             },
           }}
         >
-          <Box height={"inherit"} component={LogoBlackSvg} />
+          <Box onClick={()=> navigate('/')} height={"inherit"} component={LogoBlackSvg} />
         </Box>
       </Grid>
       <Grid item xs={12} sm={12} md={12} xl={12}>
@@ -86,7 +80,7 @@ function Footer() {
             alignItems={"center"}
             display={"flex"}
           >
-            <Typography component={"span"} id={styles.clickAbleText}>
+            <Typography onClick={()=> navigate('/become-a-lyfer')}  component={"span"} id={styles.clickAbleText}>
               Become a Lyfer
             </Typography>
           </Grid>
@@ -147,7 +141,7 @@ function Footer() {
             alignItems={"center"}
             display={"flex"}
           >
-            <Typography component={"span"} id={styles.clickAbleText}>
+            <Typography onClick={()=> navigate('/contact-us')} component={"span"} id={styles.clickAbleText}>
               Contact
             </Typography>
           </Grid>

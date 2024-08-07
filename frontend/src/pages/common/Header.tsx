@@ -3,40 +3,22 @@ import {
   AppBar,
   Box,
   Button,
+  Grid,
   IconButton,
   Toolbar,
   Typography,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
-import FacebookIcon from "@mui/icons-material/Facebook";
-import TwitterIcon from "@mui/icons-material/Twitter";
-import InstagramIcon from "@mui/icons-material/Instagram";
-import Link from "@mui/material/Link";
-import Menu from "@mui/material/Menu";
-import Container from "@mui/material/Container";
-import Avatar from "@mui/material/Avatar";
-import Tooltip from "@mui/material/Tooltip";
-import MenuItem from "@mui/material/MenuItem";
-import AdbIcon from "@mui/icons-material/Adb";
-import { margin } from "@mui/system";
-import Logo from "../../assets/images/logo.webp";
-import CssBaseline from "@mui/material/CssBaseline";
 import Divider from "@mui/material/Divider";
 import Drawer from "@mui/material/Drawer";
-import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
-import ListItemButton from "@mui/material/ListItemButton";
-import ListItemText from "@mui/material/ListItemText";
 import MenuIcon from "@mui/icons-material/Menu";
-import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import ShoppingCartCheckoutIcon from "@mui/icons-material/ShoppingCartCheckout";
+import { ReactComponent as LogoBlackSvg } from "../../assets/logos/LogoDefault.svg";
 
 import styles from "./header.module.css";
+import { Stack, width } from "@mui/system";
 
 const pages = [
-  "Home",
-  "The 6 Pillers",
   "Events",
   "Community",
   "Become A Lyfer",
@@ -56,27 +38,7 @@ const HomePage: FC = (props: Props) => {
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const drawerWidth = 240;
   const { window } = props;
-  const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(
-    null
-  );
-  const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(
-    null
-  );
-
-  const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorElNav(event.currentTarget);
-  };
-  const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorElUser(event.currentTarget);
-  };
-
-  const handleCloseNavMenu = () => {
-    setAnchorElNav(null);
-  };
-
-  const handleCloseUserMenu = () => {
-    setAnchorElUser(null);
-  };
+    const navigate = useNavigate(); 
 
   const handleDrawerToggle = () => {
     setMobileOpen((prevState) => !prevState);
@@ -87,210 +49,202 @@ const HomePage: FC = (props: Props) => {
   const drawer = (
     <Box
       onClick={handleDrawerToggle}
+      height={"100%"}
+      paddingY={2}
       sx={{ textAlign: "center", backgroundColor: "white" }}
     >
-      <Box
-        component="img"
-        sx={{
-          width: 100,
-          height: 40,
-          display: { md: "flex" },
-        }}
-        alt="Logo"
-        src={Logo}
-      />
-      <Divider />
-      <List>
-        {pages.map((item) => (
-          <ListItem key={item} disablePadding>
-            <ListItemButton sx={{ textAlign: "center" }}>
-              <ListItemText primary={item} />
-            </ListItemButton>
-          </ListItem>
-        ))}
-      </List>
+      <Stack spacing={3}>
+        <Button id={styles.headerButtonText}>Events</Button>
+        <Divider variant="middle" />
+
+        <Button id={styles.headerButtonText}>Community</Button>
+        <Divider variant="middle" />
+
+        <Button onClick={()=> navigate('/become-a-lyfer')} id={styles.headerButtonText}>Become A Lyfer</Button>
+        <Divider variant="middle" />
+
+        <Button id={styles.headerButtonText}>Shop</Button>
+      </Stack>
     </Box>
   );
 
   return (
     <Box>
-      <Box id={styles.headerBanner}>
-        <Typography id={styles.headerBannerTextNormal} component="span">
-          WANT TO BECOME A LYFER?
-          <Typography id={styles.headerBannerTextClickable} component="span">
-            {" "}
-            CLICK HERE
-          </Typography>
-        </Typography>
-      </Box>
-
       <AppBar position="static">
-        <Container maxWidth="xl">
-          <Toolbar disableGutters>
-            <Box
-              component="img"
+        <Toolbar disableGutters>
+          <Grid
+            container
+            width={"100%"}
+            display={"flex"}
+            justifyContent={"center"}
+            alignSelf={"center"}
+          >
+            <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+              <Box id={styles.headerBanner}>
+                <Typography id={styles.headerBannerTextNormal} component="span">
+                  WANT TO BECOME A LYFER?
+                  <Typography
+                    id={styles.headerBannerTextClickable}
+                    component="span"
+                  >
+                    {" "}
+                    CLICK HERE
+                  </Typography>
+                </Typography>
+              </Box>
+            </Grid>
+            <Grid
+              item
+              padding={2}
+              xs={3}
+              sm={0}
+              md={0}
+              lg={0}
+              xl={0}
               sx={{
-                width: 200,
-                height: 60,
-                display: { xs: "none", md: "flex" },
+                display: {
+                  xs: "flex",
+                  sm: "none",
+                  md: "none",
+                  lg: "none",
+                  xl: "none",
+                },
               }}
-              alt="Logo"
-              src={Logo}
-            />
-            <IconButton
-              color="inherit"
-              aria-label="open drawer"
-              edge="start"
-              onClick={handleDrawerToggle}
-              sx={{ mr: 2, display: { sm: "none" } }}
+              display={"flex"}
+              justifyContent={"start"}
+              alignSelf={"center"}
             >
-              <MenuIcon sx={{ color: "black" }} />
-            </IconButton>
-
-            <nav>
-              <Drawer
-                container={container}
-                variant="temporary"
-                open={mobileOpen}
-                onClose={handleDrawerToggle}
-                ModalProps={{
-                  keepMounted: true,
-                }}
+              <IconButton
+                color="inherit"
+                aria-label="open drawer"
+                edge="start"
+                onClick={handleDrawerToggle}
                 sx={{
-                  display: { xs: "block", sm: "none" },
-                  "& .MuiDrawer-paper": {
-                    boxSizing: "border-box",
-                    width: drawerWidth,
+                  mr: 2,
+                  display: {
+                    xs: "flex",
+                    sm: "none",
+                    md: "none",
+                    lg: "none",
+                    xl: "none",
                   },
                 }}
               >
-                {drawer}
-              </Drawer>
-            </nav>
-            <Box
+                <MenuIcon sx={{ color: "black" }} />
+              </IconButton>
+            </Grid>
+
+            <Grid item xs={6} sm={3} md={3} lg={4} xl={2} marginY={2}>
+              <Box
+                width={"inherit"}
+                display={"flex"}
+                justifyContent={"center"}
+                alignSelf={"center"}
+                sx={{
+                  height: {
+                    xs: 80,
+                    sm: 80,
+                    md: 80,
+                    lg: 80,
+                    xl: 80,
+                  },
+                }}
+              >
+                <Box onClick={()=> navigate('/')} height={"inherit"} component={LogoBlackSvg} />
+              </Box>
+            </Grid>
+
+            <Grid
+              item
+              xs={0}
+              sm={6}
+              md={7}
+              lg={5}
+              xl={4}
+              justifyContent={"center"}
+              alignItems={"center"}
+              display={"flex"}
               sx={{
-                flexGrow: 1,
-                display: { xs: "none", md: "flex", marginLeft: "100px" },
+                display: {
+                  xs: "none",
+                  sm: "flex",
+                  md: "flex",
+                  lg: "flex",
+                  xl: "flex",
+                },
               }}
             >
-              {/* {pages.map((page) => (
-                
-                <Button
-                  key={page}
-                  onClick={handleCloseNavMenu}
-                  sx={{ my: 2, color: 'black', display: 'block' ,fontFamily:' "Montserrat", Sans-serif',fontSize:'15px',marginLeft:'25px'}}
+              <Grid container>
+                <Grid item sm={3} md={3} lg={3} xl={3}>
+                  <Button  id={styles.headerButtonText}>Events</Button>
+                </Grid>
+                <Grid item sm={3} md={3} lg={3} xl={3}>
+                  <Button id={styles.headerButtonText}>Community</Button>
+                </Grid>
+                <Grid item sm={3} md={3} lg={3} xl={3}>
+                  <Button onClick={()=> navigate('/become-a-lyfer')} id={styles.headerButtonText}>Become A Lyfer</Button>
+                </Grid>
+                <Grid item sm={3} md={3} lg={3} xl={3}>
+                  <Button id={styles.headerButtonText}>Shop</Button>
+                </Grid>
+              </Grid>
+            </Grid>
+            <Grid
+              item
+              xs={0}
+              sm={2}
+              md={2}
+              lg={3}
+              xl={3}
+              justifyContent={"center"}
+              alignItems={"center"}
+              sx={{
+                display: {
+                  xs: "none",
+                  sm: "flex",
+                  md: "flex",
+                  lg: "flex",
+                  xl: "flex",
+                },
+              }}
+            >
+              <Box>
+                <Button size="large"
+                  startIcon={<ShoppingCartCheckoutIcon />}
+                  variant="contained"
+                  id={styles.cartButton}
                 >
-                {page === 'Wishlist' && <FavoriteBorderIcon/>}
-                {page === 'CartItems' && <ShoppingCartCheckoutIcon/>}
-                  {page}
+                  cart
                 </Button>
-                
-              ))} */}
+              </Box>
+            </Grid>
+          </Grid>
 
-              <Button
-                component="a"
-                href="/"
-                sx={{
-                  my: 2,
-                  color: "black",
-                  display: "block",
-                  fontFamily: ' "Montserrat", Sans-serif',
-                  fontSize: "15px",
-                  marginLeft: "25px",
-                }}
-              >
-                Home
-              </Button>
-              <Button
-                component="a"
-                href="/six-piller"
-                sx={{
-                  my: 2,
-                  color: "black",
-                  display: "block",
-                  fontFamily: ' "Montserrat", Sans-serif',
-                  fontSize: "15px",
-                  marginLeft: "25px",
-                }}
-              >
-                The 6 Pillers
-              </Button>
-              <Button
-                sx={{
-                  my: 2,
-                  color: "black",
-                  display: "block",
-                  fontFamily: ' "Montserrat", Sans-serif',
-                  fontSize: "15px",
-                  marginLeft: "25px",
-                }}
-              >
-                Events
-              </Button>
-              <Button
-                sx={{
-                  my: 2,
-                  color: "black",
-                  display: "block",
-                  fontFamily: ' "Montserrat", Sans-serif',
-                  fontSize: "15px",
-                  marginLeft: "25px",
-                }}
-              >
-                Commiunity
-              </Button>
-              <Button
-                sx={{
-                  my: 2,
-                  color: "black",
-                  display: "block",
-                  fontFamily: ' "Montserrat", Sans-serif',
-                  fontSize: "15px",
-                  marginLeft: "25px",
-                }}
-              >
-                Become A Lyfer
-              </Button>
-              <Button
-                sx={{
-                  my: 2,
-                  color: "black",
-                  display: "block",
-                  fontFamily: ' "Montserrat", Sans-serif',
-                  fontSize: "15px",
-                  marginLeft: "25px",
-                }}
-              >
-                Shop
-              </Button>
-              <Button
-                sx={{
-                  my: 2,
-                  color: "black",
-                  display: "block",
-                  marginLeft: "25px",
-                }}
-              >
-                <FavoriteBorderIcon />
-              </Button>
-              <Button
-                sx={{
-                  my: 2,
-                  color: "black",
-                  display: "block",
-                  fontFamily: ' "Montserrat", Sans-serif',
-                  fontSize: "15px",
-                  marginLeft: "25px",
-                }}
-              >
-                <ShoppingCartCheckoutIcon /> 0 items
-              </Button>
-            </Box>
-          </Toolbar>
-        </Container>
+          <nav>
+            <Drawer
+              container={container}
+              variant="temporary"
+              open={mobileOpen}
+              onClose={handleDrawerToggle}
+              ModalProps={{
+                keepMounted: true,
+              }}
+              sx={{
+                display: { xs: "block", sm: "none" },
+                "& .MuiDrawer-paper": {
+                  boxSizing: "border-box",
+                  width: drawerWidth,
+                },
+              }}
+            >
+              {drawer}
+            </Drawer>
+          </nav>
+        </Toolbar>
       </AppBar>
     </Box>
   );
 };
+
 
 export default HomePage;
