@@ -20,6 +20,7 @@ import TestDrives from "../pages/TestDrives/TestDrives";
 import SixPiller from "../pages/SixPiller/SixPiller";
 import ContactUs from "../pages/ContactUs/ContactUs";
 import BecomeALyfer from "../pages/BecomeALyfer/BecomeALyfer";
+import EventsPage from "../pages/Events/EventsPage";
 
 const routes = [
   {
@@ -45,6 +46,11 @@ const routes = [
   {
     path: "/contact-us",
     component: <ContactUs />,
+    ispublic: true,
+  },
+  {
+    path: "/events",
+    component: <EventsPage />,
     ispublic: true,
   },
   {
