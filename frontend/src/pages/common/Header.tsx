@@ -95,7 +95,6 @@ const HomePage: FC = (props: Props) => {
             </Grid>
             <Grid
               item
-              padding={2}
               xs={3}
               sm={0}
               md={0}
