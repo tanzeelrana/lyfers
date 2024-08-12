@@ -3,8 +3,11 @@ import { Box } from '@mui/system'
 import ArrowRightAltIcon from '@mui/icons-material/ArrowRightAlt';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import eventImage from '../../assets/images/eventImage.png';
+import { useNavigate } from 'react-router-dom';
 
 export default function EventsComponent() {
+    const navigate = useNavigate(); 
+
   return (
 <Grid item xs={12} md={6}>
     <Box
@@ -98,7 +101,7 @@ export default function EventsComponent() {
                             gap: 1,
                         }}
                     >
-                        <Typography
+                        <Typography onClick={()=> navigate('/event-detail')}
                             color="text.secondary"
                             sx={{
                                 fontFamily: 'Outfit',
@@ -110,7 +113,7 @@ export default function EventsComponent() {
                                 alignItems: 'center',
                             }}
                         >
-                            View Detail
+                            View Detail 
                             <ArrowRightAltIcon sx={{ color: '#FBB03A', fontSize: { xs: 24, sm: 34 }, ml: 1 }} />
                         </Typography>
 
@@ -120,5 +123,6 @@ export default function EventsComponent() {
             </Grid>
         </Grid>
     </Box>
-</Grid>  )
+</Grid>  
+)
 }

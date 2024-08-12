@@ -21,6 +21,9 @@ import SixPiller from "../pages/SixPiller/SixPiller";
 import ContactUs from "../pages/ContactUs/ContactUs";
 import BecomeALyfer from "../pages/BecomeALyfer/BecomeALyfer";
 import EventsPage from "../pages/Events/EventsPage";
+import EventDetail from "../pages/Events/EventDetail";
+import PaymentDetail from "../pages/PaymentDetail/PaymentDetail";
+import OrderConfermation from "../pages/Orders/OrderConfermation";
 
 const routes = [
   {
@@ -51,6 +54,21 @@ const routes = [
   {
     path: "/events",
     component: <EventsPage />,
+    ispublic: true,
+  },
+  {
+    path: "/event-detail",
+    component: <EventDetail />,
+    ispublic: true,
+  },
+  {
+    path: "/order-confermation",
+    component: <OrderConfermation />,
+    ispublic: true,
+  },
+  {
+    path: "/payment-detail",
+    component: <PaymentDetail />,
     ispublic: true,
   },
   {
