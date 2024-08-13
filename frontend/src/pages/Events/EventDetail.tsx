@@ -6,7 +6,6 @@ import detailEventCover from '../../assets/images/detailEventCover.png'
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import Accordion from '@mui/material/Accordion';
-import AccordionActions from '@mui/material/AccordionActions';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
@@ -401,7 +400,7 @@ export default function EventDetail() {
                         More Events
                     </Typography>
                 </Grid>
-                <Grid item xs={12} >
+                {/* <Grid item xs={12} >
                     <Carousel autoPlay={true}
                         showThumbs={false} swipeScrollTolerance={1}
                         infiniteLoop={true}
@@ -419,7 +418,7 @@ export default function EventDetail() {
                             <EventsComponent />
                         </Grid>
                     </Carousel>
-                </Grid>
+                </Grid> */}
             </Grid>
         </Box>
     )

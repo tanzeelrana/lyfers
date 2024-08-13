@@ -6,10 +6,16 @@ app.use(cors());
 const db = require('./models');
 
 
-
 //routers
 const postRouter = require('./routes/Posts')
 app.use("/posts" ,postRouter);
+
+const eventsRouter = require('./routes/events');
+app.use('/events', eventsRouter);
+
+const eventCategoriesRouter = require('./routes/eventCategories');
+app.use('/eventCategories', eventCategoriesRouter);
+
 
 
 db.sequelize.sync().then(() =>{

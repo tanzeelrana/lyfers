@@ -1,6 +1,6 @@
-import { Button, Grid, Typography } from '@mui/material'
-import { Box } from '@mui/system'
-import React from 'react'
+import { Button, Grid, Typography } from '@mui/material';
+import { Box } from '@mui/system';
+import React, { useEffect, useState } from 'react';
 import eventsCover from '../../assets/images/eventsCover.png';
 import ArrowRightAltIcon from '@mui/icons-material/ArrowRightAlt';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
@@ -10,14 +10,62 @@ import Tab from '@mui/material/Tab';
 import TabContext from '@mui/lab/TabContext';
 import TabList from '@mui/lab/TabList';
 import TabPanel from '@mui/lab/TabPanel';
+import axios from 'axios';
+
+interface TabData {
+    id: string;
+    name: string;
+}
+interface Category {
+    id: number;
+    name: string;
+}
+interface EventData {
+    id: string;
+    title: string;
+    date: string;
+    image: string;
+    description: string;
+    price: string;
+    category: Category;
+}
 
 export default function EventsPage() {
+    const [value, setValue] = useState<string>('all');
+    const [tabsData, setTabsData] = useState<TabData[]>([]);
+    const [events, setEvents] = useState<EventData[]>([]);
+    const [filteredEvents, setFilteredEvents] = useState<EventData[]>([]);
 
-    const [value, setValue] = React.useState('1');
+    useEffect(() => {
+        // Fetch data from API using Axios
+        const fetchData = async () => {
+            try {
+                const response = await axios.get('http://localhost:3003/eventCategories');
+                const categories = response.data;
+                setTabsData([{ id: 'all', name: 'All' }, ...categories]);
+                const eventResponse = await axios.get('http://localhost:3003/events');
+                setEvents(eventResponse.data);
+                setFilteredEvents(eventResponse.data);
+            } catch (error) {
+                console.error('Error fetching tab data:', error);
+            }
+        };
+
+        fetchData();
+    }, []);
+
+    useEffect(() => {
+        
+        const filtered = value === 'all'
+            ? events
+            : events.filter(event => event.category.id.toString() == value);
+            setFilteredEvents(filtered);
+    }, [value, events]);
 
     const handleChange = (event: React.SyntheticEvent, newValue: string) => {
         setValue(newValue);
     };
+
     return (
         <Box width="100%" sx={{ flexGrow: 1, backgroundColor: '#FAFAFA' }}>
             <Grid container width="100%" direction="column" padding={{ xs: 2, sm: 3, md: 4 }} rowSpacing={2} flexShrink={0}>
@@ -67,7 +115,6 @@ export default function EventsPage() {
             <Grid container direction="row" spacing={3} padding={{ xs: 2, sm: 3, md: 4 }}>
                 <Grid item xs={12}>
                     <Box>
-
                         <TabContext value={value}>
                             <Box
                                 sx={{
@@ -90,69 +137,39 @@ export default function EventsPage() {
                                         '& .MuiTabs-flexContainer': {
                                             justifyContent: { xs: 'center', sm: 'flex-start' },
                                         },
-
                                     }}
                                 >
-                                    <Tab
-                                        sx={{
-                                            typography: 'body1',
-                                            fontFamily: 'Outfit',
-                                            fontSize: { xs: '14px', sm: '16px', md: '18px' },
-                                            fontWeight: 600
-
-                                        }}
-
-                                        label="All Events" value="1" />
-                                    <Tab sx={{
-                                        typography: 'body1',
-                                        fontFamily: 'Outfit',
-                                        fontSize: { xs: '14px', sm: '16px', md: '18px' },
-                                        fontWeight: 600
-
-                                    }}
-                                        label="Charity" value="2" />
-                                    <Tab sx={{
-                                        typography: 'body1',
-                                        fontFamily: 'Outfit',
-                                        fontSize: { xs: '14px', sm: '16px', md: '18px' },
-                                        fontWeight: 600
-
-                                    }}
-                                        label="Concert" value="3" />
-                                    <Tab sx={{
-                                        typography: 'body1',
-                                        fontFamily: 'Outfit',
-                                        fontSize: { xs: '14px', sm: '16px', md: '18px' },
-                                        fontWeight: 600
-
-                                    }}
-                                        label="Festival" value="4" />
-                                    <Tab
-                                        sx={{
-                                            typography: 'body1',
-                                            fontFamily: 'Outfit',
-                                            fontSize: { xs: '14px', sm: '16px', md: '18px' },
-                                            fontWeight: 600
-
-                                        }}
-                                        label="Supports" value="5" />
+                                    {tabsData.map(tab => (
+                                        <Tab
+                                            key={tab.id}
+                                            sx={{
+                                                typography: 'body1',
+                                                fontFamily: 'Outfit',
+                                                fontSize: { xs: '14px', sm: '16px', md: '18px' },
+                                                fontWeight: 600
+                                            }}
+                                            label={tab.name}
+                                            value={tab.id}
+                                        />
+                                    ))}
                                 </TabList>
                             </Box>
                         </TabContext>
                     </Box>
                 </Grid>
 
-                <EventsComponent />
-                <EventsComponent />
-                <EventsComponent />
-                <EventsComponent />
-                <EventsComponent />
-                <EventsComponent />
-                <EventsComponent />
-                <EventsComponent />
-                <EventsComponent />
-                <EventsComponent />
+                {filteredEvents.map(event => (
+                    <EventsComponent
+                        key={event.id}
+                        title={event.title}
+                        date={event.date}
+                        image={event.image}
+                        description={event.description}
+                        price={event.price}
+                        category={event.category}
+                    />
+                ))}
             </Grid>
         </Box>
-    )
+    );
 }
