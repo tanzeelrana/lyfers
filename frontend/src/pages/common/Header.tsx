@@ -54,7 +54,7 @@ const HomePage: FC = (props: Props) => {
       sx={{ textAlign: "center", backgroundColor: "white" }}
     >
       <Stack spacing={3}>
-        <Button id={styles.headerButtonText}>Events</Button>
+        <Button onClick={()=> navigate('/events')} id={styles.headerButtonText}>Events</Button>
         <Divider variant="middle" />
 
         <Button id={styles.headerButtonText}>Community</Button>
@@ -63,7 +63,7 @@ const HomePage: FC = (props: Props) => {
         <Button onClick={()=> navigate('/become-a-lyfer')} id={styles.headerButtonText}>Become A Lyfer</Button>
         <Divider variant="middle" />
 
-        <Button id={styles.headerButtonText}>Shop</Button>
+        <Button onClick={()=> navigate('/products')} id={styles.headerButtonText}>Shop</Button>
       </Stack>
     </Box>
   );
@@ -175,7 +175,7 @@ const HomePage: FC = (props: Props) => {
             >
               <Grid container>
                 <Grid item sm={3} md={3} lg={3} xl={3}>
-                  <Button  id={styles.headerButtonText}>Events</Button>
+                  <Button onClick={()=> navigate('/events')} id={styles.headerButtonText}>Events</Button>
                 </Grid>
                 <Grid item sm={3} md={3} lg={3} xl={3}>
                   <Button id={styles.headerButtonText}>Community</Button>
@@ -184,7 +184,7 @@ const HomePage: FC = (props: Props) => {
                   <Button onClick={()=> navigate('/become-a-lyfer')} id={styles.headerButtonText}>Become A Lyfer</Button>
                 </Grid>
                 <Grid item sm={3} md={3} lg={3} xl={3}>
-                  <Button id={styles.headerButtonText}>Shop</Button>
+                  <Button onClick={()=> navigate('/products')} id={styles.headerButtonText}>Shop</Button>
                 </Grid>
               </Grid>
             </Grid>

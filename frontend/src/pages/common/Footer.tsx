@@ -95,7 +95,7 @@ function Footer() {
             alignItems={"center"}
             display={"flex"}
           >
-            <Typography component={"span"} id={styles.clickAbleText}>
+            <Typography onClick={()=> navigate('/products')} component={"span"} id={styles.clickAbleText}>
               Shop
             </Typography>
           </Grid>
@@ -125,7 +125,7 @@ function Footer() {
             alignItems={"center"}
             display={"flex"}
           >
-            <Typography component={"span"} id={styles.clickAbleText}>
+            <Typography onClick={()=> navigate('/events')} component={"span"} id={styles.clickAbleText}>
               Events
             </Typography>
           </Grid>
