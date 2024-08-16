@@ -5,12 +5,14 @@ import ArrowRightAltIcon from '@mui/icons-material/ArrowRightAlt';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import { useNavigate } from 'react-router-dom';
 import eventImage from '../../assets/images/eventImage.png';
+import { format } from 'date-fns';
 
 interface Category {
     id: number;
     name: string;
 }
 interface EventsComponentProps {
+    id:number;
     title: string;
     date: string;
     image: string;
@@ -20,6 +22,7 @@ interface EventsComponentProps {
 }
 
 const EventsComponent: React.FC<EventsComponentProps> = ({
+    id,
     title,
     date,
     image,
@@ -28,7 +31,6 @@ const EventsComponent: React.FC<EventsComponentProps> = ({
     category,
 }) => {
     const navigate = useNavigate();
-
     return (
         <Grid item xs={12} md={6}>
             <Box
@@ -96,7 +98,7 @@ const EventsComponent: React.FC<EventsComponentProps> = ({
                                     fontSize: { xs: '14px', sm: '18px' },
                                     fontWeight: 400
                                 }}>
-                                    {date}
+                                      {format(new Date(date), 'MMMM d, yyyy')}
                                 </Typography>
                                 <Typography variant="body1" gutterBottom sx={{
                                     fontFamily: 'Syne',
@@ -118,15 +120,15 @@ const EventsComponent: React.FC<EventsComponentProps> = ({
                                     marginTop: 'auto',
                                     display: 'flex',
                                     justifyContent: 'space-between',
-                                    alignItems: 'center', // Align items vertically centered
+                                    alignItems: 'center',
                                     gap: 1,
                                 }}
                             >
-                                <Typography onClick={() => navigate('/event-detail')}
+                                <Typography onClick={() => navigate(`/event-detail/${id}`)}
                                     color="text.secondary"
                                     sx={{
                                         fontFamily: 'Outfit',
-                                        fontSize: { xs: '14px', sm: '16px' }, // Responsive font size
+                                        fontSize: { xs: '14px', sm: '16px' },
                                         fontWeight: 400,
                                         lineHeight: '40px',
                                         color: '#FBB03A',

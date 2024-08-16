@@ -11,6 +11,8 @@ import TabContext from '@mui/lab/TabContext';
 import TabList from '@mui/lab/TabList';
 import TabPanel from '@mui/lab/TabPanel';
 import axios from 'axios';
+import baseUrl from '../../config/apiConfig';
+
 
 interface TabData {
     id: string;
@@ -21,7 +23,7 @@ interface Category {
     name: string;
 }
 interface EventData {
-    id: string;
+    id: number;
     title: string;
     date: string;
     image: string;
@@ -37,13 +39,12 @@ export default function EventsPage() {
     const [filteredEvents, setFilteredEvents] = useState<EventData[]>([]);
 
     useEffect(() => {
-        // Fetch data from API using Axios
         const fetchData = async () => {
             try {
-                const response = await axios.get('http://localhost:3003/eventCategories');
+                const response = await axios.get(`${baseUrl}/eventCategories`);
                 const categories = response.data;
                 setTabsData([{ id: 'all', name: 'All' }, ...categories]);
-                const eventResponse = await axios.get('http://localhost:3003/events');
+                const eventResponse = await axios.get(`${baseUrl}/events`);
                 setEvents(eventResponse.data);
                 setFilteredEvents(eventResponse.data);
             } catch (error) {
@@ -159,8 +160,10 @@ export default function EventsPage() {
                 </Grid>
 
                 {filteredEvents.map(event => (
+                    
                     <EventsComponent
                         key={event.id}
+                        id={event.id}
                         title={event.title}
                         date={event.date}
                         image={event.image}

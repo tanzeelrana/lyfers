@@ -1,6 +1,19 @@
 const express = require('express');
 const router = express.Router();
 const { Event, EventCategory } = require('../models');
+const multer = require('multer');
+const path = require('path');
+
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, 'public/uploads'); // Save files in the 'public/uploads' directory
+    },
+    filename: (req, file, cb) => {
+        cb(null, Date.now() + path.extname(file.originalname)); // Add timestamp to avoid file name collisions
+    }
+});
+
+const upload = multer({ storage });
 
 // Get all events
 router.get('/', async (req, res) => {
@@ -8,8 +21,8 @@ router.get('/', async (req, res) => {
         const events = await Event.findAll({
             include: {
               model: EventCategory,
-              as: 'category', // Must match the alias used in the association
-              attributes: ['id', 'name'] // Adjust as needed
+              as: 'category',
+              attributes: ['id', 'name']
             }
           });
         res.json(events);
@@ -21,7 +34,13 @@ router.get('/', async (req, res) => {
 // Get a single event by ID
 router.get('/:id', async (req, res) => {
     try {
-        const event = await Event.findByPk(req.params.id);
+        const event = await Event.findByPk(req.params.id ,{
+            include: {
+              model: EventCategory,
+              as: 'category',
+              attributes: ['id', 'name']
+            }
+          });
         if (event) {
             res.json(event);
         } else {
@@ -33,9 +52,15 @@ router.get('/:id', async (req, res) => {
 });
 
 // Create a new event
-router.post('/', async (req, res) => {
+router.post('/', upload.single('image'), async (req, res) => {
     try {
-        const newEvent = await Event.create(req.body);
+        const eventData = {
+            ...req.body,
+            image: req.file ? `/uploads/${req.file.filename}` : null 
+        };
+
+        // Create new event
+        const newEvent = await Event.create(eventData);
         res.status(201).json(newEvent);
     } catch (error) {
         res.status(500).json({ message: 'Error creating event', error });
