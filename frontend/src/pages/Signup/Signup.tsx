@@ -1,207 +1,305 @@
 import { FC, useState } from "react";
-import { Box, TextField, Grid, Typography, Link, Card, CardContent } from "@mui/material";
-import { useFormik } from "formik";
-import * as yup from "yup";
+import { Box, Button, Paper, TextField, Typography, MenuItem, Select, InputLabel, FormControl, Grid, SelectChangeEvent } from "@mui/material";
+import signUpImage from '../../assets/images/loginBanner.png';
+import logo from '../../assets/logos/LogoDefault.svg';
 import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
-import { LoadingButton } from "@mui/lab";
-import Parse from "parse";
-interface formikValuesProps {
-  userName: string;
-  email: string;
-  password: string;
-  confirmPassword: string;
-}
-
-const styles = {
-  signUpButtonStyle: {
-    width: "100%",
-    py: 1,
-    borderRadius: "20px",
-    mt: 2,
-  },
-  textField: {
-    width: "100%",
-    mb: 3,
-    "& .MuiInputLabel-root.Mui-focused": {
-      color: "black",
-    },
-    "& .MuiOutlinedInput-notchedOutline": {
-      borderColor: "#c6c6c6 !important",
-    },
-  },
-};
 
 const Signup: FC = () => {
   const navigate = useNavigate();
-  const [btnloading, setBtnloading] = useState<boolean>(false);
 
-  const initialValues: formikValuesProps = {
-    userName: "",
-    email: "",
-    password: "",
-    confirmPassword: "",
+  const [formValues, setFormValues] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
+    securityQuestion: '',
+    answer: ''
+  });
+  const [errors, setErrors] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
+    securityQuestion: '',
+    answer: ''
+  });
+
+  // Handle input change
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | SelectChangeEvent<string>) => {
+    const { name, value } = e.target;
+    
+    
+      setFormValues({
+        ...formValues,
+        [name]: value
+      });
+    
   };
 
-  const validationSchema = yup.object({
-    userName: yup.string().required("First name is required"),
-    email: yup.string().email("Enter a valid email").required("Email is required"),
-    password: yup.string().required("Password is required").min(8, "Password must be at least 8 characters"),
-    confirmPassword: yup.string().required("Confirm Password is required").oneOf([yup.ref("password")], "Passwords must match"),
-  });
+  // Validate form fields
+  const validate = () => {
+    let firstNameError = '';
+    let lastNameError = '';
+    let emailError = '';
+    let passwordError = '';
+    let confirmPasswordError = '';
+    let securityQuestionError = '';
+    let answerError = '';
 
-  const formik = useFormik({
-    initialValues,
-    validationSchema: validationSchema,
-    onSubmit: async (values: formikValuesProps) => {
-      handleSubmit(values)
-    },
-  });
+    if (!formValues.firstName) {
+      firstNameError = 'First name is required';
+    }
 
-  const handleSubmit = async (values: formikValuesProps) => {
-    try {
-      await Parse.Cloud.run("userSignup", {
-        username: values.userName,
-        email: values.email,
-        password: values.password,
-      });
-      setBtnloading(false);
-      toast.success("Signup Successfully");
-      navigate("/");
-    } catch (error: any) {
-      setBtnloading(false);
-      console.log("API Error: ", error);
-      toast.error(error.message);
+    if (!formValues.lastName) {
+      lastNameError = 'Last name is required';
+    }
+
+    if (!formValues.email) {
+      emailError = 'Email is required';
+    } else if (!/\S+@\S+\.\S+/.test(formValues.email)) {
+      emailError = 'Email is invalid';
+    }
+
+    if (!formValues.password) {
+      passwordError = 'Password is required';
+    } else if (formValues.password.length < 6) {
+      passwordError = 'Password must be at least 6 characters';
+    }
+
+    if (formValues.password !== formValues.confirmPassword) {
+      confirmPasswordError = 'Passwords do not match';
+    }
+
+    if (!formValues.securityQuestion) {
+      securityQuestionError = 'Please select a security question';
+    }
+
+    if (!formValues.answer) {
+      answerError = 'Answer to the security question is required';
+    }
+
+    if (firstNameError || lastNameError || emailError || passwordError || confirmPasswordError || securityQuestionError || answerError) {
+      setErrors({ firstName: firstNameError, lastName: lastNameError, email: emailError, password: passwordError, confirmPassword: confirmPasswordError, securityQuestion: securityQuestionError, answer: answerError });
+      return false;
+    }
+
+    return true;
+  };
+
+  // Handle form submission
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    if (validate()) {
+      // Proceed with form submission (e.g., API call)
+      console.log('Form submitted:', formValues);
     }
   };
 
   return (
-    <Box
-      sx={{
-        display: "flex",
-        justifyContent: "center",
-        flexDirection: "column",
-        alignItems: "center",
-        width: "100%",
-        height: "100vh",
-        background: "white",
-      }}
-    >
-      <Grid
-        container
-        sx={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        <Grid item lg={4} md={6} xs={10} sx={{ px: 2 }}>
-          <Card
-            variant="outlined"
-            sx={{
-              p: 4,
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              flexDirection: "column",
-            }}
-          >
-            <CardContent sx={{ width: "100%", px: 5 }}>
+    <Box width="100%" sx={{ flexGrow: 1, backgroundColor: '#FAFAFA' }}>
+      <Grid container  direction="row" padding={{ xs: 2, sm: 3, md: 4 }} spacing={4} flexShrink={0}>
+        <Grid item xs={12} md={6}>
+          <Grid container display={'flex'} alignItems={'center'} justifyContent={'center'} direction={'column'} spacing={3}>
+            <Grid item xs={12} display={'flex'} alignItems={'center'} justifyContent={'center'}>
+              <img
+                src={logo}
+                alt='Logo'
+                style={{
+                  width: 'auto',
+                  height: 'auto',
+                  maxWidth: '100%',
+                  maxHeight: '180px',
+                }}
+              />
+            </Grid>
+            <Grid
+              item 
+              xs={12}
+              display="flex"
+              sx={{
+                gap: '10px',
+                alignItems: 'center',
+                justifyContent: 'center',
+                marginBottom: { xs: '10px', sm: '15px', md: '20px' },
+              }}
+            >
               <Typography
                 sx={{
-                  fontSize: "30px",
-                  fontWeight: "bold",
-                  textAlign: "center"
+                  fontFamily: 'Syne',
+                  fontSize: { xs: '20px', sm: '28px', md: '40px' },
+                  fontStyle: 'normal',
+                  fontWeight: 700,
+                  lineHeight: '120%',
                 }}
               >
-                Signup
+                Sign Up
               </Typography>
-              <Box sx={{ mb: 5 }}>
-                {/* <img alt="Logo" src={logo} width="200px" /> */}
-              </Box>
-              <form onSubmit={formik.handleSubmit}>
-                <TextField
-                  id="userName"
-                  name="userName"
-                  label="Username"
-                  fullWidth
-                  value={formik.values.userName}
-                  onChange={formik.handleChange}
-                  error={formik.touched.userName && Boolean(formik.errors.userName)}
-                  helperText={formik.touched.userName && formik.errors.userName}
-                  variant="standard"
-                  sx={styles.textField}
-                />
-                <TextField
-                  id="email"
-                  name="email"
-                  label="Email"
-                  fullWidth
-                  value={formik.values.email}
-                  onChange={formik.handleChange}
-                  error={formik.touched.email && Boolean(formik.errors.email)}
-                  helperText={formik.touched.email && formik.errors.email}
-                  variant="standard"
-                  sx={styles.textField}
-                />
-                <TextField
-                  id="password"
-                  name="password"
-                  label="Password"
-                  type="password"
-                  fullWidth
-                  value={formik.values.password}
-                  onChange={formik.handleChange}
-                  error={formik.touched.password && Boolean(formik.errors.password)}
-                  helperText={formik.touched.password && formik.errors.password}
-                  variant="standard"
-                  sx={styles.textField}
-                />
-                <TextField
-                  id="confirmPassword"
-                  name="confirmPassword"
-                  label="Confirm Password"
-                  type="password"
-                  fullWidth
-                  value={formik.values.confirmPassword}
-                  onChange={formik.handleChange}
-                  error={formik.touched.confirmPassword && Boolean(formik.errors.confirmPassword)}
-                  helperText={formik.touched.confirmPassword && formik.errors.confirmPassword}
-                  variant="standard"
-                  sx={styles.textField}
-                />
-                <Box sx={{ textAlign: "center" }}>
-                  <LoadingButton
-                    fullWidth
-                    type="submit"
-                    variant="contained"
-                    loading={btnloading}
-                    sx={styles.signUpButtonStyle}
-                  >
-                    Signup
-                  </LoadingButton>
-                </Box>
-              </form>
-              <Box
+            </Grid>
+            <Grid item xs={12}>
+              <Paper
+                elevation={10}
                 sx={{
-                  mt: 4,
-                  fontSize: 12,
-                  textAlign: "center",
-                  fontWeight: "bold",
+                  padding: { xs: 2, sm: 3, md: 4 },
+                  backgroundColor: '#FFE7DB',
+                  border: '1px solid',
+                  borderRadius: '15px'
                 }}
               >
-                <Link
-                  onClick={() => navigate("/login")}
-                  color="primary"
-                  sx={{
-                    cursor: "pointer",
-                  }}
-                >
-                  Back to login
-                </Link>
-              </Box>
-            </CardContent>
-          </Card>
+                <form onSubmit={handleSubmit}>
+                  <Grid container spacing={2}>
+                    <Grid item xs={12} sm={6}>
+                      <TextField
+                        fullWidth
+                        label="First Name"
+                        variant="outlined"
+                        name="firstName"
+                        value={formValues.firstName}
+                        onChange={handleChange}
+                        error={Boolean(errors.firstName)}
+                        helperText={errors.firstName}
+                      />
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                      <TextField
+                        fullWidth
+                        label="Last Name"
+                        variant="outlined"
+                        name="lastName"
+                        value={formValues.lastName}
+                        onChange={handleChange}
+                        error={Boolean(errors.lastName)}
+                        helperText={errors.lastName}
+                      />
+                    </Grid>
+                    <Grid item xs={12}>
+                      <TextField
+                        fullWidth
+                        label="Email"
+                        variant="outlined"
+                        name="email"
+                        value={formValues.email}
+                        onChange={handleChange}
+                        error={Boolean(errors.email)}
+                        helperText={errors.email}
+                      />
+                    </Grid>
+                    <Grid item xs={12}>
+                      <TextField
+                        fullWidth
+                        label="Password"
+                        variant="outlined"
+                        name="password"
+                        type="password"
+                        value={formValues.password}
+                        onChange={handleChange}
+                        error={Boolean(errors.password)}
+                        helperText={errors.password}
+                      />
+                    </Grid>
+                    <Grid item xs={12}>
+                      <TextField
+                        fullWidth
+                        label="Confirm Password"
+                        variant="outlined"
+                        name="confirmPassword"
+                        type="password"
+                        value={formValues.confirmPassword}
+                        onChange={handleChange}
+                        error={Boolean(errors.confirmPassword)}
+                        helperText={errors.confirmPassword}
+                      />
+                    </Grid>
+                    <Grid item xs={12}>
+                      <FormControl fullWidth variant="outlined" error={Boolean(errors.securityQuestion)}>
+                        <InputLabel id="security-question-label">Security Question</InputLabel>
+                        <Select
+                          labelId="security-question-label"
+                          label="Security Question"
+                          name="securityQuestion"
+                          value={formValues.securityQuestion}
+                          onChange={handleChange}
+                          sx={{
+                            backgroundColor:'white'
+                          }}
+                        >
+                          <MenuItem value="pet">What is your pet's name?</MenuItem>
+                          <MenuItem value="mother">What is your mother's maiden name?</MenuItem>
+                          <MenuItem value="school">What was the name of your first school?</MenuItem>
+                        </Select>
+                        {errors.securityQuestion && <Typography color="error">{errors.securityQuestion}</Typography>}
+                      </FormControl>
+                    </Grid>
+                    <Grid item xs={12}>
+                      <TextField
+                        fullWidth
+                        label="Answer"
+                        variant="outlined"
+                        name="answer"
+                        value={formValues.answer}
+                        onChange={handleChange}
+                        error={Boolean(errors.answer)}
+                        helperText={errors.answer}
+                      />
+                    </Grid>
+                    <Grid item xs={12} textAlign="center">
+                      <Button 
+                        fullWidth 
+                        size="large" 
+                        variant="contained" 
+                        color="primary" 
+                        type="submit" 
+                        sx={{
+                          padding: { xs: '10px', sm: '15px' }
+                        }}
+                      >
+                        Sign Up
+                      </Button>
+                    </Grid>
+                    <Grid item xs={12} textAlign="center" display={'flex'} justifyContent={'center'}>
+                      <Typography
+                        sx={{
+                          fontFamily: 'Outfit',
+                          fontSize: { xs: '16px', sm: '20px', md: '24px' },
+                          fontStyle: 'normal',
+                          lineHeight: '120%',
+                        }}
+                      >
+                        Already have an account? 
+                      </Typography>
+                      <Typography
+                        sx={{
+                          fontFamily: 'Outfit',
+                          fontSize: { xs: '16px', sm: '20px', md: '24px' },
+                          fontStyle: 'normal',
+                          lineHeight: '120%',
+                          textDecoration:'underline',
+                          cursor: 'pointer',
+                        }}
+                        onClick={()=> navigate('/login')}
+                      >
+                         Log In
+                      </Typography>
+                    </Grid>
+                  </Grid>
+                </form>
+              </Paper>
+            </Grid>
+          </Grid>
+        </Grid>
+        <Grid item xs={12} md={6}>
+          <img
+            src={signUpImage}
+            alt='Sign Up'
+            style={{
+              width: 'auto',
+              height: 'auto',
+              maxWidth: '100%',
+              maxHeight: '1024px',
+            }}
+          />
         </Grid>
       </Grid>
     </Box>

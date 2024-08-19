@@ -24,12 +24,18 @@ import EventsPage from "../pages/Events/EventsPage";
 import EventDetail from "../pages/Events/EventDetail";
 import PaymentDetail from "../pages/PaymentDetail/PaymentDetail";
 import OrderConfermation from "../pages/Orders/OrderConfermation";
+import ProductsPage from "../pages/Shop/ProductsPage";
+import ProductDetail from "../pages/Shop/ProductDetail";
+import CartPage from "../pages/CartPage/CartPage";
+import ShippinginfoPage from "../pages/ShippinginfoPage/ShippinginfoPage";
 
 const routes = [
   {
     path: "/login",
     component: <Login />,
-    ispublic: true,
+    ispublic: false,
+    isAuth: true,
+
   },
   {
     path: "/",
@@ -57,7 +63,7 @@ const routes = [
     ispublic: true,
   },
   {
-    path: "/event-detail",
+    path: "/event-detail/:id",
     component: <EventDetail />,
     ispublic: true,
   },
@@ -72,15 +78,38 @@ const routes = [
     ispublic: true,
   },
   {
+    path: "/products",
+    component: <ProductsPage />,
+    ispublic: true,
+  },
+  {
+    path: "/productDetail/:id",
+    component: <ProductDetail />,
+    ispublic: true,
+  },
+  {
+    path: "/cart",
+    component: <CartPage />,
+    ispublic: true,
+  },
+  {
+    path: "/shippingInfo",
+    component: <ShippinginfoPage />,
+    ispublic: true,
+  },
+  {
     path: "/register",
     component: <Signup />,
-    ispublic: true,
+    ispublic: false,
+    isAuth: true,
+
   },
   {
     path: "/forgotPassword",
     component: <ForgotPassword />,
-    ispublic: true,
-  },
+    ispublic: false,
+    isAuth: true,
+ },
   {
     path: "/services",
     component: <Services />,
