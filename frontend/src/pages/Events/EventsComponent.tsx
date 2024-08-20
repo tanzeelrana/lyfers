@@ -70,6 +70,7 @@ const EventsComponent: React.FC<EventsComponentProps> = ({
                                 flexDirection: 'column',
                                 justifyContent: 'space-between',
                                 boxSizing: 'border-box',
+                                
                             }}
                         >
                             <Box>

@@ -17,6 +17,7 @@ import AddCircleOutlineOutlinedIcon from "@mui/icons-material/AddCircleOutlineOu
 import tshirt from "../../assets/images/tshirt.jpeg";
 import ArrowRightAltIcon from "@mui/icons-material/ArrowRightAlt";
 import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
+import teamImage from "../../assets/images/teamImage.png";
 
 const HomePage: FC = () => {
   const dispatch = useDispatch();
@@ -25,7 +26,7 @@ const HomePage: FC = () => {
   return (
     <>
       <Grid container sx={{ justifyContent: "center" }}>
-        <Grid item xs={9}>
+        <Grid item xs={9.2}>
           <Box
             borderRadius={{ xs: "20px", sm: "30px", md: "40px" }}
             justifyContent="center"
@@ -1250,6 +1251,8 @@ const HomePage: FC = () => {
                             display: "flex",
                             borderRadius: "20px",
                             justifyContent: "center",
+                            alignItems:'center'
+                            
                           }}
                         >
                           <Typography
@@ -1258,11 +1261,13 @@ const HomePage: FC = () => {
                               fontSize: {
                                 xs: "20px",
                                 sm: "24px",
-                                md: "32px",
+                                md: "42px",
                               },
                               fontWeight: 700,
                               lineHeight: "120%",
                               padding: "16px",
+                              color:'white',
+                              width:'100px'
                             }}
                           >
                             300+ LYFERS
@@ -1274,10 +1279,8 @@ const HomePage: FC = () => {
                           sx={{
                             backgroundColor: "#FEA324",
                             height: "100%",
-                            display: "flex",
                             flexDirection: "column",
-                            alignItems: "center",
-                            justifyContent: "center",
+
                             borderRadius: "20px",
                           }}
                         >
@@ -1291,12 +1294,23 @@ const HomePage: FC = () => {
                               },
                               fontWeight: 700,
                               lineHeight: "120%",
-                              textAlign: "center",
                               padding: "16px",
+                              color:'white'
                             }}
                           >
-                            300+ LYFERS
+                            Become a LYFER
                           </Typography>
+
+                          <img
+                            src={teamImage}
+                            alt="IMAGE"
+                            style={{
+                              width: "auto",
+                              height: "auto",
+                              maxHeight: "40px",
+                              padding: "0 16px",
+                            }}
+                          />
                           <Typography
                             sx={{
                               fontFamily: "Outfit",
@@ -1307,7 +1321,6 @@ const HomePage: FC = () => {
                               },
                               fontWeight: 600,
                               lineHeight: "120%",
-                              textAlign: "center",
                               padding: "0 16px",
                             }}
                           >
@@ -2626,10 +2639,10 @@ const HomePage: FC = () => {
                   variant="h1"
                   sx={{
                     fontFamily: "Outfit",
-                    fontSize: { xs: "8px", sm: "15px", md: "28px" },
+                    fontSize: { xs: "14px", sm: "18px", md: "28px" },
                     fontStyle: "normal",
                     fontWeight: 400,
-                    lineHeight: { xs: "25px", sm: "30px", md: "33.3px" },
+                    lineHeight: { xs: "17px", sm: "30px", md: "33.3px" },
                     marginBottom: "30px",
                   }}
                 >

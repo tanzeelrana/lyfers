@@ -81,11 +81,16 @@ const HomePage: FC = (props: Props) => {
           >
             <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
               <Box id={styles.headerBanner}>
-                <Typography id={styles.headerBannerTextNormal} component="span">
+                <Typography id={styles.headerBannerTextNormal} component="span" sx={{
+                   fontSize: { xs: "10px", sm: "12px", md: "16px" },
+                }}>
                   WANT TO BECOME A LYFER?
                   <Typography
                     id={styles.headerBannerTextClickable}
                     component="span"
+                    sx={{
+                      fontSize: { xs: "10px", sm: "12px", md: "16px" },
+                   }}
                   >
                     {" "}
                     CLICK HERE
@@ -110,7 +115,7 @@ const HomePage: FC = (props: Props) => {
                 },
               }}
               display={"flex"}
-              justifyContent={"start"}
+              justifyContent={"center"}
               alignSelf={"center"}
             >
               <IconButton
@@ -133,7 +138,7 @@ const HomePage: FC = (props: Props) => {
               </IconButton>
             </Grid>
 
-            <Grid item xs={6} sm={3} md={3} lg={4} xl={2} marginY={2}>
+            <Grid item xs={6} sm={3} md={4} marginY={1}>
               <Box
                 width={"inherit"}
                 display={"flex"}
@@ -141,11 +146,11 @@ const HomePage: FC = (props: Props) => {
                 alignSelf={"center"}
                 sx={{
                   height: {
-                    xs: 80,
-                    sm: 80,
-                    md: 80,
-                    lg: 80,
-                    xl: 80,
+                    xs: 60,
+                    sm: 60,
+                    md: 60,
+                    lg: 60,
+                    xl: 60,
                   },
                 }}
               >
@@ -157,11 +162,10 @@ const HomePage: FC = (props: Props) => {
               item
               xs={0}
               sm={6}
-              md={7}
-              lg={5}
-              xl={4}
+              md={4}
               justifyContent={"center"}
               alignItems={"center"}
+              textAlign={'center'}
               display={"flex"}
               sx={{
                 display: {
@@ -192,9 +196,7 @@ const HomePage: FC = (props: Props) => {
               item
               xs={0}
               sm={2}
-              md={2}
-              lg={3}
-              xl={3}
+              md={4}
               justifyContent={"center"}
               alignItems={"center"}
               sx={{

@@ -425,7 +425,7 @@
 // }
 import React, { useState, useEffect } from 'react';
 import { Button, Grid, Paper, Typography, IconButton } from '@mui/material';
-import { Box } from '@mui/system';
+import { Box, Container } from '@mui/system';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import Accordion from '@mui/material/Accordion';
@@ -511,27 +511,31 @@ export default function EventDetail() {
     const decrement = () => setCount(count > 0 ? count - 1 : 0);
 
     return (
-        <Box width="100%" sx={{ flexGrow: 1, backgroundColor: '#FAFAFA' }}>
-            <Grid container width="100%" direction="column" padding={{ xs: 2, sm: 3, md: 4 }} rowSpacing={2} flexShrink={0}>
-                <Grid item xs={12}>
-                    <Grid
-                        container
-                        borderRadius={{ xs: '20px', sm: '30px', md: '40px' }}
-                        justifyContent="center"
-                        alignItems="center"
-                        display="flex"
-                        flexShrink={0}
-                        padding={{ xs: 2, sm: 4, md: 6 }}
-                        sx={{
-                            backgroundImage: `url(${detailEventCover})`,
-                            backgroundPosition: 'center center',
-                            backgroundRepeat: 'no-repeat',
-                            backgroundSize: 'cover',
-                            height: { xs: '300px', sm: '500px', md: '762px' },
-                        }}
-                    >
-                    </Grid>
-                </Grid>
+
+        <>
+        <Grid container sx={{ justifyContent: "center" }}>
+          <Grid item xs={9.2}>
+            <Box
+              borderRadius={{ xs: "20px", sm: "30px", md: "40px" }}
+              justifyContent="center"
+              alignItems="center"
+              display="flex"
+              flexShrink={0}
+              padding={{ xs: 2, sm: 4, md: 6 }}
+              sx={{
+                backgroundImage: `url(${detailEventCover})`,
+                backgroundPosition: "center center",
+                backgroundRepeat: "no-repeat",
+                backgroundSize: "cover",
+                height: { xs: "300px", sm: "500px", md: "700px" },
+                margin: "40px 0px",
+              }}
+            ></Box>
+          </Grid>
+        </Grid>
+        <Container maxWidth={'xl'}>
+            <Grid container width="100%" direction="column"  rowSpacing={2} flexShrink={0}>
+          
                 <Grid item xs={12}>
                     <Grid container direction="row" spacing={3} padding={{ xs: 2, sm: 3, md: 4 }}>
                         <Grid item xs={12} md={7}>
@@ -829,7 +833,8 @@ export default function EventDetail() {
                     </Grid>
                 </Grid>
             </Grid>
-        </Box>
+        </Container>
+        </>
     );
 }
 
