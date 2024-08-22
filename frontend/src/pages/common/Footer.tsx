@@ -20,7 +20,14 @@ function Footer() {
         md={12}
         xl={12}
         sx={{
-          paddingTop: 8,
+          paddingTop: {
+            xs: 4,
+            sm: 4,
+            md: 8,
+            lg: 8,
+            xl: 8,
+           
+          },
           paddingBottom: 4,
           paddingLeft: {
             xs: 3,
@@ -32,14 +39,13 @@ function Footer() {
         }}
       >
         <Box
-          width={"100%"}
           display={"flex"}
           justifyContent={"start"}
           alignSelf={"center"}
           sx={{
             height: {
-              xs: 80,
-              sm: 80,
+              xs: 50,
+              sm: 50,
               md: 80,
               lg: 80,
               xl: 80,
@@ -62,6 +68,7 @@ function Footer() {
         <Grid
           container
           sx={{ padding: 2 }}
+          spacing={1}
           justifyContent={"center"}
           alignItems={"center"}
           display={"flex"}
@@ -110,7 +117,7 @@ function Footer() {
           <Grid
             item
             xs={12}
-            sm={2.4}
+            sm={2.2}
             md={2.4}
             lg={0}
             xl={0}
@@ -171,6 +178,7 @@ function Footer() {
         <Grid
           container
           sx={{ padding: 4 }}
+          spacing={1}
           justifyContent={"center"}
           alignItems={"center"}
           display={"flex"} 
