@@ -6,12 +6,15 @@ import shakeHand from "../../assets/images/shakeHand.png";
 import handups from "../../assets/images/handup.png";
 import heartLock from "../../assets/images/heartLock.png";
 import love6piller from "../../assets/images/love6piller.png";
+import { Carousel } from "react-responsive-carousel";
+import productsCover from "../../assets/images/productsCover.png";
+import SectionOfSixPiller from "./SectionOfSixPiller";
 
 const BecomeALyfer = () => {
   return (
     <>
       <Grid container sx={{ justifyContent: "center" }}>
-        <Grid item xs={9}>
+        <Grid item xs={11} md={11} lg={11} xl={9.2}>
           <Box
             borderRadius={{ xs: "20px", sm: "30px", md: "40px" }}
             justifyContent="center"
@@ -24,7 +27,7 @@ const BecomeALyfer = () => {
               backgroundPosition: "center center",
               backgroundRepeat: "no-repeat",
               backgroundSize: "cover",
-              height: { xs: "300px", sm: "500px", md: "700px" },
+              height: { xs: "200px", sm: "400px", md: "700px" },
               margin: "40px 0px",
             }}
           >
@@ -32,14 +35,14 @@ const BecomeALyfer = () => {
               display="inline-flex"
               sx={{
                 borderRadius: "1000px",
-                padding: { xs: 2, sm: 4, md: 5 },
+                padding: { xs: 1, sm: 1, md: 2 },
                 backgroundColor: "#FAFAFA",
               }}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                width="60"
-                height="60"
+                width="40"
+                height="40"
                 viewBox="0 0 60 60"
                 fill="none"
               >
@@ -61,7 +64,6 @@ const BecomeALyfer = () => {
             sx={{
               alignItems: "center",
               justifyContent: "center",
-              // margin: "40px 0px",
             }}
           >
             <Typography
@@ -71,7 +73,6 @@ const BecomeALyfer = () => {
                 fontStyle: "normal",
                 fontWeight: 700,
                 lineHeight: "120%",
-                // marginBottom: "50px",
               }}
             >
               Become a LYFER
@@ -91,7 +92,7 @@ const BecomeALyfer = () => {
               backgroundColor: "#FCC061",
               borderRadius: { xs: "20px", sm: "30px", md: "36px" },
               marginBottom: { xs: "10px", sm: "15px", md: "20px" },
-              margin: "40px 0px"
+              margin: "40px 0px",
             }}
           >
             <Typography
@@ -102,7 +103,6 @@ const BecomeALyfer = () => {
                 fontWeight: 700,
                 lineHeight: "120%",
                 textAlign: "center",
-                
               }}
             >
               Our Mission
@@ -166,7 +166,162 @@ const BecomeALyfer = () => {
           </Grid>
 
           {/* Section 4: Illuminating The World */}
-          <Grid item xs={12} sx={{ margin: "40px 0px" }}>
+          <Box
+            sx={{
+              display: {
+                md: "none",
+                sm: "none",
+                xs: "block",
+                width: "100%",
+                margin: "40px 0px",
+              },
+            }}
+          >
+            <Grid
+              item
+              xs={12}
+              display="flex"
+              sx={{
+                gap: "10px",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <Typography
+                sx={{
+                  fontFamily: "Syne",
+                  fontSize: { xs: "24px", sm: "32px", md: "40px" },
+                  fontStyle: "normal",
+                  fontWeight: 700,
+                  lineHeight: "120%",
+                  marginBottom: "50px",
+                }}
+              >
+                Illuminating The World
+              </Typography>
+            </Grid>
+            <Carousel
+              autoPlay={true}
+              showThumbs={false}
+              swipeScrollTolerance={1}
+              infiniteLoop={true}
+              emulateTouch={true}
+            >
+              <Grid item>
+                <Box
+                  sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    textAlign: "center",
+                    backgroundColor: "#E4626F",
+                    borderRadius: { xs: "20px", sm: "30px", md: "36px" },
+                    padding: { xs: "20px", sm: "30px", md: "40px" },
+                  }}
+                >
+                  <img
+                    src={shakeHand}
+                    alt="shakeHand image"
+                    style={{
+                      objectFit: "cover",
+                      width:'37%'
+                    }}
+                  />
+                  <Typography
+                    sx={{
+                      fontFamily: "Outfit",
+                      fontSize: { xs: "24px", sm: "28px", md: "32px" },
+                      fontWeight: 700,
+                      padding: "16px",
+                      lineHeight: "120%",
+                    }}
+                  >
+                    Love without Limits
+                  </Typography>
+                </Box>
+              </Grid>
+              <Grid item>
+                <Box
+                  sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    textAlign: "center",
+                    backgroundColor: "#15B097",
+                    borderRadius: { xs: "20px", sm: "30px", md: "36px" },
+                    padding: { xs: "20px", sm: "30px", md: "40px" },
+                  }}
+                >
+                  <img
+                    src={handups}
+                    alt="handups image"
+                    style={{
+                      objectFit: "cover",
+                      width:'37%'
+                    }}
+                  />
+                  <Typography
+                    sx={{
+                      fontFamily: "Outfit",
+                      fontSize: { xs: "24px", sm: "28px", md: "32px" },
+                      fontWeight: 700,
+                      padding: "16px",
+                      lineHeight: "120%",
+                    }}
+                  >
+                    Youthful in Spirit
+                  </Typography>
+                </Box>
+              </Grid>
+              <Grid item>
+                <Box
+                  sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    textAlign: "center",
+                    backgroundColor: "#EDA145",
+                    borderRadius: { xs: "20px", sm: "30px", md: "36px" },
+                    padding: { xs: "20px", sm: "30px", md: "40px" },
+                  }}
+                >
+                  <img
+                    src={heartLock}
+                    alt="heartLock image"
+                    style={{
+                      objectFit: "cover",
+                      width:'37%'
+                    }}
+                  />
+                  <Typography
+                    sx={{
+                      fontFamily: "Outfit",
+                      fontSize: { xs: "24px", sm: "28px", md: "32px" },
+                      fontWeight: 700,
+                      padding: "16px",
+                      lineHeight: "120%",
+                    }}
+                  >
+                    Forgiving and Free
+                  </Typography>
+                </Box>
+              </Grid>
+            </Carousel>
+          </Box>
+          <Grid
+            item
+            xs={12}
+            sx={{
+              margin: "40px 0px",
+              display: {
+                sm: "block",
+                xs: "none",
+              },
+            }}
+          >
             <Grid container direction="column" flexShrink={0}>
               <Grid
                 item
@@ -220,7 +375,7 @@ const BecomeALyfer = () => {
                     <Typography
                       sx={{
                         fontFamily: "Outfit",
-                        fontSize: { xs: "24px", sm: "28px", md: "32px" },
+                        fontSize: { xs: "24px", sm: "22px", md: "32px" },
                         fontWeight: 700,
                         padding: "16px",
                         lineHeight: "120%",
@@ -247,15 +402,13 @@ const BecomeALyfer = () => {
                       src={handups}
                       alt="handups image"
                       style={{
-                        // width: { xs: '150px', sm: '180px', md: '200px' }, // Responsive image width
-                        // height: { xs: '140px', sm: '170px', md: '192px' }, // Responsive image height
                         objectFit: "cover",
                       }}
                     />
                     <Typography
                       sx={{
                         fontFamily: "Outfit",
-                        fontSize: { xs: "24px", sm: "28px", md: "32px" },
+                        fontSize: { xs: "24px", sm: "22px", md: "32px" },
                         fontWeight: 700,
                         padding: "16px",
                         lineHeight: "120%",
@@ -282,15 +435,13 @@ const BecomeALyfer = () => {
                       src={heartLock}
                       alt="heartLock image"
                       style={{
-                        // width: { xs: '150px', sm: '180px', md: '200px' }, // Responsive image width
-                        // height: { xs: '140px', sm: '170px', md: '192px' }, // Responsive image height
                         objectFit: "cover",
                       }}
                     />
                     <Typography
                       sx={{
                         fontFamily: "Outfit",
-                        fontSize: { xs: "24px", sm: "28px", md: "32px" },
+                        fontSize: { xs: "24px", sm: "22px", md: "32px" },
                         fontWeight: 700,
                         padding: "16px",
                         lineHeight: "120%",
@@ -305,453 +456,7 @@ const BecomeALyfer = () => {
           </Grid>
         </Grid>
 
-        <Grid
-          container
-          direction="row"
-          flexShrink={0}
-          padding={3}
-          sx={{
-            position: "relative",
-            overflowY: "auto",
-            maxHeight: "560px",
-            marginBottom: "50px 0px",
-            scrollbarWidth:'none'
-          }}
-        >
-          <Grid
-            item
-            xs={12}
-            display="flex"
-            sx={{
-              gap: "10px",
-              alignItems: "center",
-              justifyContent: "center",
-              position: "sticky",
-              top: 0,
-              left: 0,
-              right: 0,
-              zIndex: 1,
-            }}
-          >
-            <Typography
-              sx={{
-                fontFamily: "Syne",
-                fontSize: { xs: "24px", sm: "30px", md: "40px" },
-                fontStyle: "normal",
-                fontWeight: 700,
-                lineHeight: "120%",
-                marginBottom: "50px",
-
-              }}
-            >
-              The 6 Pillars
-            </Typography>
-          </Grid>
-
-          <Grid
-            item
-            xs={12}
-            container
-            marginBottom="20px"
-            columnSpacing={2}
-            sx={{
-              backgroundColor: "#FFB892",
-              borderRadius: "36px",
-              padding: { xs: "20px", sm: "30px", md: "40px" },
-              position: "sticky",
-              top: 50,
-            }}
-          >
-            <Grid item xs={12} md={6} display="flex" flexDirection="column">
-              <Typography
-                alignSelf="stretch"
-                sx={{
-                  fontFamily: "Outfit",
-                  fontSize: { xs: "24px", sm: "30px", md: "40px" },
-                  fontWeight: 700,
-                  fontStyle: "normal",
-                  lineHeight: "120%",
-                }}
-              >
-                Love
-              </Typography>
-              <Typography
-                sx={{
-                  fontFamily: "Outfit",
-                  fontSize: { xs: "16px", sm: "20px", md: "24px" },
-                  fontWeight: 400,
-                  fontStyle: "normal",
-                  lineHeight: "120%",
-                  textAlign: "justify",
-                }}
-              >
-                Love is the heart of LYFERS, the bedrock of its six guiding
-                principles. It's like the soil that lets the others grow. The
-                love we talk about here is boundless, selfless, and heavenly.
-                It's the kind that never tires of giving and sacrificing for
-                others. Love is fresh like youth, forgiving like a gentle
-                breeze, empowering like a guiding light, resilient like a sturdy
-                tree, and strong like a mountain.
-              </Typography>
-            </Grid>
-            <Grid
-              item
-              xs={12}
-              md={6}
-              display="flex"
-              alignItems="center"
-              justifyContent="end"
-            >
-              <img
-                src={love6piller}
-                alt="Love"
-                style={{
-                  width: "100%",
-                  height: "auto",
-                  maxWidth: "800px",
-                  maxHeight: "360px",
-                  borderRadius: "30px",
-                }}
-              />
-            </Grid>
-          </Grid>
-
-          <Grid
-            item
-            xs={12}
-            container
-            marginBottom="20px"
-            columnSpacing={2}
-            sx={{
-              backgroundColor: "#FFA16D",
-              borderRadius: "36px",
-              padding: { xs: "20px", sm: "30px", md: "40px" },
-              position: "sticky",
-              top: 50,
-            }}
-          >
-            <Grid
-              item
-              xs={12}
-              md={6}
-              display="flex"
-              alignItems="center"
-              justifyContent="start"
-            >
-              <img
-                src={love6piller}
-                alt="Youthful"
-                style={{
-                  width: "100%",
-                  height: "auto",
-                  maxWidth: "800px",
-                  maxHeight: "360px",
-                  borderRadius: "30px",
-                }}
-              />
-            </Grid>
-            <Grid item xs={12} md={6} display="flex" flexDirection="column">
-              <Typography
-                alignSelf="stretch"
-                sx={{
-                  fontFamily: "Outfit",
-                  fontSize: { xs: "24px", sm: "30px", md: "40px" },
-                  fontWeight: 700,
-                  fontStyle: "normal",
-                  lineHeight: "120%",
-                }}
-              >
-                Youthful
-              </Typography>
-              <Typography
-                sx={{
-                  fontFamily: "Outfit",
-                  fontSize: { xs: "16px", sm: "20px", md: "24px" },
-                  fontWeight: 400,
-                  fontStyle: "normal",
-                  lineHeight: "120%",
-                  textAlign: "justify",
-                }}
-              >
-                Youthfulness is the catalyst for a happy soul. It is the key
-                organic ingredient within that translates to a long-lasting and
-                healthy life. Youthfulness also allows us to keep our sense of
-                playfulness and humor, which socially attract others. It keeps
-                us active and alive, and therefore could be considered the
-                gateway to the mysterious, yet resourceful, Fountain of Youth!
-              </Typography>
-            </Grid>
-          </Grid>
-
-          <Grid
-            item
-            xs={12}
-            container
-            marginBottom="20px"
-            columnSpacing={2}
-            sx={{
-              backgroundColor: "#FF8949",
-              borderRadius: "36px",
-              padding: { xs: "20px", sm: "30px", md: "40px" },
-              position: "sticky",
-              top: 50,
-            }}
-          >
-            <Grid item xs={12} md={6} display="flex" flexDirection="column">
-              <Typography
-                alignSelf="stretch"
-                sx={{
-                  fontFamily: "Outfit",
-                  fontSize: { xs: "24px", sm: "30px", md: "40px" },
-                  fontWeight: 700,
-                  fontStyle: "normal",
-                  lineHeight: "120%",
-                }}
-              >
-                Forgiving
-              </Typography>
-              <Typography
-                sx={{
-                  fontFamily: "Outfit",
-                  fontSize: { xs: "16px", sm: "20px", md: "24px" },
-                  fontWeight: 400,
-                  fontStyle: "normal",
-                  lineHeight: "120%",
-                  textAlign: "justify",
-                }}
-              >
-                Forgiveness is essential to relieving our hearts and minds of
-                heavy burdens and tragedies that have occurred throughout our
-                lives. It frees us from negative thoughts and emotions that
-                adversely impact our health, both spiritually and mentally.
-                Forgiveness teaches us that we are not perfect and that
-                mistakes, no matter their severity, are bound to be made.
-                Finally, forgiveness has been the ultimate declaration of
-                humility and love throughout the history of mankind.
-              </Typography>
-            </Grid>
-            <Grid
-              item
-              xs={12}
-              md={6}
-              display="flex"
-              alignItems="center"
-              justifyContent="end"
-            >
-              <img
-                src={love6piller}
-                alt="Forgiving"
-                style={{
-                  width: "100%",
-                  height: "auto",
-                  maxWidth: "800px",
-                  maxHeight: "360px",
-                  borderRadius: "30px",
-                }}
-              />
-            </Grid>
-          </Grid>
-
-          <Grid
-            item
-            xs={12}
-            container
-            marginBottom="20px"
-            columnSpacing={2}
-            sx={{
-              backgroundColor: "#FAA217",
-              borderRadius: "36px",
-              padding: { xs: "20px", sm: "30px", md: "40px" },
-              position: "sticky",
-              top: 50,
-            }}
-          >
-            <Grid
-              item
-              xs={12}
-              md={6}
-              display="flex"
-              alignItems="center"
-              justifyContent="start"
-            >
-              <img
-                src={love6piller}
-                alt="Empowering"
-                style={{
-                  width: "100%",
-                  height: "auto",
-                  maxWidth: "800px",
-                  maxHeight: "360px",
-                  borderRadius: "30px",
-                }}
-              />
-            </Grid>
-            <Grid item xs={12} md={6} display="flex" flexDirection="column">
-              <Typography
-                alignSelf="stretch"
-                sx={{
-                  fontFamily: "Outfit",
-                  fontSize: { xs: "24px", sm: "30px", md: "40px" },
-                  fontWeight: 700,
-                  fontStyle: "normal",
-                  lineHeight: "120%",
-                }}
-              >
-                Empowering
-              </Typography>
-              <Typography
-                sx={{
-                  fontFamily: "Outfit",
-                  fontSize: { xs: "16px", sm: "20px", md: "24px" },
-                  fontWeight: 400,
-                  fontStyle: "normal",
-                  lineHeight: "120%",
-                  textAlign: "justify",
-                }}
-              >
-                Empowering others is essential to empowering oneself. It gives a
-                sense of purpose and belonging and showcases that our existence,
-                in fact, matters. The positive energy empowerment exudes becomes
-                our essential fuel to feed off when times are difficult, and
-                gives us the added boost necessary to push through the same.
-              </Typography>
-            </Grid>
-          </Grid>
-
-          <Grid
-            item
-            xs={12}
-            container
-            marginBottom="20px"
-            columnSpacing={2}
-            sx={{
-              backgroundColor: "#FCC061",
-              borderRadius: "36px",
-              padding: { xs: "20px", sm: "30px", md: "40px" },
-              position: "sticky",
-              top: 50,
-            }}
-          >
-            <Grid item xs={12} md={6} display="flex" flexDirection="column">
-              <Typography
-                alignSelf="stretch"
-                sx={{
-                  fontFamily: "Outfit",
-                  fontSize: { xs: "24px", sm: "30px", md: "40px" },
-                  fontWeight: 700,
-                  fontStyle: "normal",
-                  lineHeight: "120%",
-                }}
-              >
-                Resilient
-              </Typography>
-              <Typography
-                sx={{
-                  fontFamily: "Outfit",
-                  fontSize: { xs: "16px", sm: "20px", md: "24px" },
-                  fontWeight: 400,
-                  fontStyle: "normal",
-                  lineHeight: "120%",
-                  textAlign: "justify",
-                }}
-              >
-                Resilience is the unwavering spirit to rise above adversity, the
-                strength to overcome obstacles, and the courage to keep moving
-                forward despite setbacks. It's about embracing challenges,
-                learning from failures, and transforming struggles into growth
-                opportunities. Each time you bounce back, you build a foundation
-                of strength that propels you toward success.
-              </Typography>
-            </Grid>
-            <Grid
-              item
-              xs={12}
-              md={6}
-              display="flex"
-              alignItems="center"
-              justifyContent="end"
-            >
-              <img
-                src={love6piller}
-                alt="Resilient"
-                style={{
-                  width: "100%",
-                  height: "auto",
-                  maxWidth: "800px",
-                  maxHeight: "360px",
-                  borderRadius: "30px",
-                }}
-              />
-            </Grid>
-          </Grid>
-
-          <Grid
-            item
-            xs={12}
-            container
-            marginBottom="20px"
-            columnSpacing={2}
-            sx={{
-              backgroundColor: "#FDD089",
-              borderRadius: "36px",
-              padding: { xs: "20px", sm: "30px", md: "40px" },
-              position: "sticky",
-              top: 50,
-            }}
-          >
-            <Grid
-              item
-              xs={12}
-              md={6}
-              display="flex"
-              alignItems="center"
-              justifyContent="start"
-            >
-              <img
-                src={love6piller}
-                alt="Strong"
-                style={{
-                  width: "100%",
-                  height: "auto",
-                  maxWidth: "800px",
-                  maxHeight: "360px",
-                  borderRadius: "30px",
-                }}
-              />
-            </Grid>
-            <Grid item xs={12} md={6} display="flex" flexDirection="column">
-              <Typography
-                alignSelf="stretch"
-                sx={{
-                  fontFamily: "Outfit",
-                  fontSize: { xs: "24px", sm: "30px", md: "40px" },
-                  fontWeight: 700,
-                  fontStyle: "normal",
-                  lineHeight: "120%",
-                }}
-              >
-                Strong
-              </Typography>
-              <Typography
-                sx={{
-                  fontFamily: "Outfit",
-                  fontSize: { xs: "16px", sm: "20px", md: "24px" },
-                  fontWeight: 400,
-                  fontStyle: "normal",
-                  lineHeight: "120%",
-                  textAlign: "justify",
-                }}
-              >
-                Strength for the purpose of LYFERS is to build, support, and
-                uplift others through physical, emotional, and mental fortitude.
-                It's about being the rock for others when they need it most and
-                leading by example. True strength encompasses the ability to
-                remain steadfast in the face of adversity and to inspire others
-                through our resilience and courage.
-              </Typography>
-            </Grid>
-          </Grid>
-        </Grid>
+        <SectionOfSixPiller />
       </Container>
     </>
   );

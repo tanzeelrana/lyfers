@@ -514,7 +514,7 @@ export default function EventDetail() {
 
         <>
         <Grid container sx={{ justifyContent: "center" }}>
-          <Grid item xs={9.2}>
+        <Grid item xs={11} md={11} lg={11} xl={9.2}>
             <Box
               borderRadius={{ xs: "20px", sm: "30px", md: "40px" }}
               justifyContent="center"
@@ -527,17 +527,18 @@ export default function EventDetail() {
                 backgroundPosition: "center center",
                 backgroundRepeat: "no-repeat",
                 backgroundSize: "cover",
-                height: { xs: "300px", sm: "500px", md: "700px" },
+                height: { xs: "200px", sm: "400px", md: "700px" },
                 margin: "40px 0px",
               }}
             ></Box>
           </Grid>
         </Grid>
         <Container maxWidth={'xl'}>
-            <Grid container width="100%" direction="column"  rowSpacing={2} flexShrink={0}>
+            <Grid container width="100%" direction="column"  rowSpacing={2} flexShrink={0} sx={{margin: "40px 0px",
+}}>
           
                 <Grid item xs={12}>
-                    <Grid container direction="row" spacing={3} padding={{ xs: 2, sm: 3, md: 4 }}>
+                    <Grid container direction="row" spacing={3}>
                         <Grid item xs={12} md={7}>
                             <Grid container spacing={2}>
                                 <Grid item xs={12}>
@@ -763,7 +764,7 @@ export default function EventDetail() {
                                     opacity: isDisabled ? 0.5 : 1, 
                                 }}
                             >
-                                <Grid container alignItems="center" spacing={4}>
+                                <Grid container alignItems="center" spacing={{xs:1,md:4}}>
                                     <Grid item xs={12} sm={6}>
                                         <Typography variant="body1">Your Order</Typography>
                                     </Grid>

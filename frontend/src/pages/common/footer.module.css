@@ -1,6 +1,6 @@
 #mainContainer {
     border-radius: var(--Radius-xl, 36px) var(--Radius-xl, 36px) var(--Radius-Sharp, 0px) var(--Radius-Sharp, 0px);
-    background: var(--Primary-Primary400, #FFA16D);
+    background: linear-gradient(90deg, rgba(251, 176, 58, 0.80) 0%, rgba(236, 32, 39, 1.2) 100%);
     width: 100%;
 }
 

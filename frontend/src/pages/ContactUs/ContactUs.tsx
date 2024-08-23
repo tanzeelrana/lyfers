@@ -26,7 +26,7 @@ const ContactUs = () => {
   return (
     <>
       <Grid container sx={{ justifyContent: "center" }}>
-        <Grid item xs={9.2}>
+      <Grid item xs={11} md={11} lg={11} xl={9.2}>
           <Grid
             container
             borderRadius={{ xs: "20px", sm: "30px", md: "40px" }}
@@ -52,25 +52,23 @@ const ContactUs = () => {
           container
           width="100%"
           direction="column"
-          padding={{ xs: 2, sm: 3, md: 4 }}
           rowSpacing={2}
           flexShrink={0}
         >
-          <Grid item xs={12}>
+          <Grid item xs={12} sx={{margin: "20px 0px",}}>
             <Grid
               container
               direction="row"
               spacing={3}
-              padding={{ xs: 2, sm: 3, md: 4 }}
             >
               <Grid item xs={12} md={6}>
-                <Grid container spacing={2}>
+                <Grid container rowSpacing={1}>
                   <Grid item xs={12}>
                     <Typography
                       variant="h4"
                       sx={{
                         fontFamily: "Syne",
-                        fontSize: { xs: "24px", sm: "28px", md: "32px" },
+                        fontSize: { xs: "20px", sm: "28px", md: "28px",lg:'32px' },
                         fontWeight: "bold",
                       }}
                     >
@@ -81,9 +79,9 @@ const ContactUs = () => {
                     <Typography
                       sx={{
                         fontFamily: "Syne",
-                        fontSize: { xs: "36px", sm: "42px", md: "54px" },
+                        fontSize: { xs: "26px", sm: "34px", md: "30px",lg:'48px' },
                         fontWeight: "bold",
-                        width: { xs: "100%", sm: "80%", md: "620px" },
+                        width: { xs: "100%", sm: "80%", md: "400px",lg:'628px' },
                       }}
                       variant="h3"
                     >
@@ -95,7 +93,7 @@ const ContactUs = () => {
                       variant="body1"
                       sx={{
                         fontFamily: "Outfit",
-                        fontSize: { xs: "16px", sm: "20px", md: "34px" },
+                        fontSize: { xs: "16px", sm: "20px", md: "20px" ,lg:'28px'},
                       }}
                     >
                       We’d love to hear from you! Whether you have questions, or
@@ -116,7 +114,7 @@ const ContactUs = () => {
                     }}
                   >
                     <Grid container spacing={2}>
-                      <Grid item xs={12} md={6}>
+                      <Grid item xs={12} md={12} lg={6}>
                         <Typography
                           variant="h6"
                           sx={{
@@ -131,7 +129,7 @@ const ContactUs = () => {
                           variant="h4"
                           sx={{
                             fontFamily: "Outfit",
-                            fontSize: { xs: "24px", sm: "28px", md: "34px" },
+                            fontSize: { xs: "24px", sm: "28px", md: "28px" },
                             fontWeight: 700,
                             color: "#FF5A00",
                           }}
@@ -139,13 +137,14 @@ const ContactUs = () => {
                           community@lyfers.com
                         </Typography>
                       </Grid>
-                      <Grid item xs={12} md={6}>
+                      <Grid item xs={12} md={12} lg={6}>
                         <Typography
                           variant="h6"
                           sx={{
                             fontFamily: "Outfit",
                             fontSize: { xs: "18px", sm: "20px", md: "24px" },
                             fontWeight: 400,
+
                           }}
                         >
                           Store Email
@@ -154,9 +153,10 @@ const ContactUs = () => {
                           variant="h4"
                           sx={{
                             fontFamily: "Outfit",
-                            fontSize: { xs: "24px", sm: "28px", md: "34px" },
+                            fontSize: { xs: "24px", sm: "28px", md: "28px" },
                             fontWeight: 700,
                             color: "#FF5A00",
+
                           }}
                         >
                           store@lyfers.com
@@ -168,9 +168,8 @@ const ContactUs = () => {
               </Grid>
               <Grid item xs={12} md={6}>
                 <Paper
-                  elevation={10}
                   sx={{
-                    padding: { xs: 2, sm: 3, md: 4 },
+                    padding: { xs: 2, sm: 2, md: 2 },
                     backgroundColor: "#FFE7DB",
                     border: "1px solid",
                     borderRadius: "15px",
@@ -236,7 +235,7 @@ const ContactUs = () => {
               </Grid>
             </Grid>
           </Grid>
-          <Grid item padding={{ xs: 2, sm: 3, md: 4 }}>
+          <Grid item >
             <Typography
               variant="h4"
               sx={{
@@ -248,13 +247,13 @@ const ContactUs = () => {
               Socials
             </Typography>
           </Grid>
-          <Grid item xs={12} padding={{ xs: 2, sm: 3, md: 4 }}>
+          <Grid item xs={12} sx={{margin: "20px 0px 60px 0px",}} >
             <Grid container spacing={3}>
-              <Grid item xs={12} sm={6} md={3}>
+              <Grid item xs={6} sm={6} md={3}>
                 <Box
                   sx={{
                     backgroundColor: "#FFE7DB",
-                    height: "117px",
+                    height: {xs:'40px', sm:'100px', md:'117px'},
                     display: "flex",
                     flexDirection: "column",
                     alignItems: "center",
@@ -268,7 +267,7 @@ const ContactUs = () => {
                     variant="h6"
                     sx={{
                       fontFamily: "Outfit",
-                      fontSize: { xs: "14px", sm: "16px" },
+                      fontSize: { xs: "12px", sm: "16px" },
                       textAlign: "center",
                     }}
                   >
@@ -278,7 +277,7 @@ const ContactUs = () => {
                     variant="h4"
                     sx={{
                       fontFamily: "Outfit",
-                      fontSize: { xs: "24px", sm: "28px", md: "32px" },
+                      fontSize: { xs: "16px", sm: "28px", md: "32px" },
                       fontWeight: "bold",
                       textAlign: "center",
                       color: "#FF5A00",
@@ -288,11 +287,11 @@ const ContactUs = () => {
                   </Typography>
                 </Box>
               </Grid>
-              <Grid item xs={12} sm={6} md={3}>
+              <Grid item xs={6} sm={6} md={3}>
                 <Box
                   sx={{
                     backgroundColor: "#FFE7DB",
-                    height: "117px",
+                    height: {xs:'40px', sm:'100px', md:'117px'},
                     display: "flex",
                     flexDirection: "column",
                     alignItems: "center",
@@ -306,7 +305,7 @@ const ContactUs = () => {
                     variant="h6"
                     sx={{
                       fontFamily: "Outfit",
-                      fontSize: { xs: "14px", sm: "16px" },
+                      fontSize: { xs: "12px", sm: "16px" },
                       textAlign: "center",
                     }}
                   >
@@ -316,7 +315,7 @@ const ContactUs = () => {
                     variant="h4"
                     sx={{
                       fontFamily: "Outfit",
-                      fontSize: { xs: "24px", sm: "28px", md: "32px" },
+                      fontSize: { xs: "16px", sm: "28px", md: "32px" },
                       fontWeight: "bold",
                       textAlign: "center",
                       color: "#FF5A00",
@@ -326,11 +325,11 @@ const ContactUs = () => {
                   </Typography>
                 </Box>
               </Grid>
-              <Grid item xs={12} sm={6} md={3}>
+              <Grid item xs={6} sm={6} md={3}>
                 <Box
                   sx={{
                     backgroundColor: "#FFE7DB",
-                    height: "117px",
+                    height: {xs:'40px', sm:'100px', md:'117px'},
                     display: "flex",
                     flexDirection: "column",
                     alignItems: "center",
@@ -344,7 +343,7 @@ const ContactUs = () => {
                     variant="h6"
                     sx={{
                       fontFamily: "Outfit",
-                      fontSize: { xs: "14px", sm: "16px" },
+                      fontSize: { xs: "12px", sm: "16px" },
                       textAlign: "center",
                     }}
                   >
@@ -354,7 +353,7 @@ const ContactUs = () => {
                     variant="h4"
                     sx={{
                       fontFamily: "Outfit",
-                      fontSize: { xs: "24px", sm: "28px", md: "32px" },
+                      fontSize: { xs: "16px", sm: "28px", md: "32px" },
                       fontWeight: "bold",
                       textAlign: "center",
                       color: "#FF5A00",
@@ -364,11 +363,11 @@ const ContactUs = () => {
                   </Typography>
                 </Box>
               </Grid>
-              <Grid item xs={12} sm={6} md={3}>
+              <Grid item xs={6} sm={6} md={3}>
                 <Box
                   sx={{
                     backgroundColor: "#FFE7DB",
-                    height: "117px",
+                    height: {xs:'40px', sm:'100px', md:'117px'},
                     display: "flex",
                     flexDirection: "column",
                     alignItems: "center",
@@ -382,7 +381,7 @@ const ContactUs = () => {
                     variant="h6"
                     sx={{
                       fontFamily: "Outfit",
-                      fontSize: { xs: "14px", sm: "16px" },
+                      fontSize: { xs: "12px", sm: "16px" },
                       textAlign: "center",
                     }}
                   >
@@ -392,7 +391,7 @@ const ContactUs = () => {
                     variant="h4"
                     sx={{
                       fontFamily: "Outfit",
-                      fontSize: { xs: "24px", sm: "28px", md: "32px" },
+                      fontSize: { xs: "16px", sm: "28px", md: "32px" },
                       fontWeight: "bold",
                       textAlign: "center",
                       color: "#FF5A00",

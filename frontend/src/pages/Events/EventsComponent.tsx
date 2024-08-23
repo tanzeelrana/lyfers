@@ -32,16 +32,17 @@ const EventsComponent: React.FC<EventsComponentProps> = ({
 }) => {
     const navigate = useNavigate();
     return (
-        <Grid item xs={12} md={6}>
+        <Grid item xs={12} sm={6}>
             <Box
                 sx={{
                     borderRadius: '20px',
                     boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
                     overflow: 'hidden',
+                    height:{md:'286px',lg:'auto'}
                 }}
             >
                 <Grid container spacing={2}>
-                    <Grid item xs={12} sm={6}>
+                    <Grid item xs={12} sm={12} md={6}>
                         <Box
                             sx={{
                                 position: 'relative',
@@ -60,7 +61,7 @@ const EventsComponent: React.FC<EventsComponentProps> = ({
                             />
                         </Box>
                     </Grid>
-                    <Grid item xs={12} sm={6}>
+                    <Grid item xs={12} sm={12} md={6}>
                         <Box
                             sx={{
                                 padding: 2,

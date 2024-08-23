@@ -1,4 +1,4 @@
-import { Button, Container, Grid, Typography } from "@mui/material";
+import { Button, Container, Grid, Typography, CircularProgress } from "@mui/material";
 import { Box } from "@mui/system";
 import React, { useEffect, useState } from "react";
 import eventsCover from "../../assets/images/eventsCover.png";
@@ -36,6 +36,7 @@ export default function EventsPage() {
   const [tabsData, setTabsData] = useState<TabData[]>([]);
   const [events, setEvents] = useState<EventData[]>([]);
   const [filteredEvents, setFilteredEvents] = useState<EventData[]>([]);
+  const [loading, setLoading] = useState<boolean>(true); // Loading state
 
   useEffect(() => {
     const fetchData = async () => {
@@ -48,6 +49,8 @@ export default function EventsPage() {
         setFilteredEvents(eventResponse.data);
       } catch (error) {
         console.error("Error fetching tab data:", error);
+      } finally {
+        setLoading(false); // Set loading to false after data fetching
       }
     };
 
@@ -56,7 +59,7 @@ export default function EventsPage() {
 
   useEffect(() => {
     const filtered =
-      value === "all"
+      value == "all"
         ? events
         : events.filter((event) => event.category.id.toString() == value);
     setFilteredEvents(filtered);
@@ -69,7 +72,7 @@ export default function EventsPage() {
   return (
     <>
       <Grid container sx={{ justifyContent: "center" }}>
-        <Grid item xs={9.2}>
+        <Grid item xs={11} md={11} lg={11} xl={9.2}>
           <Box
             borderRadius={{ xs: "20px", sm: "30px", md: "40px" }}
             justifyContent="center"
@@ -97,8 +100,6 @@ export default function EventsPage() {
           padding={{ xs: 2, sm: 3, md: 4 }}
           rowSpacing={2}
           flexShrink={0}
-          
-          
         >
           <Grid
             item
@@ -129,7 +130,7 @@ export default function EventsPage() {
           direction="row"
           spacing={3}
           padding={{ xs: 2, sm: 3, md: 4 }}
-         marginBottom={6}
+          marginBottom={6}
         >
           <Grid item xs={12}>
             <Box>
@@ -138,22 +139,23 @@ export default function EventsPage() {
                   sx={{
                     borderBottom: 1,
                     borderColor: "divider",
-                    display: "inline-block",
                     overflowX: "auto",
-                    "@media (max-width:600px)": {
-                      width: "100%",
-                    },
-                    "@media (min-width:600px)": {
-                      width: "auto",
-                    },
+                    width: "100%",
+                    whiteSpace: "nowrap",
                   }}
                 >
                   <TabList
                     onChange={handleChange}
-                    aria-label="lab API tabs example"
+                    aria-label="scrollable auto tabs"
+                    variant="scrollable"
+                    scrollButtons="auto"
+                    allowScrollButtonsMobile
                     sx={{
                       "& .MuiTabs-flexContainer": {
-                        justifyContent: { xs: "center", sm: "flex-start" },
+                        justifyContent: "flex-start",
+                      },
+                      "& .MuiTab-root": {
+                        minWidth: "auto",
                       },
                     }}
                   >
@@ -165,6 +167,7 @@ export default function EventsPage() {
                           fontFamily: "Outfit",
                           fontSize: { xs: "14px", sm: "16px", md: "18px" },
                           fontWeight: 600,
+                          maxWidth: "none",
                         }}
                         label={tab.name}
                         value={tab.id}
@@ -176,18 +179,38 @@ export default function EventsPage() {
             </Box>
           </Grid>
 
-          {filteredEvents.map((event) => (
-            <EventsComponent
-              key={event.id}
-              id={event.id}
-              title={event.title}
-              date={event.date}
-              image={event.image}
-              description={event.description}
-              price={event.price}
-              category={event.category}
-            />
-          ))}
+          {loading ? (
+            <Grid
+              container
+              justifyContent="center"
+              alignItems="center"
+              height="30vh"
+            >
+              <CircularProgress />
+            </Grid>
+          ) : filteredEvents.length === 0 ? (
+            <Grid
+              container
+              justifyContent="center"
+              alignItems="center"
+              height="30vh"
+            >
+              <Typography variant="h6">Records not found</Typography>
+            </Grid>
+          ) : (
+            filteredEvents.map((event) => (
+              <EventsComponent
+                key={event.id}
+                id={event.id}
+                title={event.title}
+                date={event.date}
+                image={event.image}
+                description={event.description}
+                price={event.price}
+                category={event.category}
+              />
+            ))
+          )}
         </Grid>
       </Container>
     </>

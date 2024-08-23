@@ -1410,7 +1410,7 @@ const HomePage: FC = () => {
                           sx={{
                             position: "absolute",
                             top: { xs: "2px", sm: "10px", md: "20px" },
-                            left: "20px",
+                            left: "15px",
                             fontFamily: "Outfit",
                             fontSize: {
                               xs: "20px",
