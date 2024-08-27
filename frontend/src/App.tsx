@@ -17,9 +17,10 @@ const App = () => {
                 path={route.path}
                 element={
                   !route.ispublic ? (
+                    !route.isAuth ?
                     <PrivateRoute>
                       <Layout>{route.component}</Layout>
-                    </PrivateRoute>
+                    </PrivateRoute> : route.component
                   ) : (
                     <PublicRoute>
                       <FrontLayout>
