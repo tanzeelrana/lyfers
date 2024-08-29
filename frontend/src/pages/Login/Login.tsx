@@ -1,10 +1,21 @@
 import { FC, useState } from "react";
 import styled from "styled-components";
 import Grid from "@mui/material/Grid";
-import { Box, Button, Paper, TextField, Typography } from "@mui/material";
-import signIn from '../../assets/images/signIn.png'
-import logo from '../../assets/logos/LogoDefault.svg'
+import {
+  Box,
+  Button,
+  Container,
+  Paper,
+  TextField,
+  Typography,
+} from "@mui/material";
+import signIn from "../../assets/images/signIn.png";
+import logo from "../../assets/logos/LogoDefault.svg";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { login } from "../../store/auth/actions";
+import { LoginPayload } from "../../store/auth/types"; 
+import './login.css';
 
 const LoginTitle = styled.h1`
   font-size: 1.5em;
@@ -14,32 +25,34 @@ const LoginTitle = styled.h1`
 
 const Login: FC = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   // State for form values and errors
-  const [formValues, setFormValues] = useState({ email: '', password: '' });
-  const [errors, setErrors] = useState({ email: '', password: '' });
+  const [formValues, setFormValues] = useState({ email: "", password: "" });
+  const [errors, setErrors] = useState({ email: "", password: "" });
+  const [btnLoading, setBtnLoading] = useState(false);
 
   // Handle input change
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormValues({
       ...formValues,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     });
   };
 
   // Validate form fields
   const validate = () => {
-    let emailError = '';
-    let passwordError = '';
+    let emailError = "";
+    let passwordError = "";
 
     if (!formValues.email) {
-      emailError = 'Email is required';
+      emailError = "Email is required";
     } else if (!/\S+@\S+\.\S+/.test(formValues.email)) {
-      emailError = 'Email is invalid';
+      emailError = "Email is invalid";
     }
 
     if (!formValues.password) {
-      passwordError = 'Password is required';
+      passwordError = "Password is required";
     }
 
     if (emailError || passwordError) {
@@ -55,46 +68,64 @@ const Login: FC = () => {
     e.preventDefault();
 
     if (validate()) {
-      // Proceed with form submission (e.g., API call)
-      console.log('Form submitted:', formValues);
+      setBtnLoading(true);
+      const loginPayload: LoginPayload = {
+        email: formValues.email,
+        password: formValues.password,
+        setBtnloading: setBtnLoading,
+        navigate: navigate,
+      };
+
+      dispatch(login(loginPayload));
     }
   };
 
   return (
-    <Box width="100%" sx={{ flexGrow: 1, backgroundColor: '#FAFAFA' }}>
-      <Grid container  direction="row" padding={{ xs: 2, sm: 3, md: 4 }} spacing={4}>
-        <Grid item xs={12} md={6}>
-          <Grid container display={'flex'} alignItems={'center'} justifyContent={'center'} direction={'column'} spacing={4}>
-            <Grid item xs={12} display={'flex'} alignItems={'center'} justifyContent={'center'}>
+    <Container maxWidth={"xl"}>
+      <Grid
+        container
+        direction="row"
+        padding={{ xs: 2, sm: 3, md: 4 }}
+        spacing={4}
+      >
+        <Grid item xs={12} md={6} alignItems={'center'} justifyContent={'center'} display={'flex'}>
+          <Grid
+            container
+          
+            direction={"column"}
+            spacing={4}
+          >
+            <Grid
+              item
+              xs={12}
+              display={"flex"}
+              alignItems={"center"}
+              justifyContent={"center"}
+            >
               <img
                 src={logo}
-                alt='Logo'
-                style={{
-                  width: 'auto',
-                  height: 'auto',
-                  maxWidth: '100%',
-                  maxHeight: '190px',
-                }}
+                alt="Logo"
+                className="responsive-logo"
               />
             </Grid>
             <Grid
-              item 
+              item
               xs={12}
               display="flex"
               sx={{
-                gap: '10px',
-                alignItems: 'center',
-                justifyContent: 'center',
-                marginBottom: { xs: '10px', sm: '15px', md: '20px' },
+                gap: "10px",
+                alignItems: "center",
+                justifyContent: "center",
+                marginBottom: { xs: "10px", sm: "15px", md: "20px" },
               }}
             >
               <Typography
                 sx={{
-                  fontFamily: 'Syne',
-                  fontSize: { xs: '20px', sm: '28px', md: '40px' },
-                  fontStyle: 'normal',
+                  fontFamily: "Syne",
+                  fontSize: { xs: "20px", sm: "28px", md: "40px" },
+                  fontStyle: "normal",
                   fontWeight: 700,
-                  lineHeight: '120%',
+                  lineHeight: "120%",
                 }}
               >
                 Log In
@@ -105,9 +136,9 @@ const Login: FC = () => {
                 elevation={10}
                 sx={{
                   padding: { xs: 2, sm: 3, md: 4 },
-                  backgroundColor: '#FFE7DB',
-                  border: '1px solid',
-                  borderRadius: '15px'
+                  backgroundColor: "#FFE7DB",
+                  border: "1px solid",
+                  borderRadius: "15px",
                 }}
               >
                 <form onSubmit={handleSubmit}>
@@ -140,31 +171,32 @@ const Login: FC = () => {
                       />
                     </Grid>
                     <Grid item xs={12} textAlign="center">
-                      <Button 
-                        fullWidth 
-                        size="large" 
-                        variant="contained" 
-                        color="primary" 
-                        type="submit" 
+                      <Button
+                        fullWidth
+                        size="large"
+                        variant="contained"
+                        color="primary"
+                        type="submit"
                         sx={{
-                          padding: { xs: '10px', sm: '15px' },
-                          fontSize: { xs: '14px', sm: '16px' }
+                          padding: { xs: "10px", sm: "15px" },
+                          fontSize: { xs: "14px", sm: "16px" },
                         }}
+                        disabled={btnLoading} // Disable button while loading
                       >
-                        Log In
+                        {btnLoading ? "Logging in..." : "Log In"}
                       </Button>
                     </Grid>
                     <Grid item xs={12} textAlign="center">
                       <Typography
                         sx={{
-                          fontFamily: 'Outfit',
-                          fontSize: { xs: '16px', sm: '18px', md: '20px' },
-                          fontStyle: 'normal',
-                          lineHeight: '120%',
-                          cursor: 'pointer',
-                          textDecoration: 'underline',
+                          fontFamily: "Outfit",
+                          fontSize: { xs: "16px", sm: "18px", md: "20px" },
+                          fontStyle: "normal",
+                          lineHeight: "120%",
+                          cursor: "pointer",
+                          textDecoration: "underline",
                         }}
-                        onClick={() => navigate('/forgotPassword')}
+                        onClick={() => navigate("/forgotPassword")}
                       >
                         Forgot Password?
                       </Typography>
@@ -173,47 +205,61 @@ const Login: FC = () => {
                 </form>
               </Paper>
             </Grid>
-            <Grid item xs={12} textAlign={'center'} display={'flex'} flexDirection="column" alignItems="center">
+            <Grid
+              item
+              xs={12}
+              textAlign={"center"}
+              display={"flex"}
+              flexDirection="column"
+              alignItems="center"
+            >
               <Typography
                 sx={{
-                  fontFamily: 'Outfit',
-                  fontSize: { xs: '16px', sm: '18px', md: '20px' },
-                  fontStyle: 'normal',
-                  lineHeight: '120%',
+                  fontFamily: "Outfit",
+                  fontSize: { xs: "16px", sm: "18px", md: "20px" },
+                  fontStyle: "normal",
+                  lineHeight: "120%",
                 }}
               >
                 Don’t have a LYFER account?
               </Typography>
               <Typography
                 sx={{
-                  fontFamily: 'Outfit',
-                  fontSize: { xs: '16px', sm: '18px', md: '20px' },
-                  fontStyle: 'normal',
-                  lineHeight: '120%',
-                  textDecoration: 'underline',
-                  cursor: 'pointer',
+                  fontFamily: "Outfit",
+                  fontSize: { xs: "16px", sm: "18px", md: "20px" },
+                  fontStyle: "normal",
+                  lineHeight: "120%",
+                  textDecoration: "underline",
+                  cursor: "pointer",
                 }}
-                onClick={() => navigate('/register')}
+                onClick={() => navigate("/register")}
               >
                 Sign Up
               </Typography>
             </Grid>
           </Grid>
         </Grid>
-        <Grid item xs={12} md={6}>
+        <Grid
+          item
+          xs={12}
+          md={6}
+          sx={{
+            display: { xs: "none", sm: "block" },
+          }}
+        >
           <img
             src={signIn}
-            alt='Sign In'
+            alt="Sign In"
             style={{
-              width: 'auto',
-              height: 'auto',
-              maxWidth: '100%',
-              maxHeight: '1024px',
+              width: "auto",
+              height: "auto",
+              maxWidth: "100%",
+              maxHeight: "1024px",
             }}
           />
         </Grid>
       </Grid>
-    </Box>
+    </Container>
   );
 };
 

@@ -1,87 +1,142 @@
-import { FC, useState } from "react";
-import { Box, Button, Paper, TextField, Typography, MenuItem, Select, InputLabel, FormControl, Grid, SelectChangeEvent } from "@mui/material";
-import signUpImage from '../../assets/images/loginBanner.png';
-import logo from '../../assets/logos/LogoDefault.svg';
+import { FC, useEffect, useState } from "react";
+import {
+  Box,
+  Button,
+  Paper,
+  TextField,
+  Typography,
+  MenuItem,
+  Select,
+  InputLabel,
+  FormControl,
+  Grid,
+  SelectChangeEvent,
+  Container,
+  CircularProgress,
+} from "@mui/material";
+import signUpImage from "../../assets/images/loginBanner.png";
+import logo from "../../assets/logos/LogoDefault.svg";
 import { useNavigate } from "react-router-dom";
+import "../Signup/signup.css";
+import { useDispatch } from "react-redux";
+import { RegisterPayload } from "../../store/auth/types";
+import { register } from "../../store/auth/actions";
+import axios from "axios";
+import baseUrl from "../../config/apiConfig";
 
 const Signup: FC = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const [formValues, setFormValues] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    password: '',
-    confirmPassword: '',
-    securityQuestion: '',
-    answer: ''
+    firstName: "",
+    lastName: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+    securityQuestion: "",
+    answer: "",
   });
   const [errors, setErrors] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    password: '',
-    confirmPassword: '',
-    securityQuestion: '',
-    answer: ''
+    firstName: "",
+    lastName: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+    securityQuestion: "",
+    answer: "",
   });
-
+  const [btnLoading, setBtnLoading] = useState(false);
   // Handle input change
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | SelectChangeEvent<string>) => {
+  const handleChange = (
+    e:
+      | React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+      | SelectChangeEvent<string>
+  ) => {
     const { name, value } = e.target;
-    
-    
-      setFormValues({
-        ...formValues,
-        [name]: value
-      });
-    
-  };
 
+    setFormValues({
+      ...formValues,
+      [name]: value,
+    });
+  };
+  const [securityQuestions, setSecurityQuestions] = useState([]);
+  const [loadingQuestions, setLoadingQuestions] = useState(true);
+
+  useEffect(() => {
+    const fetchSecurityQuestions = async () => {
+      try {
+        const response = await axios.get(`${baseUrl}/api/security-questions`);
+        setSecurityQuestions(response.data.data);
+      } catch (error) {
+        console.error("Error fetching security questions:", error);
+      } finally {
+        setLoadingQuestions(false);
+      }
+    };
+
+    fetchSecurityQuestions();
+  }, []);
   // Validate form fields
   const validate = () => {
-    let firstNameError = '';
-    let lastNameError = '';
-    let emailError = '';
-    let passwordError = '';
-    let confirmPasswordError = '';
-    let securityQuestionError = '';
-    let answerError = '';
+    let firstNameError = "";
+    let lastNameError = "";
+    let emailError = "";
+    let passwordError = "";
+    let confirmPasswordError = "";
+    let securityQuestionError = "";
+    let answerError = "";
 
     if (!formValues.firstName) {
-      firstNameError = 'First name is required';
+      firstNameError = "First name is required";
     }
 
     if (!formValues.lastName) {
-      lastNameError = 'Last name is required';
+      lastNameError = "Last name is required";
     }
 
     if (!formValues.email) {
-      emailError = 'Email is required';
+      emailError = "Email is required";
     } else if (!/\S+@\S+\.\S+/.test(formValues.email)) {
-      emailError = 'Email is invalid';
+      emailError = "Email is invalid";
     }
 
     if (!formValues.password) {
-      passwordError = 'Password is required';
+      passwordError = "Password is required";
     } else if (formValues.password.length < 6) {
-      passwordError = 'Password must be at least 6 characters';
+      passwordError = "Password must be at least 6 characters";
     }
 
     if (formValues.password !== formValues.confirmPassword) {
-      confirmPasswordError = 'Passwords do not match';
+      confirmPasswordError = "Passwords do not match";
     }
 
     if (!formValues.securityQuestion) {
-      securityQuestionError = 'Please select a security question';
+      securityQuestionError = "Please select a security question";
     }
 
     if (!formValues.answer) {
-      answerError = 'Answer to the security question is required';
+      answerError = "Answer to the security question is required";
     }
 
-    if (firstNameError || lastNameError || emailError || passwordError || confirmPasswordError || securityQuestionError || answerError) {
-      setErrors({ firstName: firstNameError, lastName: lastNameError, email: emailError, password: passwordError, confirmPassword: confirmPasswordError, securityQuestion: securityQuestionError, answer: answerError });
+    if (
+      firstNameError ||
+      lastNameError ||
+      emailError ||
+      passwordError ||
+      confirmPasswordError ||
+      securityQuestionError ||
+      answerError
+    ) {
+      setErrors({
+        firstName: firstNameError,
+        lastName: lastNameError,
+        email: emailError,
+        password: passwordError,
+        confirmPassword: confirmPasswordError,
+        securityQuestion: securityQuestionError,
+        answer: answerError,
+      });
       return false;
     }
 
@@ -93,49 +148,71 @@ const Signup: FC = () => {
     e.preventDefault();
 
     if (validate()) {
-      // Proceed with form submission (e.g., API call)
-      console.log('Form submitted:', formValues);
+      const registerPayload: RegisterPayload = {
+        fname: formValues.firstName,
+        lname: formValues.lastName,
+        email: formValues.email,
+        password: formValues.password,
+        Cpassword: formValues.confirmPassword,
+        security_question_id: formValues.securityQuestion,
+        security_answer: formValues.answer,
+        setBtnloading: setBtnLoading,
+        navigate: navigate,
+      };
+
+      dispatch(register(registerPayload));
+      console.log("Form submitted:", formValues);
     }
   };
 
   return (
-    <Box width="100%" sx={{ flexGrow: 1, backgroundColor: '#FAFAFA' }}>
-      <Grid container  direction="row" padding={{ xs: 2, sm: 3, md: 4 }} spacing={4} flexShrink={0}>
-        <Grid item xs={12} md={6}>
-          <Grid container display={'flex'} alignItems={'center'} justifyContent={'center'} direction={'column'} spacing={3}>
-            <Grid item xs={12} display={'flex'} alignItems={'center'} justifyContent={'center'}>
-              <img
-                src={logo}
-                alt='Logo'
-                style={{
-                  width: 'auto',
-                  height: 'auto',
-                  maxWidth: '100%',
-                  maxHeight: '180px',
-                }}
-              />
+    <Container maxWidth={"xl"}>
+      <Grid
+        container
+        direction="row"
+        padding={{ xs: 2, sm: 3, md: 4 }}
+        spacing={4}
+        flexShrink={0}
+      >
+        <Grid
+          item
+          xs={12}
+          md={6}
+          alignItems={"center"}
+          justifyContent={"center"}
+          display={"flex"}
+        >
+          <Grid container direction={"column"} spacing={3}>
+            <Grid
+              item
+              xs={12}
+              display={"flex"}
+              alignItems={"center"}
+              justifyContent={"center"}
+            >
+              <img src={logo} alt="Logo" className="responsive-logo" />
             </Grid>
             <Grid
-              item 
+              item
               xs={12}
               display="flex"
               sx={{
-                gap: '10px',
-                alignItems: 'center',
-                justifyContent: 'center',
-                marginBottom: { xs: '10px', sm: '15px', md: '20px' },
+                gap: "10px",
+                alignItems: "center",
+                justifyContent: "center",
+                marginBottom: { xs: "10px", sm: "15px", md: "20px" },
               }}
             >
               <Typography
                 sx={{
-                  fontFamily: 'Syne',
-                  fontSize: { xs: '20px', sm: '28px', md: '40px' },
-                  fontStyle: 'normal',
+                  fontFamily: "Syne",
+                  fontSize: { xs: "20px", sm: "28px", md: "40px" },
+                  fontStyle: "normal",
                   fontWeight: 700,
-                  lineHeight: '120%',
+                  lineHeight: "120%",
                 }}
               >
-                Sign Up
+                Sign Up to Become a LYFER
               </Typography>
             </Grid>
             <Grid item xs={12}>
@@ -143,9 +220,9 @@ const Signup: FC = () => {
                 elevation={10}
                 sx={{
                   padding: { xs: 2, sm: 3, md: 4 },
-                  backgroundColor: '#FFE7DB',
-                  border: '1px solid',
-                  borderRadius: '15px'
+                  backgroundColor: "#FFE7DB",
+                  border: "1px solid",
+                  borderRadius: "15px",
                 }}
               >
                 <form onSubmit={handleSubmit}>
@@ -213,24 +290,42 @@ const Signup: FC = () => {
                       />
                     </Grid>
                     <Grid item xs={12}>
-                      <FormControl fullWidth variant="outlined" error={Boolean(errors.securityQuestion)}>
-                        <InputLabel id="security-question-label">Security Question</InputLabel>
-                        <Select
-                          labelId="security-question-label"
-                          label="Security Question"
-                          name="securityQuestion"
-                          value={formValues.securityQuestion}
-                          onChange={handleChange}
-                          sx={{
-                            backgroundColor:'white'
-                          }}
+                      {loadingQuestions ? (
+                        <Box display="flex" justifyContent="center">
+                          <CircularProgress />
+                        </Box>
+                      ) : (
+                        <FormControl
+                          fullWidth
+                          variant="outlined"
+                          error={Boolean(errors.securityQuestion)}
                         >
-                          <MenuItem value="pet">What is your pet's name?</MenuItem>
-                          <MenuItem value="mother">What is your mother's maiden name?</MenuItem>
-                          <MenuItem value="school">What was the name of your first school?</MenuItem>
-                        </Select>
-                        {errors.securityQuestion && <Typography color="error">{errors.securityQuestion}</Typography>}
-                      </FormControl>
+                          <InputLabel id="security-question-label">
+                            Security Question
+                          </InputLabel>
+                          <Select
+                            labelId="security-question-label"
+                            label="Security Question"
+                            name="securityQuestion"
+                            value={formValues.securityQuestion}
+                            onChange={handleChange}
+                            sx={{
+                              backgroundColor: "white",
+                            }}
+                          >
+                            {securityQuestions.map((question: any) => (
+                              <MenuItem key={question.id} value={question.id}>
+                                {question.question}
+                              </MenuItem>
+                            ))}
+                          </Select>
+                          {errors.securityQuestion && (
+                            <Typography color="error">
+                              {errors.securityQuestion}
+                            </Typography>
+                          )}
+                        </FormControl>
+                      )}
                     </Grid>
                     <Grid item xs={12}>
                       <TextField
@@ -245,42 +340,48 @@ const Signup: FC = () => {
                       />
                     </Grid>
                     <Grid item xs={12} textAlign="center">
-                      <Button 
-                        fullWidth 
-                        size="large" 
-                        variant="contained" 
-                        color="primary" 
-                        type="submit" 
+                      <Button
+                        fullWidth
+                        size="large"
+                        variant="contained"
+                        color="primary"
+                        type="submit"
                         sx={{
-                          padding: { xs: '10px', sm: '15px' }
+                          padding: { xs: "10px", sm: "15px" },
                         }}
                       >
                         Sign Up
                       </Button>
                     </Grid>
-                    <Grid item xs={12} textAlign="center" display={'flex'} justifyContent={'center'}>
+                    <Grid
+                      item
+                      xs={12}
+                      textAlign="center"
+                      display={"flex"}
+                      justifyContent={"center"}
+                    >
                       <Typography
                         sx={{
-                          fontFamily: 'Outfit',
-                          fontSize: { xs: '16px', sm: '20px', md: '24px' },
-                          fontStyle: 'normal',
-                          lineHeight: '120%',
+                          fontFamily: "Outfit",
+                          fontSize: { xs: "16px", sm: "20px", md: "24px" },
+                          fontStyle: "normal",
+                          lineHeight: "120%",
                         }}
                       >
-                        Already have an account? 
+                        Already have an account?
                       </Typography>
                       <Typography
                         sx={{
-                          fontFamily: 'Outfit',
-                          fontSize: { xs: '16px', sm: '20px', md: '24px' },
-                          fontStyle: 'normal',
-                          lineHeight: '120%',
-                          textDecoration:'underline',
-                          cursor: 'pointer',
+                          fontFamily: "Outfit",
+                          fontSize: { xs: "16px", sm: "20px", md: "24px" },
+                          fontStyle: "normal",
+                          lineHeight: "120%",
+                          textDecoration: "underline",
+                          cursor: "pointer",
                         }}
-                        onClick={()=> navigate('/login')}
+                        onClick={() => navigate("/login")}
                       >
-                         Log In
+                        Log In
                       </Typography>
                     </Grid>
                   </Grid>
@@ -289,20 +390,27 @@ const Signup: FC = () => {
             </Grid>
           </Grid>
         </Grid>
-        <Grid item xs={12} md={6}>
+        <Grid
+          item
+          xs={12}
+          md={6}
+          sx={{
+            display: { xs: "none", sm: "block" },
+          }}
+        >
           <img
             src={signUpImage}
-            alt='Sign Up'
+            alt="Sign Up"
             style={{
-              width: 'auto',
-              height: 'auto',
-              maxWidth: '100%',
-              maxHeight: '1024px',
+              width: "auto",
+              height: "auto",
+              maxWidth: "100%",
+              maxHeight: "1024px",
             }}
           />
         </Grid>
       </Grid>
-    </Box>
+    </Container>
   );
 };
 
