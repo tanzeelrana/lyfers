@@ -4,7 +4,6 @@ const { User } = require('../models');
 
 const { login,signup,logout, forgotPassword } = require('../../backend/controllers/authController');
 
-// User signup route
 router.post('/signup', signup);
 
 router.post('/login', login);

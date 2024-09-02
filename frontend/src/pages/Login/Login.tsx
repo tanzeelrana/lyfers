@@ -14,8 +14,8 @@ import logo from "../../assets/logos/LogoDefault.svg";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { login } from "../../store/auth/actions";
-import { LoginPayload } from "../../store/auth/types"; 
-import './login.css';
+import { LoginPayload } from "../../store/auth/types";
+import "./login.css";
 
 const LoginTitle = styled.h1`
   font-size: 1.5em;
@@ -81,31 +81,31 @@ const Login: FC = () => {
   };
 
   return (
-    <Container maxWidth={"xl"}>
-      <Grid
-        container
-        direction="row"
-        padding={{ xs: 2, sm: 3, md: 4 }}
-        spacing={4}
-      >
-        <Grid item xs={12} md={6} alignItems={'center'} justifyContent={'center'} display={'flex'}>
-          <Grid
-            container
-          
-            direction={"column"}
-            spacing={4}
-          >
+    <Container maxWidth="xl">
+      <Grid container columnSpacing={3}>
+        <Grid
+          item
+          xs={12}
+          md={6}
+          alignItems="center"
+          justifyContent="center"
+          display="flex"
+        >
+          <Grid container direction="column" spacing={4}>
             <Grid
               item
               xs={12}
-              display={"flex"}
-              alignItems={"center"}
-              justifyContent={"center"}
+              display="flex"
+              alignItems="center"
+              justifyContent="center"
             >
               <img
                 src={logo}
                 alt="Logo"
                 className="responsive-logo"
+                style={{
+                  width: "80%",
+                }}
               />
             </Grid>
             <Grid
@@ -142,7 +142,7 @@ const Login: FC = () => {
                 }}
               >
                 <form onSubmit={handleSubmit}>
-                  <Grid container spacing={4}>
+                  <Grid container spacing={3}>
                     <Grid item xs={12}>
                       <TextField
                         fullWidth
@@ -181,7 +181,7 @@ const Login: FC = () => {
                           padding: { xs: "10px", sm: "15px" },
                           fontSize: { xs: "14px", sm: "16px" },
                         }}
-                        disabled={btnLoading} // Disable button while loading
+                        disabled={btnLoading}
                       >
                         {btnLoading ? "Logging in..." : "Log In"}
                       </Button>
@@ -208,8 +208,8 @@ const Login: FC = () => {
             <Grid
               item
               xs={12}
-              textAlign={"center"}
-              display={"flex"}
+              textAlign="center"
+              display="flex"
               flexDirection="column"
               alignItems="center"
             >
@@ -244,17 +244,19 @@ const Login: FC = () => {
           xs={12}
           md={6}
           sx={{
-            display: { xs: "none", sm: "block" },
+            display: { xs: "none", md: "block" },
+            height: "100vh", 
           }}
         >
           <img
             src={signIn}
             alt="Sign In"
             style={{
-              width: "auto",
-              height: "auto",
-              maxWidth: "100%",
-              maxHeight: "1024px",
+              width: "100%",
+              height: "100vh", 
+              objectFit: "cover", 
+              borderTopLeftRadius: "50px", 
+              borderBottomLeftRadius: "50px",
             }}
           />
         </Grid>

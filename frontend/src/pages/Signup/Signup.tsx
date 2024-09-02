@@ -166,29 +166,23 @@ const Signup: FC = () => {
   };
 
   return (
-    <Container maxWidth={"xl"}>
-      <Grid
-        container
-        direction="row"
-        padding={{ xs: 2, sm: 3, md: 4 }}
-        spacing={4}
-        flexShrink={0}
-      >
+    <Container maxWidth="xl">
+      <Grid container direction="row" spacing={3} flexShrink={0}>
         <Grid
           item
           xs={12}
           md={6}
-          alignItems={"center"}
-          justifyContent={"center"}
-          display={"flex"}
+          display="flex"
+          alignItems="center"
+          justifyContent="center"
         >
-          <Grid container direction={"column"} spacing={3}>
+          <Grid container direction="column" spacing={1}>
             <Grid
               item
               xs={12}
-              display={"flex"}
-              alignItems={"center"}
-              justifyContent={"center"}
+              display="flex"
+              alignItems="center"
+              justifyContent="center"
             >
               <img src={logo} alt="Logo" className="responsive-logo" />
             </Grid>
@@ -200,7 +194,7 @@ const Signup: FC = () => {
                 gap: "10px",
                 alignItems: "center",
                 justifyContent: "center",
-                marginBottom: { xs: "10px", sm: "15px", md: "20px" },
+                marginBottom: { xs: "10px", sm: "15px", md: "10px" },
               }}
             >
               <Typography
@@ -210,6 +204,7 @@ const Signup: FC = () => {
                   fontStyle: "normal",
                   fontWeight: 700,
                   lineHeight: "120%",
+                  textAlign: "center", 
                 }}
               >
                 Sign Up to Become a LYFER
@@ -219,7 +214,7 @@ const Signup: FC = () => {
               <Paper
                 elevation={10}
                 sx={{
-                  padding: { xs: 2, sm: 3, md: 4 },
+                  padding: { xs: 2, sm: 3, md: 3},
                   backgroundColor: "#FFE7DB",
                   border: "1px solid",
                   borderRadius: "15px",
@@ -309,9 +304,7 @@ const Signup: FC = () => {
                             name="securityQuestion"
                             value={formValues.securityQuestion}
                             onChange={handleChange}
-                            sx={{
-                              backgroundColor: "white",
-                            }}
+                            sx={{ backgroundColor: "white" }}
                           >
                             {securityQuestions.map((question: any) => (
                               <MenuItem key={question.id} value={question.id}>
@@ -357,8 +350,8 @@ const Signup: FC = () => {
                       item
                       xs={12}
                       textAlign="center"
-                      display={"flex"}
-                      justifyContent={"center"}
+                      display="flex"
+                      justifyContent="center"
                     >
                       <Typography
                         sx={{
@@ -366,6 +359,7 @@ const Signup: FC = () => {
                           fontSize: { xs: "16px", sm: "20px", md: "24px" },
                           fontStyle: "normal",
                           lineHeight: "120%",
+                          textAlign: "center", // Center text on all screen sizes
                         }}
                       >
                         Already have an account?
@@ -395,17 +389,18 @@ const Signup: FC = () => {
           xs={12}
           md={6}
           sx={{
-            display: { xs: "none", sm: "block" },
+            display: { xs: "none", md: "block" },
+            height: "100vh",
           }}
         >
           <img
             src={signUpImage}
             alt="Sign Up"
             style={{
-              width: "auto",
-              height: "auto",
-              maxWidth: "100%",
-              maxHeight: "1024px",
+              width: "100%",
+              height: "100vh",
+              borderTopLeftRadius: "50px",
+              borderBottomLeftRadius: "50px",
             }}
           />
         </Grid>

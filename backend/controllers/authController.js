@@ -1,6 +1,6 @@
 const { body, validationResult } = require("express-validator");
 const jwt = require("jsonwebtoken");
-const { User } = require("../models"); // Adjust the path as needed
+const { User } = require("../models");
 
 const login = async (req, res) => {
   // Validation rules
