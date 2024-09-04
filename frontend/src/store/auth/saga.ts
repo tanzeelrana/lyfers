@@ -23,7 +23,7 @@ function* loginRequest({ payload }: any): Generator<any, void, any> {
       yield put(loginSuccess(response.data));
       setBtnloading(false);
       toast.success('Login successfully');
-      navigate('/');
+      navigate('/dashboard');
     } else {
       setBtnloading(false);
       toast.error(response.data.message);

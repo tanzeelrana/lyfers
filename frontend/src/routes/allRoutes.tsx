@@ -28,6 +28,8 @@ import ProductsPage from "../pages/Shop/ProductsPage";
 import ProductDetail from "../pages/Shop/ProductDetail";
 import CartPage from "../pages/CartPage/CartPage";
 import ShippinginfoPage from "../pages/ShippinginfoPage/ShippinginfoPage";
+import { Component } from "react";
+import Dashboard from "../pages/Dashboard/Dashboard";
 
 const routes = [
   {
@@ -118,6 +120,11 @@ const routes = [
   {
     path: "/myGarage",
     component: <CarGarage />,
+    ispublic: false,
+  },
+  {
+    path:"/dashboard",
+    component: <Dashboard />,
     ispublic: false,
   },
   {

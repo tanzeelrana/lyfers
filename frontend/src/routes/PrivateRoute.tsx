@@ -7,9 +7,8 @@ export function PrivateRoute({ children }: any) {
   const auth = useSelector((state: any) => state?.Auth);
 
   if (!auth.currentUser) {
-    return <Navigate to={"/"} replace />;
+    return <Navigate to={"/login"} replace />;
   } else {
-    // && ["/myGarage", "/availableListing", "/services", "/chat", "/testDrives", "/offers"].includes(window.location.pathname)
     if ((auth.selectedPath !== window.location.pathname)) {
       dispatch(changePath(window.location.pathname))
     }

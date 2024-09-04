@@ -19,14 +19,16 @@ const App = () => {
                   !route.ispublic ? (
                     !route.isAuth ?
                     <PrivateRoute>
-                      <Layout>{route.component}</Layout>
+                      <FrontLayout>
+                        <Layout>{route.component}</Layout>
+                      </FrontLayout>
                     </PrivateRoute> : route.component
                   ) : (
                     <PublicRoute>
                       <FrontLayout>
                       {route.component}
                       </FrontLayout>
-                      </PublicRoute>
+                    </PublicRoute>
                   )
                 }
               />

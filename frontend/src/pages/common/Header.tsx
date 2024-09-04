@@ -255,6 +255,7 @@
 import React, { FC } from "react";
 import {
   AppBar,
+  Avatar,
   Box,
   Button,
   Grid,
@@ -271,6 +272,7 @@ import { ReactComponent as LogoBlackSvg } from "../../assets/logos/LogoDefault.s
 
 import styles from "./header.module.css";
 import { Stack } from "@mui/system";
+import { useSelector } from "react-redux";
 
 const pages = [
   { name: "Events", path: "/events" },
@@ -285,6 +287,8 @@ interface Props {
 
 const HomePage: FC<Props> = (props: Props) => {
   const [mobileOpen, setMobileOpen] = React.useState(false);
+  const auth = useSelector((state: any) => state?.Auth);
+
   const { window } = props;
   const navigate = useNavigate();
   const location = useLocation();
@@ -448,7 +452,18 @@ const HomePage: FC<Props> = (props: Props) => {
                 },
               }}
             >
-              <Box>
+
+              <Box display={'flex'} gap={2}>
+                {auth.currentUser != null ?   <Avatar src="/broken-image.jpg" /> : <Button
+                    onClick={() => navigate("/login")}
+                      id={styles.headerButtonText}
+                      sx={{
+                        fontFamily:'Outfit',
+                      }}
+                    >
+                      Login
+                    </Button> }
+            
                 <Button
                   size="large"
                   startIcon={<ShoppingCartCheckoutIcon />}
