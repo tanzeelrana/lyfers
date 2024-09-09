@@ -1,279 +1,417 @@
-import { FC, useEffect, useState } from "react";
-import { Grid, Avatar, Button, TextField } from "@mui/material";
-import CloudUploadIcon from '@mui/icons-material/CloudUpload';
-import { useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import BreadCrumbs from "../../components/BreadCrumbs";
-import * as Yup from "yup";
-import { Form, useFormik, FormikProvider } from "formik";
+import { FC, useState, useEffect } from "react";
+import {
+  Avatar,
+  Typography,
+  Box,
+  Grid,
+  TextField,
+  Button,
+  Divider,
+  IconButton,
+} from "@mui/material";
+import { Edit as EditIcon } from "@mui/icons-material";
 import { toast } from "react-toastify";
-import { updateProfile } from "../../store/auth/actions";
 import "./styles.scss";
+import { useDispatch, useSelector } from "react-redux";
+import axios from "axios";
+import baseUrl from "../../config/apiConfig";
 
 const Profile: FC = () => {
-  const navigate = useNavigate();
   const dispatch = useDispatch();
   const currentUser = useSelector((state: any) => state?.Auth?.currentUser);
   const [btnLoading, setBtnLoading] = useState<boolean>(false);
   const [uploadedImage, setUploadedImage] = useState<string>("");
 
+  // Track whether form is editable or not
+  const [isEditable, setIsEditable] = useState<boolean>(false);
 
-  const cleanPhoneNumber = (phone_number: string) => {
-    return phone_number
-      .replace("(", "")
-      .replace(")", "")
-      .replace(" ", "")
-      .replace("-", "");
-  };
+  const [formValues, setFormValues] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    dateOfBirth: "",
+    password: "",
+    securityQuestion: "",
+    answer: "",
+    fullName: "",
+    phone: "",
+    address: "",
+    city: "",
+    state: "",
+    postalCode: "",
+  });
 
-  const formatPhoneNumber = (phone_number: string) => {
-    if (!phone_number) return "";
-    var x = phone_number.replace(/\D/g, "").match(/(\d{0,3})(\d{0,3})(\d{0,4})/);
+  const [formErrors, setFormErrors] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    dateOfBirth: "",
+    password: "",
+    securityQuestion: "",
+    answer: "",
+    fullName: "",
+    phone: "",
+    address: "",
+    city: "",
+    state: "",
+    postalCode: "",
+  });
 
-    if (x != null) {
-      return (phone_number = !x[2]
-        ? x[1]
-        : "(" + x[1] + ") " + x[2] + (x[3] ? "-" + x[3] : ""));
+  // UseEffect to set initial form values from currentUser
+  useEffect(() => {
+    if (currentUser) {
+      setFormValues({
+        firstName: currentUser.user.firstName || "",
+        lastName: currentUser.user.lastName || "",
+        email: currentUser.user.email || "",
+        dateOfBirth: currentUser.user.dateOfBirth || "",
+        password: "",
+        securityQuestion: currentUser.user.security_question_id || "",
+        answer: currentUser.user.security_answer || "",
+        fullName: currentUser.user.fullname || "",
+        phone: currentUser.user.phone || "",
+        address: currentUser.user.address || "",
+        city: currentUser.user.city || "",
+        state: currentUser.user.state || "",
+        postalCode: currentUser.user.postalCode || "",
+      });
     }
-    else return x;
+  }, [currentUser]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const errors: any = {};
+
+    // Validation
+    if (!formValues.firstName) errors.firstName = "First Name is required";
+    if (!formValues.lastName) errors.lastName = "Last Name is required";
+    if (!formValues.email) errors.email = "Email is required";
+    else if (!/\S+@\S+\.\S+/.test(formValues.email))
+      errors.email = "Email is invalid";
+    if (!formValues.dateOfBirth)
+      errors.dateOfBirth = "Date of Birth is required";
+    if (!formValues.password) errors.password = "Password is required";
+    if (!formValues.securityQuestion)
+      errors.securityQuestion = "Security Question is required";
+    if (!formValues.answer) errors.answer = "Answer is required";
+    if (!formValues.fullName) errors.fullName = "Full Name is required";
+    if (!formValues.phone) errors.phone = "Phone number is required";
+    if (!formValues.address) errors.address = "Address is required";
+    if (!formValues.city) errors.city = "City is required";
+    if (!formValues.state) errors.state = "State is required";
+    if (!formValues.postalCode) errors.postalCode = "Postal Code is required";
+
+    setFormErrors(errors);
+
+    if (Object.keys(errors).length === 0) {
+      console.log("Form submitted:", formValues);
+
+      const errors: any = {};
+
+      setFormErrors(errors);
+
+      if (Object.keys(errors).length === 0) {
+        setBtnLoading(true);
+
+        try {
+          const response = await axios.put(
+            `${baseUrl}/auth/update-profile/${currentUser.user.id}`,
+            formValues,
+          );
+
+          toast.success(response.data.message);
+        } catch (error) {
+          console.error("Error updating profile", error);
+          toast.error("Failed to update profile. Please try again.");
+        } finally {
+          setBtnLoading(false);
+        }
+      }
+      // toast.success("Profile updated successfully!");
+    }
   };
 
-  const profileSchema = Yup.object().shape({
-    profileImage: Yup.mixed().required("Please upload profile image"),
-    firstName: Yup.string()
-      .required("Please enter legal first name")
-      .matches(/\S/, "Invalid legal first name")
-      .max(25, 'Must be less than or equal to 25 characters'),
-    lastName: Yup.string()
-      .required("Please enter legal last name")
-      .matches(/\S/, "Invalid legal last name")
-      .max(25, 'Must be less than or equal to 25 characters'),
-    nickname: Yup.string()
-      .matches(/\S/, "Invalid nickname")
-      .max(25, 'Must be less than or equal to 25 characters'),
-    phone: Yup.string()
-      .required("Please enter phone number")
-      .min(14, "Phone must be at least 10 characters")
-      .matches(/\S/, "Invalid phone"),
-    email: Yup.string()
-      .email("Please enter valid email address")
-      .required("Please enter email address")
-      .matches(/\S/, "Invalid email")
-      .max(60, 'Must be less than or equal to 60 characters'),
-    address: Yup.string()
-      .required("Please enter address")
-      .matches(/\S/, "Invalid address")
-      .max(50, 'Must be less than or equal to 50 characters'),
-  });
-
-  const formik = useFormik({
-    initialValues: {
-      profileImage: currentUser?.profileImage,
-      firstName: currentUser?.firstName,
-      lastName: currentUser?.lastName,
-      nickname: currentUser?.nickname,
-      phone: currentUser?.phone,
-      email: currentUser?.email,
-      address: currentUser?.address,
-    },
-    enableReinitialize: true,
-    validationSchema: profileSchema,
-    onSubmit: async (values) => {
-      if (cleanPhoneNumber(values.phone).length === 10) {
-        setBtnLoading(true);
-        dispatch(
-          updateProfile({
-            profileImage: values.profileImage,
-            firstName: values.firstName,
-            lastName: values.lastName,
-            nickname: values.nickname,
-            phone: values.phone,
-            email: values.email,
-            address: values.address,
-            setBtnloading: setBtnLoading,
-          })
-        )
-      } else {
-        toast.error("Please enter a valid phone number")
-      }
-    },
-  });
-
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormValues({ ...formValues, [name]: value });
+  };
 
   return (
-    <FormikProvider value={formik}>
-      <Form noValidate onSubmit={formik.handleSubmit}>
-        <Grid container>
-          <BreadCrumbs title="Profile" />
-          <Grid item lg={12} md={12} xs={12} sx={{ px: 2, py: 1 }}>
-            <Avatar src={uploadedImage ? uploadedImage : (formik.values && formik.values.profileImage)} sx={{ width: 125, height: 125, mb: 2, ml: 3 }} />
-            <Button component="label" variant="contained" color="info" startIcon={<CloudUploadIcon />}>
-              Change Photo
-              <input type="file"
-                name="profileImage"
-                accept="image/jpeg, image/png"
-                onChange={(event) => {
-                  if (event.target.files) {
-                    event.preventDefault();
-                    // formik.setFieldValue("profileImage", event.target.files[0]);
-                    // setUploadedImage(URL.createObjectURL(event.target.files[0]))
+    <Grid
+      container
+      width="100%"
+      direction="column"
+      padding={{ xs: 0, sm: 0, md: 4 }}
+      rowSpacing={3}
+      flexShrink={0}
+      sx={{ marginBottom: "40px" }}
+    >
+      {/* Account Details */}
+      <Grid item xs={12}>
+        <Grid container direction="column" flexShrink={0}>
+          <Grid
+            item
+            xs={12}
+            display="flex"
+            justifyContent="space-between"
+            alignItems="center"
+            sx={{
+              padding: { xs: "8px", sm: "12px", md: "16px" },
+            }}
+          >
+            <Typography
+              sx={{
+                fontFamily: "Syne",
+                fontSize: { xs: "20px", sm: "24px", md: "32px" },
+                fontStyle: "normal",
+                fontWeight: 700,
+                lineHeight: "120%",
+                color: "#000000",
+              }}
+            >
+              Account Details
+            </Typography>
+          </Grid>
+        </Grid>
+      </Grid>
 
-                    const file = event.target.files[0];
-                    const reader = new FileReader();
-                  
-                    reader.onload = (e) => {
-                      const dataURL = e?.target?.result;
-                      formik.setFieldValue("profileImage", dataURL);
-                    };
-                    reader.readAsDataURL(file);
-                    setUploadedImage(URL.createObjectURL(event.target.files[0]))
+      {/* Form */}
+      <Grid item xs={12}>
+        <Box
+          component="form"
+          noValidate
+          autoComplete="off"
+          onSubmit={handleSubmit}
+          sx={{
+            padding: { xs: 1, sm: 2, md: 3 },
+            borderRadius: 4,
+            border: "1px solid",
+          }}
+        >
+          {/* Personal Details */}
+          <Box display={"flex"} justifyContent={"space-between"} mb={2}>
+            <Typography variant="h6" gutterBottom>
+              Personal Details
+            </Typography>
+            <IconButton
+              onClick={() => setIsEditable((prev) => !prev)}
+              aria-label="edit"
+            >
+              <EditIcon />
+            </IconButton>
+          </Box>
 
-                  }
-                }} hidden />
-            </Button>
-            {formik.touched.profileImage && formik.errors.profileImage && (
-              <p className="error">
-                <>{formik.errors.profileImage}</>
-              </p>
-            )}
+          <Grid container spacing={2} alignItems="center">
+            <Grid item md={2}>
+              <Avatar
+                sx={{ width: 150, height: 150 }}
+                variant="square"
+                src="/avatar-url.png"
+              />
+            </Grid>
+            <Grid item md={10}>
+              <Grid container spacing={2}>
+                <Grid item xs={6}>
+                  <TextField
+                    label="First Name"
+                    name="firstName"
+                    value={formValues.firstName}
+                    onChange={handleInputChange}
+                    fullWidth
+                    error={!!formErrors.firstName}
+                    helperText={formErrors.firstName}
+                    disabled={!isEditable}
+                  />
+                </Grid>
+                <Grid item xs={6}>
+                  <TextField
+                    label="Last Name"
+                    name="lastName"
+                    value={formValues.lastName}
+                    onChange={handleInputChange}
+                    fullWidth
+                    error={!!formErrors.lastName}
+                    helperText={formErrors.lastName}
+                    disabled={!isEditable}
+                  />
+                </Grid>
+                <Grid item xs={6}>
+                  <TextField
+                    label="Email"
+                    name="email"
+                    value={formValues.email}
+                    onChange={handleInputChange}
+                    fullWidth
+                    error={!!formErrors.email}
+                    helperText={formErrors.email}
+                    disabled={!isEditable}
+                  />
+                </Grid>
+                <Grid item xs={6}>
+                  <TextField
+                    name="dateOfBirth"
+                    type="date"
+                    value={formValues.dateOfBirth}
+                    onChange={handleInputChange}
+                    fullWidth
+                    error={!!formErrors.dateOfBirth}
+                    helperText={formErrors.dateOfBirth}
+                    disabled={!isEditable}
+                  />
+                </Grid>
+              </Grid>
+            </Grid>
           </Grid>
 
-          <Grid item lg={6} md={6} xs={6} sx={{ px: 2, py: 2 }}>
-            <TextField
-              id="firstName"
-              label="Legal First Name"
-              variant="filled"
-              margin="dense"
-              name="firstName"
-              value={formik.values && formik.values.firstName}
-              onChange={formik.handleChange}
-              error={Boolean(
-                formik.touched.firstName && formik.errors.firstName
-              )}
-              helperText={
-                formik.touched.firstName && formik.errors.firstName ? (
-                <span className="error">{formik.errors.firstName?.toString()}</span>
-              ) : null }
-              fullWidth 
-              onBlur={formik.handleBlur}
-              InputLabelProps={{
-                required: true,
-              }}/>
-            <TextField
-              id="lastName"
-              label="Legal Last Name"
-              variant="filled"
-              margin="dense"
-              name="lastName"
-              value={formik.values && formik.values.lastName}
-              onChange={formik.handleChange}
-              error={Boolean(
-                formik.touched.lastName && formik.errors.lastName
-              )}
-              helperText={
-                formik.touched.lastName && formik.errors.lastName ? (
-                <span className="error">{formik.errors.lastName?.toString()}</span>
-              ) : null }
-              fullWidth
-              onBlur={formik.handleBlur}
-              InputLabelProps={{
-                required: true,
-              }}/>
-            <TextField
-              id="nickname"
-              label="Nickname"
-              variant="filled"
-              margin="dense"
-              name="nickname"
-              value={formik.values && formik.values.nickname}
-              onChange={formik.handleChange}
-              error={Boolean(
-                formik.touched.nickname && formik.errors.nickname
-              )}
-              helperText={ 
-                formik.touched.nickname && formik.errors.nickname ? (
-                <span className="error">{formik.errors.nickname?.toString()}</span>
-              ) : null}
-              fullWidth />
-            <TextField
-              id="phone"
-              label="Phone Number"
-              variant="filled"
-              margin="dense"
-              name="phone"
-              value={formik.values && formik.values.phone}
-              onChange={(e: any) =>
-                formik.setFieldValue("phone", formatPhoneNumber(e.target.value))
-              }
-              // icon={
-              //   <span className="absolute left-2 lg:left-3 text-mobile-grey-600 lg:text-3xl">
-              //     +1
-              //   </span>
-              // }
-              error={Boolean(
-                formik.touched.phone && formik.errors.phone
-              )}
-              helperText={
-                formik.touched.phone && formik.errors.phone ? (
-                <span className="error">{formik.errors.phone?.toString()}</span>
-                ) : null }
-              fullWidth
-              onBlur={formik.handleBlur}
-              InputLabelProps={{
-                required: true,
-              }}/>
-            <TextField
-              id="email"
-              label="Email"
-              variant="filled"
-              margin="dense"
-              name="email"
-              value={formik.values && formik.values.email}
-              onChange={formik.handleChange}
-              error={Boolean(
-                formik.touched.email && formik.errors.email
-              )}
-              helperText={<span className="error">{formik.errors.email?.toString()}</span>}
-              disabled={true}
-              fullWidth
-              onBlur={formik.handleBlur}
-              InputLabelProps={{
-                required: true,
-              }}/>
-            <TextField
-              id="address"
-              label="Address"
-              variant="filled"
-              margin="dense"
-              name="address"
-              value={formik.values && formik.values.address}
-              onChange={formik.handleChange}
-              error={Boolean(
-                formik.touched.address && formik.errors.address
-              )}
-              helperText={
-                formik.touched.address && formik.errors.address ? (
-                  <span className="error">{formik.errors.address?.toString()}</span>
-                ) : null
-              }
-              fullWidth
-              onBlur={formik.handleBlur}
-              InputLabelProps={{
-                required: true,
-              }}/>
+          <Grid container spacing={2} mt={2}>
+            <Grid item xs={12}>
+              <TextField
+                label="Password"
+                name="password"
+                type="password"
+                value={formValues.password}
+                onChange={handleInputChange}
+                fullWidth
+                error={!!formErrors.password}
+                helperText={formErrors.password}
+                disabled={!isEditable}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                label="Security Question"
+                name="securityQuestion"
+                value={formValues.securityQuestion}
+                onChange={handleInputChange}
+                fullWidth
+                error={!!formErrors.securityQuestion}
+                helperText={formErrors.securityQuestion}
+                disabled={!isEditable}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                label="Answer"
+                name="answer"
+                value={formValues.answer}
+                onChange={handleInputChange}
+                fullWidth
+                error={!!formErrors.answer}
+                helperText={formErrors.answer}
+                disabled={!isEditable}
+              />
+            </Grid>
+          </Grid>
+
+          <Divider sx={{ marginY: 2 }} />
+
+          {/* Shipping Details */}
+          <Typography variant="h6" gutterBottom>
+            Shipping Details
+          </Typography>
+          <Grid container spacing={2}>
+            <Grid item xs={12} md={12}>
+              <TextField
+                label="Full Name"
+                name="fullName"
+                value={formValues.fullName}
+                onChange={handleInputChange}
+                fullWidth
+                error={!!formErrors.fullName}
+                helperText={formErrors.fullName}
+                disabled={!isEditable}
+              />
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <TextField
+                label="Email"
+                name="email"
+                value={formValues.email}
+                onChange={handleInputChange}
+                fullWidth
+                error={!!formErrors.email}
+                helperText={formErrors.email}
+                disabled={!isEditable}
+              />
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <TextField
+                label="Phone"
+                name="phone"
+                value={formValues.phone}
+                onChange={handleInputChange}
+                fullWidth
+                error={!!formErrors.phone}
+                helperText={formErrors.phone}
+                disabled={!isEditable}
+              />
+            </Grid>
+            <Grid item xs={12} md={12}>
+              <TextField
+                label="Address"
+                name="address"
+                value={formValues.address}
+                onChange={handleInputChange}
+                fullWidth
+                error={!!formErrors.address}
+                helperText={formErrors.address}
+                disabled={!isEditable}
+              />
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <TextField
+                label="City"
+                name="city"
+                value={formValues.city}
+                onChange={handleInputChange}
+                fullWidth
+                error={!!formErrors.city}
+                helperText={formErrors.city}
+                disabled={!isEditable}
+              />
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <TextField
+                label="State"
+                name="state"
+                value={formValues.state}
+                onChange={handleInputChange}
+                fullWidth
+                error={!!formErrors.state}
+                helperText={formErrors.state}
+                disabled={!isEditable}
+              />
+            </Grid>
+            <Grid item xs={12} md={12}>
+              <TextField
+                label="Postal Code"
+                name="postalCode"
+                value={formValues.postalCode}
+                onChange={handleInputChange}
+                fullWidth
+                error={!!formErrors.postalCode}
+                helperText={formErrors.postalCode}
+                disabled={!isEditable}
+              />
+            </Grid>
+          </Grid>
+
+          {/* Submit Button */}
+          <Box mt={3}>
             <Button
-              variant="contained"
-              color="info"
               type="submit"
-              // loading={btnLoading}
-              sx={{ mt: 2, float: "right" }}>Save</Button>
-          </Grid >
-
-        </Grid>
-      </Form>
-    </FormikProvider>
-
-  )
+              variant="contained"
+              color="primary"
+              fullWidth
+              disabled={!isEditable}
+            >
+              {btnLoading ? "Updating..." : "save"}
+            </Button>
+          </Box>
+        </Box>
+      </Grid>
+    </Grid>
+  );
 };
 
 export default Profile;

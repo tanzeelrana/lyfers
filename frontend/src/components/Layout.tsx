@@ -32,7 +32,7 @@ export default function Layout(props: Props) {
               width: "auto",
               borderRadius: 5,
               border: "1px solid",
-              bgcolor: "#FFB892",
+              bgcolor: "#ffece2",
               padding:'10px'
             }}
           >

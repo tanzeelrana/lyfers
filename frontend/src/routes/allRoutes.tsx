@@ -30,6 +30,7 @@ import CartPage from "../pages/CartPage/CartPage";
 import ShippinginfoPage from "../pages/ShippinginfoPage/ShippinginfoPage";
 import { Component } from "react";
 import Dashboard from "../pages/Dashboard/Dashboard";
+import OrdersPage from "../pages/Orders/OrdersPage";
 
 const routes = [
   {
@@ -125,6 +126,11 @@ const routes = [
   {
     path:"/dashboard",
     component: <Dashboard />,
+    ispublic: false,
+  },
+  {
+    path:"/dashboard/orders",
+    component: <OrdersPage />,
     ispublic: false,
   },
   {

@@ -469,8 +469,9 @@ const HomePage: FC<Props> = (props: Props) => {
                   startIcon={<ShoppingCartCheckoutIcon />}
                   variant="contained"
                   id={styles.cartButton}
+                  onClick={() => navigate("/cart")}
                 >
-                  Cart
+                  Cart 
                 </Button>
               </Box>
             </Grid>

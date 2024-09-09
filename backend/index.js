@@ -28,6 +28,8 @@ app.use('/eventCategories', eventCategoriesRouter);
 const productRoutes = require('./routes/productsRoutes');
 app.use('/products', productRoutes);
 
+const securityQuestionsRoutes = require('./routes/securityQuestionsRoutes');
+app.use('/api/security-questions', securityQuestionsRoutes);
 
 
     app.listen(3003,() =>{
