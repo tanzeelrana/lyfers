@@ -101,7 +101,7 @@ const routes = [
     ispublic: true,
   },
   {
-    path: "/register",
+    path: "/register/:id?",
     component: <Signup />,
     ispublic: false,
     isAuth: true,

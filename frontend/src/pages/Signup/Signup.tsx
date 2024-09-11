@@ -16,7 +16,7 @@ import {
 } from "@mui/material";
 import signUpImage from "../../assets/images/loginBanner.png";
 import logo from "../../assets/logos/LogoDefault.svg";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import "../Signup/signup.css";
 import { useDispatch } from "react-redux";
 import { RegisterPayload } from "../../store/auth/types";
@@ -27,6 +27,7 @@ import baseUrl from "../../config/apiConfig";
 const Signup: FC = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const { id } = useParams<{ id: string | undefined }>();
 
   const [formValues, setFormValues] = useState({
     firstName: "",
@@ -146,7 +147,7 @@ const Signup: FC = () => {
   // Handle form submission
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
+   
     if (validate()) {
       const registerPayload: RegisterPayload = {
         fname: formValues.firstName,
@@ -156,6 +157,7 @@ const Signup: FC = () => {
         Cpassword: formValues.confirmPassword,
         security_question_id: formValues.securityQuestion,
         security_answer: formValues.answer,
+        referalUserId:id,
         setBtnloading: setBtnLoading,
         navigate: navigate,
       };

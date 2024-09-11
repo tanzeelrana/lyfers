@@ -1,10 +1,12 @@
 import { call, put, takeLatest } from "redux-saga/effects";
 import { sagaErrorHandler } from "../SagaErrorHandler";
-import { forgotPassordSuccess, loginSuccess, registerSuccess, updateProfileSuccess } from "./actions";
+import { forgotPassordSuccess, loginSuccess, logoutSuccess, registerSuccess, updateProfileSuccess } from "./actions";
 import { toast } from "react-toastify";
-import { LOGIN, UPDATE_PROFILE,SIGNUP, FORGOTPASSWORD} from "./actionTypes";
+import { LOGIN, UPDATE_PROFILE,SIGNUP, FORGOTPASSWORD, LOGOUT} from "./actionTypes";
 import axios from "axios";
 import { REGISTER } from "redux-persist";
+import baseUrl from "../../config/apiConfig";
+
 
 function* loginRequest({ payload }: any): Generator<any, void, any> {
   const { email, password, setBtnloading, navigate } = payload;
@@ -15,7 +17,7 @@ function* loginRequest({ payload }: any): Generator<any, void, any> {
     };
     const response = yield call(
       axios.post,
-      'http://localhost:3003/auth/login',
+      `${baseUrl}/auth/login`,
       user
     );
 
@@ -48,16 +50,16 @@ function* loginRequest({ payload }: any): Generator<any, void, any> {
 }
 
 function* registerRequest({ payload }: any): Generator<any, void, any> {
-  const { fname, lname, email, password, Cpassword, security_question_id, security_answer, setBtnloading, navigate } = payload;
+  const { fname, lname, email, password, Cpassword, security_question_id, security_answer ,referalUserId, setBtnloading, navigate } = payload;
 
   try {
     const user = {
-      fname, lname, email, password, Cpassword, security_question_id, security_answer,
+      fname, lname, email, password, Cpassword, security_question_id, security_answer,referalUserId,
     };
 
     const response = yield call(
       axios.post,
-      'http://localhost:3003/auth/signup',
+      `${baseUrl}/auth/signup`,
       user
     );
 
@@ -100,7 +102,7 @@ function* forgotPassword({ payload }: any): Generator<any, void, any> {
     };
     const response = yield call(
       axios.post,
-      'http://localhost:3003/auth/forgot-password',
+      `${baseUrl}/auth/forgot-password`,
       user
     );
 
@@ -153,8 +155,15 @@ function* updateProfileRequest({ payload }: any): Generator<any, void, any> {
   }
 }
 
+function* logoutRequest({ payload }: any): Generator<any, void, any> {
+ 
+
+  yield put(logoutSuccess(''));
+}
+
 export default function* authSaga() {
   yield takeLatest(LOGIN, loginRequest);
+  yield takeLatest(LOGOUT, logoutRequest);
   yield takeLatest(SIGNUP, registerRequest);
   yield takeLatest(FORGOTPASSWORD, forgotPassword);
   yield takeLatest(UPDATE_PROFILE, updateProfileRequest);

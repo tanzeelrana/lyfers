@@ -37,7 +37,7 @@ router.put('/update-profile/:id', async (req, res) => {
           lastName,
           email,
           dateOfBirth,
-          password, // Ensure to hash if changed
+          password,
           securityQuestion,
           answer,
           fullName,

@@ -94,6 +94,9 @@ module.exports = (sequelize, DataTypes) => {
       as: "securityQuestion",
     });
   };
+  User.associate = function(models) {
+    User.hasMany(models.UserReferralPoints, { foreignKey: 'user_id' });
+  };
 
   return User;
 };

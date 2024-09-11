@@ -4,6 +4,8 @@ export const CHANGE_PATH = "change_path";
 export const UPDATE_PROFILE = "update_profile";
 export const UPDATE_PROFILE_SUCCESS = "update_profile_success";
 export const LOGOUT = "logout";
+export const LOGOUT_SUCCESS = "logout_success";
+
 
 export const SIGNUP = "register";
 export const REGISTER_SUCCESS= "register_success";

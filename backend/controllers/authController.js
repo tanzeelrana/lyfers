@@ -1,6 +1,11 @@
 const { body, validationResult } = require("express-validator");
 const jwt = require("jsonwebtoken");
 const { User } = require("../models");
+const QRCode = require('qrcode');
+const baseUrlFrontend = process.env.FRON_END_URL
+const sharp = require('sharp');
+const fs = require('fs');
+const {UserReferralPoints} = require("../models");
 
 const login = async (req, res) => {
   // Validation rules
@@ -36,7 +41,7 @@ const login = async (req, res) => {
     );
 
     // Return the token
-    return res.status(200).json({ success: true, token });
+    return res.status(200).json({ success: true, token ,user:user });
   } catch (error) {
     console.error("Login error:", error);
     return res.status(500).json({ success: false, message: "Server error", error });
@@ -44,6 +49,9 @@ const login = async (req, res) => {
 };
 
 const signup = async (req, res) => {
+
+
+ 
   // Validation rules
   await body('email').isEmail().withMessage('Invalid email address').run(req);
   await body('password').isLength({ min: 6 }).withMessage('Password must be at least 6 characters long').run(req);
@@ -55,6 +63,8 @@ const signup = async (req, res) => {
   if (!errors.isEmpty()) {
     return res.status(400).json({ success: false, errors: errors.array() });
   }
+  
+
 
   const {
     fname,
@@ -65,8 +75,10 @@ const signup = async (req, res) => {
     user_type = "user",
     security_question_id,
     security_answer,
+    referalUserId,
   } = req.body;
 
+ 
   try {
     // Check if the user already exists
     const existingUser = await User.findOne({ where: { email } });
@@ -94,8 +106,63 @@ const signup = async (req, res) => {
       process.env.JWT_SECRET,
       { expiresIn: "1h" }
     );
+    if (referalUserId) {
+     const referUser = await User.findByPk(referalUserId);
+      if (referUser) {
+        referUser.points = referUser.points + 10;
+        await referUser.save();
+        const referalPoint = await UserReferralPoints.create({
+          user_id: newUser.id,
+          referral_name:referUser.firstName ?? referUser.email +' '+ referUser.lastName ?? '',
+          referral_user_id:referUser.id,
+          points:10
+        });
+      }
+    } 
 
-    return res.status(201).json({ success: true, token });
+
+    
+          // Generate a URL containing the user ID 
+          const signUpUrl = `${baseUrlFrontend}/register/${newUser.id}`;
+
+          const generateQRCodeWithText = async (data, text) => {
+            try {
+              const qrCodeBuffer = await QRCode.toBuffer(data, {
+                color: {
+                  dark: '#000000', 
+                  light: '#ffffff' 
+                },
+                width: 300, 
+              });
+          
+              const svgText = `
+              <svg width="300" height="300">
+                <text x="50%" y="50%" dy="15" dominant-baseline="middle" text-anchor="middle" font-size="46" fill="red">${text}</text>
+              </svg>
+            `;
+              const textBuffer = Buffer.from(svgText);
+                        const combinedImage = await sharp(qrCodeBuffer)
+                .composite([
+                  { input: textBuffer, top: 0, left: 0 }
+                ])
+                .png()
+                .toBuffer();
+          
+          
+              const base64Image = combinedImage.toString('base64');
+              newUser.qr_code = base64Image;
+              await newUser.save();           
+            } catch (err) {
+              console.error(err);
+            }
+          };
+          
+          generateQRCodeWithText(signUpUrl, 'LYFERS');       
+
+      
+
+
+    return res.status(201).json({ success: true, token,user:newUser });
   } catch (error) {
     console.error("Signup error:", error);
     return res.status(500).json({ success: false, message: "Server error", error });

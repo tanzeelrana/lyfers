@@ -38,7 +38,7 @@
 //   const [mobileOpen, setMobileOpen] = React.useState(false);
 //   const drawerWidth = 240;
 //   const { window } = props;
-//     const navigate = useNavigate(); 
+//     const navigate = useNavigate();
 
 //   const handleDrawerToggle = () => {
 //     setMobileOpen((prevState) => !prevState);
@@ -247,12 +247,9 @@
 //   );
 // };
 
-
 // export default HomePage;
 
-
-
-import React, { FC } from "react";
+import React, { FC, useState } from "react";
 import {
   AppBar,
   Avatar,
@@ -262,6 +259,8 @@ import {
   IconButton,
   Toolbar,
   Typography,
+  Menu,
+  MenuItem,
 } from "@mui/material";
 import { useNavigate, useLocation } from "react-router-dom";
 import Divider from "@mui/material/Divider";
@@ -272,7 +271,8 @@ import { ReactComponent as LogoBlackSvg } from "../../assets/logos/LogoDefault.s
 
 import styles from "./header.module.css";
 import { Stack } from "@mui/system";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { logout } from "../../store/auth/actions";
 
 const pages = [
   { name: "Events", path: "/events" },
@@ -292,10 +292,31 @@ const HomePage: FC<Props> = (props: Props) => {
   const { window } = props;
   const navigate = useNavigate();
   const location = useLocation();
+  const dispatch = useDispatch();
   const drawerWidth = 240;
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
 
   const handleDrawerToggle = () => {
     setMobileOpen((prevState) => !prevState);
+  };
+
+  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleProfile = () => {
+    navigate("/dashboard");
+    handleClose();
+  };
+
+  const handleLogout = () => {
+    dispatch(logout());
+    handleClose();
   };
 
   const container =
@@ -315,7 +336,8 @@ const HomePage: FC<Props> = (props: Props) => {
               onClick={() => navigate(page.path)}
               id={styles.headerButtonText}
               sx={{
-                backgroundColor: location.pathname === page.path ? "lightgray" : "transparent",
+                backgroundColor:
+                  location.pathname === page.path ? "lightgray" : "transparent",
               }}
             >
               {page.name}
@@ -354,6 +376,7 @@ const HomePage: FC<Props> = (props: Props) => {
                     sx={{
                       fontSize: { xs: "10px", sm: "12px", md: "16px" },
                     }}
+                    onClick={() => navigate("/become-a-lyfer")}
                   >
                     {" "}
                     CLICK HERE
@@ -400,7 +423,11 @@ const HomePage: FC<Props> = (props: Props) => {
                   },
                 }}
               >
-                <Box onClick={() => navigate("/")} height={"inherit"} component={LogoBlackSvg} />
+                <Box
+                  onClick={() => navigate("/")}
+                  height={"inherit"}
+                  component={LogoBlackSvg}
+                />
               </Box>
             </Grid>
 
@@ -427,8 +454,9 @@ const HomePage: FC<Props> = (props: Props) => {
                       onClick={() => navigate(page.path)}
                       id={styles.headerButtonText}
                       sx={{
-                        fontFamily:'Outfit',
-                        color: location.pathname === page.path ? "#FF5A00" : " #000",
+                        fontFamily: "Outfit",
+                        color:
+                          location.pathname === page.path ? "#FF5A00" : " #000",
                         fontWeight: location.pathname === page.path ? 700 : 500,
                       }}
                     >
@@ -452,9 +480,8 @@ const HomePage: FC<Props> = (props: Props) => {
                 },
               }}
             >
-
-              <Box display={'flex'} gap={2}>
-                {auth.currentUser != null ?   <Avatar src="/broken-image.jpg" /> : <Button
+              {/* <Box display={'flex'} gap={2}>
+                {auth.currentUser != null ?   <Avatar onClick={() => navigate("/profile")} src="/broken-image.jpg" /> : <Button
                     onClick={() => navigate("/login")}
                       id={styles.headerButtonText}
                       sx={{
@@ -472,6 +499,40 @@ const HomePage: FC<Props> = (props: Props) => {
                   onClick={() => navigate("/cart")}
                 >
                   Cart 
+                </Button>
+              </Box> */}
+
+              <Box display={"flex"} gap={2}>
+                {auth.currentUser != null ? (
+                  <>
+                    <Avatar
+                      onClick={handleClick}
+                      src="/broken-image.jpg"
+                      style={{ cursor: "pointer" }}
+                    />
+                    <Menu anchorEl={anchorEl} open={open} onClose={handleClose}>
+                      <MenuItem onClick={handleProfile}>Dashboard</MenuItem>
+                      <MenuItem onClick={handleLogout}>Logout</MenuItem>
+                    </Menu>
+                  </>
+                ) : (
+                  <Button
+                    onClick={() => navigate("/login")}
+                    id={styles.headerButtonText}
+                    sx={{ fontFamily: "Outfit" }}
+                  >
+                    Login
+                  </Button>
+                )}
+
+                <Button
+                  size="large"
+                  startIcon={<ShoppingCartCheckoutIcon />}
+                  variant="contained"
+                  id={styles.cartButton}
+                  onClick={() => navigate("/cart")}
+                >
+                  Cart
                 </Button>
               </Box>
             </Grid>

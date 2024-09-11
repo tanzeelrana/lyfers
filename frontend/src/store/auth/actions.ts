@@ -42,6 +42,7 @@ export const forgotPassordSuccess = (data: any) => {
   };
 };
 
+
 export const changePath = (data: string) => {
   return {
     type: actionTypes.CHANGE_PATH,
@@ -66,5 +67,12 @@ export const updateProfileSuccess = (data: dataTypes.ProfileSuccessPayload) => {
 export const logout = () => {
   return {
     type: actionTypes.LOGOUT,
+  };
+};
+
+export const logoutSuccess = (data: any) => {
+  return {
+    type: actionTypes.LOGOUT_SUCCESS,
+    payload: data,
   };
 };

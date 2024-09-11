@@ -15,6 +15,7 @@ export interface RegisterPayload {
   Cpassword: string;
   security_question_id:string;
   security_answer:string;
+  referalUserId:string | undefined;
   setBtnloading: React.Dispatch<React.SetStateAction<boolean>>;
   navigate: NavigateFunction;
 }
@@ -46,4 +47,9 @@ export interface ProfileSuccessPayload {
   phone: string;
   email: string;
   address: string;
+}
+
+export interface LogoutPayload {
+  setBtnloading: React.Dispatch<React.SetStateAction<boolean>>;
+  navigate: NavigateFunction;
 }
