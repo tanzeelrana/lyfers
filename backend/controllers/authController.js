@@ -6,6 +6,11 @@ const baseUrlFrontend = process.env.FRON_END_URL
 const sharp = require('sharp');
 const fs = require('fs');
 const {UserReferralPoints} = require("../models");
+const crypto = require('crypto');
+
+const algorithm = 'aes-256-cbc';
+const key = Buffer.from('27675871c7d814c83c78ea5af3dcde51');
+const iv = Buffer.from('d2f090a61e979aea'); 
 
 const login = async (req, res) => {
   // Validation rules
@@ -49,8 +54,8 @@ const login = async (req, res) => {
 };
 
 const signup = async (req, res) => {
-
-
+  
+  
  
   // Validation rules
   await body('email').isEmail().withMessage('Invalid email address').run(req);
@@ -106,24 +111,26 @@ const signup = async (req, res) => {
       process.env.JWT_SECRET,
       { expiresIn: "1h" }
     );
-    if (referalUserId) {
-     const referUser = await User.findByPk(referalUserId);
-      if (referUser) {
-        referUser.points = referUser.points + 10;
-        await referUser.save();
-        const referalPoint = await UserReferralPoints.create({
-          user_id: newUser.id,
-          referral_name:referUser.firstName ?? referUser.email +' '+ referUser.lastName ?? '',
-          referral_user_id:referUser.id,
-          points:10
-        });
-      }
-    } 
-
-
-    
           // Generate a URL containing the user ID 
-          const signUpUrl = `${baseUrlFrontend}/register/${newUser.id}`;
+          function encryptUserId(userId) {
+            const cipher = crypto.createCipheriv(algorithm, key, iv);
+            let encrypted = cipher.update(userId, 'utf8', 'hex');
+            encrypted += cipher.final('hex');
+            return encodeURIComponent(encrypted);
+          }
+          
+          function decryptUserId(encryptedUserId) {
+            const decipher = crypto.createDecipheriv(algorithm, key, iv);
+            let decrypted = decipher.update(decodeURIComponent(encryptedUserId), 'hex', 'utf8');
+            decrypted += decipher.final('utf8');
+            return decrypted;
+          }
+          
+          // Example usage
+          const userId = newUser.id.toString();
+          const encryptedUserId = encryptUserId(userId);
+
+          const signUpUrl = `${baseUrlFrontend}/register/${encryptedUserId}`;
 
           const generateQRCodeWithText = async (data, text) => {
             try {
@@ -159,7 +166,21 @@ const signup = async (req, res) => {
           
           generateQRCodeWithText(signUpUrl, 'LYFERS');       
 
-      
+          if (referalUserId) {
+            const decryptedUserId = decryptUserId(referalUserId);
+
+            const referUser = await User.findByPk(decryptedUserId);
+             if (referUser) {
+               referUser.points = referUser.points + 10;
+               await referUser.save();
+               const referalPoint = await UserReferralPoints.create({
+                 user_id: newUser.id,
+                 referral_name:referUser.firstName ?? referUser.email +' '+ referUser.lastName ?? '',
+                 referral_user_id:referUser.id,
+                 points:10
+               });
+             }
+           } 
 
 
     return res.status(201).json({ success: true, token,user:newUser });

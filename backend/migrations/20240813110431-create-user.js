@@ -12,7 +12,7 @@ module.exports = {
       email: {
         type: Sequelize.STRING,
         allowNull: false,
-        unique: true, // Ensure email is unique
+        unique: true,
       },
       password: {
         type: Sequelize.STRING,
@@ -20,7 +20,7 @@ module.exports = {
       },
       qr_code: {
         type: Sequelize.STRING,
-        allowNull: true, // QR code is optional
+        allowNull: true,
       },
       user_type: {
         type: Sequelize.STRING,
@@ -30,7 +30,7 @@ module.exports = {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
-          model: 'SecurityQuestions', // Ensure this model exists
+          model: 'SecurityQuestions',
           key: 'id',
         },
         onDelete: 'CASCADE',
@@ -42,7 +42,7 @@ module.exports = {
       },
       points: {
         type: Sequelize.INTEGER,
-        defaultValue: 0, // Default value for points
+        defaultValue: 0,
       },
       createdAt: {
         type: Sequelize.DATE,
