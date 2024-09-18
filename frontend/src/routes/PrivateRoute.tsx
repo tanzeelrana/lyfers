@@ -9,11 +9,22 @@ export function PrivateRoute({ children }: any) {
   const auth = useSelector((state: any) => state?.Auth);
 
   if (!auth.currentUser) {
-    return children;
+    if (
+      window.location.pathname === '/login' ||
+      window.location.pathname === '/forgotPassword' ||
+      /^\/register(\/\d+)?$/.test(window.location.pathname)
+    ) {
+      return children;
+    }else{
+    return <Navigate to={"/login"} replace />;
+    }
   } else {
-    if(window.location.pathname === ('/login' ||'/register' || '/forgotPassword')){
-      toast.success('Already logged');
-     return <Navigate to={"/"} replace />;
+    if (
+      window.location.pathname === '/login' ||
+      window.location.pathname === '/forgotPassword' ||
+      /^\/register(\/\d+)?$/.test(window.location.pathname)
+    ) {
+      return <Navigate to={"/"} replace />;
     }
     if ((auth.selectedPath !== window.location.pathname)) {
       dispatch(changePath(window.location.pathname))

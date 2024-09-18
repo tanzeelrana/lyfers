@@ -3,9 +3,37 @@ import routes from "./routes/allRoutes";
 import { PrivateRoute } from "./routes/PrivateRoute";
 import { PublicRoute } from "./routes/PublicRoute";
 import Layout from "./components/Layout";
-import FrontLayout from "./pages/common/Layout"
+import FrontLayout from "./pages/common/Layout";
+import { useSelector } from "react-redux";
+import AdminLayout from "./components/admin/AdminLayout";
+import jwtDecode from 'jwt-decode';
+
+interface UserPayload {
+  id: string;
+  email: string;
+  role: string;
+}
 
 const App = () => {
+  const auth = useSelector((state: any) => state?.Auth);
+
+  const getUserDetailsFromToken = (token: string): UserPayload | null => {
+    try {
+      const decodedToken: UserPayload = jwtDecode(token);
+      return decodedToken;
+    } catch (error) {
+      console.error("Invalid token", error);
+      return null;
+    }
+  };
+
+  let userDetails: UserPayload | null = null;
+
+  const token = auth.currentUser?.token;
+  if (token) {
+    userDetails = getUserDetailsFromToken(token);
+  }
+
   return (
     <div>
       <BrowserRouter>
@@ -17,18 +45,22 @@ const App = () => {
                 path={route.path}
                 element={
                   !route.ispublic ? (
-                   
-                    <PrivateRoute>{
-                       !route.isAuth ?
-                      <FrontLayout>
-                        <Layout>{route.component}</Layout>
-                      </FrontLayout> : route.component}
-                    </PrivateRoute> 
+                    !route.isAuth ? (
+                      <PrivateRoute>
+                        <FrontLayout>
+                          {userDetails?.role === "admin" ? (
+                            <AdminLayout>{route.component}</AdminLayout>
+                          ) : (
+                            <Layout>{route.component}</Layout>
+                          )}
+                        </FrontLayout>
+                      </PrivateRoute>
+                    ) : (
+                      <PrivateRoute>{ route.component}</PrivateRoute>
+                    )
                   ) : (
                     <PublicRoute>
-                      <FrontLayout>
-                      {route.component}
-                      </FrontLayout>
+                      <FrontLayout>{route.component}</FrontLayout>
                     </PublicRoute>
                   )
                 }
