@@ -31,6 +31,11 @@ import ShippinginfoPage from "../pages/ShippinginfoPage/ShippinginfoPage";
 import { Component } from "react";
 import Dashboard from "../pages/Dashboard/Dashboard";
 import OrdersPage from "../pages/Orders/OrdersPage";
+import Products from "../pages/admin/Shop/Products";
+import CreateProductPage from "../pages/admin/Shop/CreateProductPage";
+import SubCategories from "../pages/admin/Shop/SubCategories";
+import Colors from "../pages/admin/Shop/Colors";
+import AllEvents from "../pages/admin/Events/AllEvents";
 
 const routes = [
   {
@@ -191,6 +196,37 @@ const routes = [
     component: <TestDrives />,
     ispublic: false,
   },
+  {
+    path: "/admin/products",
+    component: <Products />,
+    ispublic: false,
+  },
+  {
+    path: "/admin/products/create",
+    component: <CreateProductPage />,
+    ispublic: false,
+  },
+  {
+    path: "/admin/sub-categories",
+    component: <SubCategories />,
+    ispublic: false,
+  },
+  {
+    path: "/admin/colors",
+    component: <Colors />,
+    ispublic: false,
+  },
+  {
+    path: "/admin/events",
+    component: <AllEvents />,
+    ispublic: false,
+  },
+  {
+    path: "/admin/products/edit/:productId",
+    component: <CreateProductPage />,
+    ispublic: false,
+  },
+
   { path: "*", component: <PageNotFound />, ispublic: true },
   { path: "/*", component: <PageNotFound />, ispublic: true },
   { path: "/*/*", component: <PageNotFound />, ispublic: true },

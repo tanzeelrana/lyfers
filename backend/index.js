@@ -8,16 +8,13 @@ const db = require('./models');
 const bodyParser = require('body-parser');
 app.use(bodyParser.json());
 require('dotenv').config();
+const path = require('path');
 
-
-
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 //routers
 const authRoutes = require('./routes/authRoutes');
 app.use('/auth', authRoutes);
-
-const postRouter = require('./routes/Posts')
-app.use("/posts" ,postRouter);
 
 const eventsRouter = require('./routes/events');
 app.use('/events', eventsRouter);
@@ -30,6 +27,29 @@ app.use('/products', productRoutes);
 
 const securityQuestionsRoutes = require('./routes/securityQuestionsRoutes');
 app.use('/api/security-questions', securityQuestionsRoutes);
+
+const subcategoryRoutes = require('./routes/subcategory');
+app.use('/subcategories', subcategoryRoutes);
+
+const wishlistRoutes = require('./routes/wishlistRoutes');
+app.use('/wishlist', wishlistRoutes);
+
+const cartRoutes = require('./routes/cartItemsRoutes');
+app.use('/cart', cartRoutes);
+
+const postRoutes = require('./routes/postRoutes');
+app.use('/posts', postRoutes);
+
+const commentRoutes = require('./routes/commentRoutes');
+app.use('/comments', commentRoutes);
+
+const groupRoutes = require('./routes/groupRoutes');
+app.use('/groups', groupRoutes);
+
+const colorRoutes = require('./routes/colorRoutes');
+app.use('/colors', colorRoutes);
+
+
 
 
     app.listen(3003,() =>{
