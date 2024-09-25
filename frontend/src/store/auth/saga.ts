@@ -25,7 +25,12 @@ function* loginRequest({ payload }: any): Generator<any, void, any> {
       yield put(loginSuccess(response.data));
       setBtnloading(false);
       toast.success('Login successfully');
-      navigate('/dashboard');
+      if(response.data.user.user_type == 'admin'){
+        navigate('/admin/dashboard');
+
+      }else{
+        navigate('/dashboard');
+      }
     } else {
       setBtnloading(false);
       toast.error(response.data.message);

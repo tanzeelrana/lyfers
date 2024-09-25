@@ -36,6 +36,7 @@ import CreateProductPage from "../pages/admin/Shop/CreateProductPage";
 import SubCategories from "../pages/admin/Shop/SubCategories";
 import Colors from "../pages/admin/Shop/Colors";
 import AllEvents from "../pages/admin/Events/AllEvents";
+import AdminDashboard from "../pages/admin/Dashboard/AdminDashboard";
 
 const routes = [
   {
@@ -93,7 +94,7 @@ const routes = [
   {
     path: "/productDetail/:id",
     component: <ProductDetail />,
-    ispublic: true,
+    ispublic: false,
   },
   {
     path: "/cart",
@@ -131,6 +132,11 @@ const routes = [
   {
     path:"/dashboard",
     component: <Dashboard />,
+    ispublic: false,
+  },
+  {
+    path:"/admin/dashboard",
+    component: <AdminDashboard />,
     ispublic: false,
   },
   {

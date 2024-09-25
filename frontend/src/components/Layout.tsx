@@ -11,8 +11,6 @@ interface Props {
   children: any;
 }
 
-
-
 export default function Layout(props: Props) {
   const { window, children } = props;
   const navigate = useNavigate();

@@ -1,12 +1,13 @@
+
 import { Button, Divider, Grid, Paper, Typography } from "@mui/material";
 import { Box } from "@mui/system";
 import React from "react";
 import { format } from "date-fns";
-import tshirt from "../../assets/images/tshirt.jpeg";
+import tshirt from "../../../assets/images/tshirt.jpeg";
 import { useSelector } from "react-redux";
 
-function Dashboard() {
-  const currentUser = useSelector((state: any) => state?.Auth?.currentUser);
+function AdminDashboard() {
+    const currentUser = useSelector((state: any) => state?.Auth?.currentUser);
 
   const items = [
     {
@@ -52,6 +53,14 @@ function Dashboard() {
               padding: { xs: "8px", sm: "12px", md: "16px" },
             }}
           >
+             <Box display={"flex"} alignItems={"center"} justifyContent={"center"}>
+            {" "}
+            <img
+              src={`data:image/png;base64,${currentUser.user.qr_code}`}
+              alt="User QR Code"
+              style={{ width: "200px", height: "200px" }}
+            />
+          </Box>
             <Typography
               sx={{
                 fontFamily: "Syne",
@@ -60,10 +69,10 @@ function Dashboard() {
                 fontWeight: 700,
                 lineHeight: "120%",
                 color: "#000000",
-                marginLeft: { xs: 0, md: 20 },
+                marginLeft: {xs:0, md:20},
               }}
             >
-              Dashboard
+             Admin Dashboard
             </Typography>
           </Grid>
         </Grid>
@@ -76,15 +85,6 @@ function Dashboard() {
             border: "1px solid",
           }}
         >
-          <Box display={"flex"} alignItems={"center"} justifyContent={"center"}>
-            {" "}
-            <img
-              src={`data:image/png;base64,${currentUser.user.qr_code}`}
-              alt="User QR Code"
-              style={{ width: "200px", height: "200px" }}
-            />
-          </Box>
-
           <Typography variant="h6" fontFamily={"Outfit"} fontWeight="bold">
             Membership Points
           </Typography>
@@ -102,7 +102,7 @@ function Dashboard() {
             </Typography>
           </Box>
 
-          <Typography variant="h6" sx={{ marginTop: 2 }}>
+           <Typography variant="h6" sx={{ marginTop: 2 }}>
             QR Scan Details
           </Typography>
           {["John Doe", "John Doe", "John Doe"].map((name, index) => (
@@ -123,7 +123,7 @@ function Dashboard() {
                 20 Points
               </Typography>
             </Box>
-          ))}
+          ))} 
 
           <Typography variant="h5" fontWeight="bold" sx={{ marginTop: 3 }}>
             Reviews
@@ -199,7 +199,7 @@ function Dashboard() {
 
           <Typography variant="h6" sx={{ marginTop: 2 }}>
             Testimonials
-          </Typography>
+          </Typography> 
           <Box sx={{ marginTop: 2 }}>
             <Typography fontFamily={"Outfit"} variant="body1">
               Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas
@@ -214,4 +214,4 @@ function Dashboard() {
   );
 }
 
-export default Dashboard;
+export default AdminDashboard;

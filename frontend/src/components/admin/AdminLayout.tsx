@@ -38,11 +38,11 @@ export default function Layout(props: Props) {
             >
               <Box>
                 <Button
-                  onClick={() => navigate("/dashboard")}
+                  onClick={() => navigate("/admin/dashboard")}
                   sx={{
                     fontFamily: "Outfit",
                     textTransform: 'capitalize',
-                    fontWeight: activePath === "/dashboard" ? "700" : "normal", 
+                    fontWeight: activePath === "/admin/dashboard" ? "700" : "normal", 
                   }}
                 >
                   Admin Dashboard

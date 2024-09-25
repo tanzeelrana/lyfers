@@ -4,6 +4,8 @@ const subcategoryController = require('../controllers/subcategoryController');
 
 // Get all subcategories
 router.get('/', subcategoryController.getAllSubcategories);
+router.get('/categories', subcategoryController.getAllCategories);
+
 
 // Get subcategory by ID
 router.get('/:id', subcategoryController.getSubcategoryById);

@@ -35,17 +35,19 @@ exports.createProduct = [
         description,
         quantity,
         price,
-        size,
+        sizes,
         colorIds,
         subcategoryId,
       } = req.body;
       const imageFiles = req.files;
+
+      const parsedSize = Array.isArray(sizes) ? sizes : JSON.parse(sizes);
       const newProduct = await Product.create({
         title,
         description,
         quantity,
         price,
-        size,
+        size:parsedSize,
         subcategoryId,
       });
       const parsedColorIds = colorIds ? JSON.parse(colorIds) : [];
@@ -164,7 +166,7 @@ exports.updateProduct = [
         description,
         quantity,
         price,
-        size,
+        sizes,
         colorIds,
         subcategoryId,
         removedImageIds,
@@ -212,12 +214,15 @@ exports.updateProduct = [
           },
         });
       }
+
+      const parsedSize = Array.isArray(sizes) ? sizes : JSON.parse(sizes);
+
       await product.update({
         title,
         description,
         quantity,
         price,
-        size,
+        size:parsedSize,
         subcategoryId,
       });
       const parsedColorIds = colorIds ? JSON.parse(colorIds) : [];

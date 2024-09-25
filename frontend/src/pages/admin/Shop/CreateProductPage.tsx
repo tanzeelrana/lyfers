@@ -41,7 +41,7 @@ interface Product {
   price: number;
   quantity: number;
   subcategoryId: string;
-  size: string[];
+  size: string;
   colors: Color[];
   images: {
     fullPath: string;
@@ -92,10 +92,10 @@ export default function CreateProductPage() {
           setDescription(productData.description);
           setPrice(productData.price);
           setQuantity(productData.quantity);
-          // if(productData.size != null){
-
-          //   setSelectedSizes(productData.size)
-          // }
+          if (productData.size != null) {
+            const sizes: string[] = JSON.parse(productData.size);
+            setSelectedSizes(sizes);
+          }
           setSubcategoryId(productData.subcategoryId);
           setSelectedColors(productData.colors.map((color) => color.id));
           setExistingImages(productData.images.map((img) => img.fullPath));
@@ -123,7 +123,8 @@ export default function CreateProductPage() {
   const handleRemoveExistingImage = (index: number) => {
     setExistingImages((prevImages) => prevImages.filter((_, i) => i !== index));
     setRemovedImageIds((prevIds) => [...prevIds, existingImageIds[index]]);
-    setExistingImageIds((prevIds) => prevIds.filter((_, i) => i !== index));  };
+    setExistingImageIds((prevIds) => prevIds.filter((_, i) => i !== index));
+  };
 
   const handleSizeChange = (event: SelectChangeEvent<string[]>) => {
     setSelectedSizes(event.target.value as string[]);
@@ -403,7 +404,9 @@ export default function CreateProductPage() {
                     </MenuItem>
                   ))}
                 </Select>
-                <FormHelperText>{errors.subcategoryId}</FormHelperText>
+                {errors.subcategoryId && (
+                  <Typography color="error">{errors.subcategoryId}</Typography>
+                )}
               </FormControl>
             </Grid>
 
@@ -424,9 +427,11 @@ export default function CreateProductPage() {
                     </MenuItem>
                   ))}
                 </Select>
+                {errors.selectedSizes && (
+                  <Typography color="error">{errors.selectedSizes}</Typography>
+                )}
               </FormControl>
             </Grid>
-
             <Grid item xs={12}>
               <InputLabel>Colors</InputLabel>
               <Box
@@ -451,9 +456,25 @@ export default function CreateProductPage() {
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
+                      position: "relative",
                     }}
                     onClick={() => handleColorSelect(color.id)}
-                  />
+                  >
+                    {selectedColors.includes(color.id) && (
+                      <Box
+                        sx={{
+                          width: 10,
+                          height: 10,
+                          borderRadius: "50%",
+                          backgroundColor: "#fff", 
+                          position: "absolute",
+                          top: "50%",
+                          left: "50%",
+                          transform: "translate(-50%, -50%)",
+                        }}
+                      />
+                    )}
+                  </Box>
                 ))}
               </Box>
               {errors.selectedColors && (

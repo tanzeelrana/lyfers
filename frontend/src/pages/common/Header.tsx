@@ -310,7 +310,12 @@ const HomePage: FC<Props> = (props: Props) => {
   };
 
   const handleProfile = () => {
-    navigate("/dashboard");
+    if(auth.currentUser.user.user_type == 'admin'){
+      navigate('/admin/dashboard');
+
+    }else{
+      navigate('/dashboard');
+    }
     handleClose();
   };
 
