@@ -2,9 +2,8 @@ const { Cart, CartItem, Product, ProductImage } = require("../models");
 
 exports.addToCart = async (req, res) => {
   try {
-    const { userId, productId, quantity, color,size } = req.body;
- console.log(req.body)
-//  return;
+    const { userId, productId, quantity, color, size } = req.body;
+
     // Find or create a cart for the user
     let cart = await Cart.findOne({ where: { userId } });
     if (!cart) {
@@ -63,9 +62,8 @@ exports.getCartItems = async (req, res) => {
 exports.removeFromCart = async (req, res) => {
   try {
     const { cartItemId } = req.params;
-    console.log(cartItemId);
+
     const cartItem = await CartItem.findByPk(cartItemId);
-    // console.log(cartItem);
     if (!cartItem) {
       return res.status(404).json({ message: "Cart item not found" });
     }
