@@ -1,19 +1,17 @@
-import React from "react";
-import {
-  Box,
-  Button,
-  Typography,
-  Grid,
-  Card,
-  CardMedia,
-  CardContent,
-  CardActions,
-} from "@mui/material";
+import React, { useEffect, useState } from "react";
+import { Box, Typography, Card, CardMedia } from "@mui/material";
 import tshirt from "../../assets/images/tshirt.jpeg";
 import ArrowRightAltIcon from "@mui/icons-material/ArrowRightAlt";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
+import FavoriteIcon from "@mui/icons-material/Favorite";
 import AddCircleOutlineOutlinedIcon from "@mui/icons-material/AddCircleOutlineOutlined";
+import RemoveCircleOutlineOutlinedIcon from "@mui/icons-material/RemoveCircleOutlineOutlined";
+
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import baseUrl from "../../config/apiConfig";
+import { toast } from "react-toastify";
+import { color } from "@mui/system";
 
 interface ProductProps {
   product: {
@@ -21,6 +19,8 @@ interface ProductProps {
     title: string;
     description: string;
     image: string;
+    colors: { name: string; code: string }[];
+    size: string[];
     images: {
       fullPath: string;
       id: number;
@@ -29,10 +29,88 @@ interface ProductProps {
     }[];
     price: number;
   };
+  userId: number;
+  removeFromWishlist: (productId: number) => void;
 }
 
-const ProductComponent: React.FC<ProductProps> = ({ product }) => {
+const ProductComponent: React.FC<ProductProps> = ({
+  product,
+  userId,
+  removeFromWishlist,
+}) => {
   const navigate = useNavigate();
+  const [isFavorited, setIsFavorited] = useState(false);
+  const [isAddedToCart, setIsAddedToCart] = useState(false);
+
+  useEffect(() => {
+    const fetchWishlist = async () => {
+      try {
+        const response = await axios.get(`${baseUrl}/wishlist/${userId}`);
+        const wishlistProductIds = response.data.map(
+          (item: any) => item.productId
+        );
+
+        // Check if the current product is in the wishlist
+        if (wishlistProductIds.includes(product.id)) {
+          setIsFavorited(true);
+        }
+      } catch (error) {
+        console.error("Failed to fetch wishlist:", error);
+      }
+    };
+
+    fetchWishlist();
+  }, [userId, product.id]);
+
+  // Handle adding/removing the product from the wishlist
+  const handleFavoriteClick = async () => {
+    try {
+      if (isFavorited) {
+        // Remove product from wishlist
+        const response = await axios.delete(
+          `${baseUrl}/wishlist/${userId}/${product.id}`
+        );
+        removeFromWishlist(product.id);
+        toast.success(response.data.message);
+      } else {
+        // Add product to wishlist
+        const response = await axios.post(`${baseUrl}/wishlist`, {
+          userId,
+          productId: product.id,
+        });
+        toast.success(response.data.message);
+      }
+
+      setIsFavorited(!isFavorited);
+    } catch (error) {
+      console.error("Failed to update wishlist:", error);
+    }
+  };
+
+  const handleAddToCart = async () => {
+    try {
+      const user_d = userId;
+      const quantity = 1;
+
+      const response = await axios.post(`${baseUrl}/cart/add`, {
+        userId: user_d,
+        productId: product.id,
+        quantity,
+        color: product.colors[0]?.name ?? "N/A",
+        size: product.size[0] ?? "N/A",
+      });
+
+      toast.success(response.data.message);
+      setIsAddedToCart(true);
+    } catch (error) {
+      console.error("Error adding item to cart:", error);
+      alert("There was an error adding the item to your cart.");
+    }
+  };
+  const handleRemoveFromCart = async (pId: number) => {
+    toast.error("Already Added in Your Cart");
+  };
+
   return (
     <Card sx={{ borderRadius: "36px", position: "relative" }}>
       <CardMedia
@@ -40,6 +118,8 @@ const ProductComponent: React.FC<ProductProps> = ({ product }) => {
         image={product.images?.[0]?.fullPath ?? tshirt}
         title={product.title}
       />
+
+      {/* Favorite Icon */}
       <Box
         sx={{
           position: "absolute",
@@ -50,10 +130,17 @@ const ProductComponent: React.FC<ProductProps> = ({ product }) => {
           padding: "5px",
           justifyContent: "center",
           alignItems: "center",
+          cursor: "pointer",
         }}
+        onClick={handleFavoriteClick}
       >
-        <FavoriteBorderIcon style={{ color: "black", fontSize: 34 }} />
+        {isFavorited ? (
+          <FavoriteIcon style={{ color: "red", fontSize: 34 }} />
+        ) : (
+          <FavoriteBorderIcon style={{ color: "black", fontSize: 34 }} />
+        )}
       </Box>
+
       <Box
         sx={{
           position: "absolute",
@@ -68,10 +155,19 @@ const ProductComponent: React.FC<ProductProps> = ({ product }) => {
           justifyContent: "center",
           alignItems: "start",
         }}
+        onClick={() =>
+          isAddedToCart ? handleRemoveFromCart(product.id) : handleAddToCart()
+        }
       >
-        <AddCircleOutlineOutlinedIcon
-          style={{ color: "black", fontSize: 34 }}
-        />
+        {isAddedToCart ? (
+          <RemoveCircleOutlineOutlinedIcon
+            style={{ color: "black", fontSize: 34 }}
+          />
+        ) : (
+          <AddCircleOutlineOutlinedIcon
+            style={{ color: "black", fontSize: 34 }}
+          />
+        )}
       </Box>
 
       <Box sx={{ padding: "12px 20px" }}>

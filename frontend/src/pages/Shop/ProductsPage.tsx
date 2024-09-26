@@ -1,4 +1,3 @@
-
 import {
   Box,
   Button,
@@ -23,12 +22,15 @@ import { Carousel } from "react-responsive-carousel";
 import axios from "axios";
 import baseUrl from "../../config/apiConfig";
 import { Container } from "@mui/system";
+import { useSelector } from "react-redux";
 
 interface Product {
   id: number;
   title: string;
   description: string;
   image: string;
+  colors: { name: string; code: string }[];
+  size: string[];
   images: {
     fullPath: string;
     id: number;
@@ -45,14 +47,18 @@ interface Category {
 }
 
 function ProductsPage() {
+  const currentUser = useSelector((state: any) => state?.Auth?.currentUser);
+
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
-  const [selectedCategoryName, setSelectedCategoryName] = useState<string | null>(null);
+  const [selectedCategoryName, setSelectedCategoryName] = useState<
+    string | null
+  >(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState<boolean>(false);
-  const [sortOrder, setSortOrder] = useState<string>(""); // State for sorting
+  const [sortOrder, setSortOrder] = useState<string>("");
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -68,7 +74,9 @@ function ProductsPage() {
 
     const fetchCategories = async () => {
       try {
-        const response = await axios.get<Category[]>(`${baseUrl}/subcategories`);
+        const response = await axios.get<Category[]>(
+          `${baseUrl}/subcategories`
+        );
         setCategories(response.data);
       } catch (error) {
         console.error("Error fetching categories", error);
@@ -81,7 +89,14 @@ function ProductsPage() {
 
   if (loading) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+        }}
+      >
         <CircularProgress />
       </Box>
     );
@@ -103,15 +118,22 @@ function ProductsPage() {
       case "priceHighToLow":
         return [...filteredProducts].sort((a, b) => b.price - a.price);
       case "nameAtoZ":
-        return [...filteredProducts].sort((a, b) => a.title.localeCompare(b.title));
+        return [...filteredProducts].sort((a, b) =>
+          a.title.localeCompare(b.title)
+        );
       case "nameZtoA":
-        return [...filteredProducts].sort((a, b) => b.title.localeCompare(a.title));
+        return [...filteredProducts].sort((a, b) =>
+          b.title.localeCompare(a.title)
+        );
       default:
         return filteredProducts;
     }
   };
 
-  const handleCategorySelect = (categoryId: number | null, categoryName: string) => {
+  const handleCategorySelect = (
+    categoryId: number | null,
+    categoryName: string
+  ) => {
     setSelectedCategory(categoryId);
     setSelectedCategoryName(categoryName);
     setSidebarOpen(false);
@@ -121,6 +143,7 @@ function ProductsPage() {
     setSelectedCategory(null);
     setSelectedCategoryName(null);
   };
+  const removeFromWishlist = (productId: number) => {};
 
   return (
     <>
@@ -143,25 +166,53 @@ function ProductsPage() {
               infiniteLoop={true}
               emulateTouch={true}
             >
-              <img src={productsCover} alt="Event" style={{ objectFit: "cover" }} />
-              <img src={productsCover} alt="Event" style={{ objectFit: "cover" }} />
-              <img src={productsCover} alt="Event" style={{ objectFit: "cover" }} />
+              <img
+                src={productsCover}
+                alt="Event"
+                style={{ objectFit: "cover" }}
+              />
+              <img
+                src={productsCover}
+                alt="Event"
+                style={{ objectFit: "cover" }}
+              />
+              <img
+                src={productsCover}
+                alt="Event"
+                style={{ objectFit: "cover" }}
+              />
             </Carousel>
           </Box>
         </Grid>
       </Grid>
 
       {/* Sidebar Filter */}
-      <Drawer anchor="left" open={sidebarOpen} onClose={() => setSidebarOpen(false)}>
-        <Box role="presentation" sx={{ width: 250, padding: 2 }} onClick={() => setSidebarOpen(false)}>
-          <Typography variant="h6">Filter by Category</Typography>
+      <Drawer
+        anchor="left"
+        open={sidebarOpen}
+        onClose={() => setSidebarOpen(false)}
+      >
+        <Box
+          sx={{ width: 200, padding: 2 }}
+          onClick={() => setSidebarOpen(false)}
+        >
+          <Typography textAlign={"center"} variant="h6">
+            Filter by Category
+          </Typography>
           <List>
             <ListItem button onClick={() => handleCategorySelect(null, "All")}>
-              <ListItemText primary="All" />
+              <ListItemText sx={{ textAlign: "center" }} primary="All" />
             </ListItem>
             {categories.map((category) => (
-              <ListItem button key={category.id} onClick={() => handleCategorySelect(category.id, category.name)}>
-                <ListItemText primary={category.name} />
+              <ListItem
+                button
+                key={category.id}
+                onClick={() => handleCategorySelect(category.id, category.name)}
+              >
+                <ListItemText
+                  sx={{ textAlign: "center" }}
+                  primary={category.name}
+                />
               </ListItem>
             ))}
           </List>
@@ -172,19 +223,49 @@ function ProductsPage() {
         <Grid container direction="column" rowSpacing={2} flexShrink={0}>
           <Grid item xs={12}>
             <Grid container direction="column" flexShrink={0}>
-              <Grid item xs={12} display="flex" justifyContent="center" alignItems="center" sx={{ marginBottom: { xs: "10px", sm: "15px", md: "20px" } }}>
-                <Typography sx={{ fontFamily: "Syne", fontSize: { xs: "16px", sm: "24px", md: "32px" }, fontWeight: 700, lineHeight: "120%", textAlign: "center", color: "#000000" }}>
+              <Grid
+                item
+                xs={12}
+                display="flex"
+                justifyContent="center"
+                alignItems="center"
+                sx={{ marginBottom: { xs: "10px", sm: "15px", md: "20px" } }}
+              >
+                <Typography
+                  sx={{
+                    fontFamily: "Syne",
+                    fontSize: { xs: "16px", sm: "24px", md: "32px" },
+                    fontWeight: 700,
+                    lineHeight: "120%",
+                    textAlign: "center",
+                    color: "#000000",
+                  }}
+                >
                   Buy LYFERS Merchandise
                 </Typography>
               </Grid>
               <Grid item>
                 {/* Filters Button with Selected Category Name */}
                 <Box display="flex" alignItems="center" sx={{ margin: 2 }}>
-                  <Button variant="outlined" size="large" onClick={() => setSidebarOpen(true)}>Filters</Button>
+                  <Button
+                    variant="outlined"
+                    size="large"
+                    onClick={() => setSidebarOpen(true)}
+                  >
+                    Filters
+                  </Button>
                   {selectedCategoryName && (
-                    <Box display="flex" alignItems="center" sx={{ marginLeft: 2 }}>
-                      <Typography variant="body1">{selectedCategoryName}</Typography>
-                      <IconButton onClick={clearFilter}><CloseIcon /></IconButton>
+                    <Box
+                      display="flex"
+                      alignItems="center"
+                      sx={{ marginLeft: 2 }}
+                    >
+                      <Typography variant="body1">
+                        {selectedCategoryName}
+                      </Typography>
+                      <IconButton onClick={clearFilter}>
+                        <CloseIcon />
+                      </IconButton>
                     </Box>
                   )}
                   {/* Sorting Dropdown */}
@@ -192,11 +273,17 @@ function ProductsPage() {
                     value={sortOrder}
                     onChange={(e) => setSortOrder(e.target.value)}
                     displayEmpty
-                    sx={{ marginLeft: 'auto', minWidth: 150 }}
+                    sx={{ marginLeft: "auto", minWidth: 150 }}
                   >
-                    <MenuItem value="" disabled>Sorting</MenuItem>
-                    <MenuItem value="priceLowToHigh">Price: Low to High</MenuItem>
-                    <MenuItem value="priceHighToLow">Price: High to Low</MenuItem>
+                    <MenuItem value="" disabled>
+                      Sorting
+                    </MenuItem>
+                    <MenuItem value="priceLowToHigh">
+                      Price: Low to High
+                    </MenuItem>
+                    <MenuItem value="priceHighToLow">
+                      Price: High to Low
+                    </MenuItem>
                     <MenuItem value="nameAtoZ">Name: A to Z</MenuItem>
                     <MenuItem value="nameZtoA">Name: Z to A</MenuItem>
                   </Select>
@@ -211,11 +298,18 @@ function ProductsPage() {
               {sortedProducts().length > 0 ? (
                 sortedProducts().map((product) => (
                   <Grid item xs={12} sm={6} md={3} key={product.id}>
-                    <ProductComponent product={product} />
+                    <ProductComponent
+                      product={product}
+                      userId={currentUser?.user?.id ?? 0}
+                      removeFromWishlist={removeFromWishlist}
+                    />
                   </Grid>
                 ))
               ) : (
-                <Typography variant="h6" sx={{ width: "100%", textAlign: "center" }}>
+                <Typography
+                  variant="h6"
+                  sx={{ width: "100%", textAlign: "center" }}
+                >
                   No records found
                 </Typography>
               )}
@@ -228,4 +322,3 @@ function ProductsPage() {
 }
 
 export default ProductsPage;
-
