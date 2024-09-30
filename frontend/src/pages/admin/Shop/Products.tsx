@@ -5,7 +5,8 @@ import {
   Grid,
   Paper,
   TextField,
-  Typography,InputAdornment, IconButton 
+  Typography,InputAdornment, IconButton, 
+  CircularProgress
 } from "@mui/material";
 import { Box } from "@mui/system";
 import axios from "axios";
@@ -59,11 +60,21 @@ export default function Products() {
   );
 
   if (loading) {
-    return <Typography>Loading...</Typography>;
+    return (
+      <Grid container justifyContent="center" alignItems="center" height="100vh">
+        <CircularProgress />
+      </Grid>
+    );
   }
 
   if (error) {
-    return <Typography>{error}</Typography>;
+    return (
+      <Grid container justifyContent="center" alignItems="center" height="100vh">
+        <Typography variant="h6" color="error">
+          {error}
+        </Typography>
+      </Grid>
+    );
   }
   return (
     <Grid

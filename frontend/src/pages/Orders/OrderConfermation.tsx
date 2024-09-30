@@ -1,9 +1,10 @@
 import { Card, CardContent, Typography, Grid, Container, Button } from '@mui/material';
 import { Box } from '@mui/system';
 import React from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 export default function OrderConfermation() {
+    const navigate = useNavigate();
     const location = useLocation();
     const { state } = location;
     const {
@@ -15,16 +16,16 @@ export default function OrderConfermation() {
             { name: 'Product 1', quantity: 1, price: 19.99 },
             { name: 'Product 2', quantity: 2, price: 29.99 },
         ],
-        subtotal = 0,
+        subtotal = 20,
         discount= 0,
-        shippingCost = 0,
-        tax = 0,
-        grandTotal = 0,
+        shippingCost = 5,
+        tax = 5,
+        grandTotal = 30,
     } = state || {};
 
     return (
-        <Box width="100%" sx={{ flexGrow: 1, backgroundColor: '#FAFAFA' }}>
-            <Grid container width="100%" direction="column" padding={{ xs: 2, sm: 3, md: 4 }} rowSpacing={2}>
+        <Box width="100%">
+            <Grid container width="100%" direction="column" padding={{ xs: 2, sm: 3, md: 4 }} rowSpacing={2} sx={{ marginBottom: "40px" }}>
                 <Grid
                     item
                     xs={12}
@@ -248,7 +249,9 @@ export default function OrderConfermation() {
                                 </Grid>
                             </Box>
                             <Box mt={3} textAlign="center">
-                                <Button variant="contained" fullWidth color="primary">
+                                <Button variant="contained" fullWidth color="primary"
+                                onClick={() => navigate("/products")} 
+                                >
                                     Continue Shopping
                                 </Button>
                             </Box>

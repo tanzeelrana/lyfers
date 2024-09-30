@@ -49,7 +49,8 @@ app.use('/groups', groupRoutes);
 const colorRoutes = require('./routes/colorRoutes');
 app.use('/colors', colorRoutes);
 
-
+const orderRoutes = require('./routes/orderRoutes');
+app.use('/orders', orderRoutes);
 
 
     app.listen(3003,() =>{

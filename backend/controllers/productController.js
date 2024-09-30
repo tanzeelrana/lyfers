@@ -65,7 +65,8 @@ exports.createProduct = [
         await ProductImage.bulkCreate(images);
       }
 
-      res.status(201).json(newProduct);
+      res.status(201).json({ message: "Product created successfully" ,product:newProduct});
+
     } catch (error) {
       res.status(500).json({ error: "Failed to create product" });
     }
@@ -96,6 +97,7 @@ exports.getAllProducts = async (req, res) => {
           as: "images",
         },
       ],
+      order: [['createdAt', 'DESC']], 
     });
     res.status(200).json(products);
   } catch (error) {
@@ -251,7 +253,7 @@ exports.updateProduct = [
         ],
       });
 
-      res.status(200).json(updatedProduct);
+      res.status(200).json({ message: "Product updated successfully" ,product:updatedProduct});
     } catch (error) {
       res.status(500).json({ error: "Failed to update product" });
     }

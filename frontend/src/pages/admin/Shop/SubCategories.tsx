@@ -14,6 +14,7 @@ import {
   Select,
   MenuItem,
   InputLabel,
+  CircularProgress,
 } from "@mui/material";
 import { Box } from "@mui/system";
 import axios from "axios";
@@ -138,13 +139,17 @@ export default function SubCategories() {
 
       if (editMode && currentSubCategoryId !== null) {
         // Update existing subcategory
-        await axios.put(
+        const response =  await axios.put(
           `${baseUrl}/subcategories/${currentSubCategoryId}`,
           subCategoryData
         );
+        toast.success( response.data.message);
+
       } else {
         // Create new subcategory
-        await axios.post(`${baseUrl}/subcategories`, subCategoryData);
+        const response =  await axios.post(`${baseUrl}/subcategories`, subCategoryData);
+        toast.success( response.data.message);
+
       }
 
       handleCloseModal();
@@ -189,11 +194,31 @@ export default function SubCategories() {
   };
 
   if (loading) {
-    return <Typography>Loading...</Typography>;
+    return (
+      <Grid
+        container
+        justifyContent="center"
+        alignItems="center"
+        height="100vh"
+      >
+        <CircularProgress />
+      </Grid>
+    );
   }
 
   if (error) {
-    return <Typography>{error}</Typography>;
+    return (
+      <Grid
+        container
+        justifyContent="center"
+        alignItems="center"
+        height="100vh"
+      >
+        <Typography variant="h6" color="error">
+          {error}
+        </Typography>
+      </Grid>
+    );
   }
 
   return (

@@ -37,6 +37,9 @@ import SubCategories from "../pages/admin/Shop/SubCategories";
 import Colors from "../pages/admin/Shop/Colors";
 import AllEvents from "../pages/admin/Events/AllEvents";
 import AdminDashboard from "../pages/admin/Dashboard/AdminDashboard";
+import Wishlist from "../pages/Wishlist/Wishlist";
+import AdminOrdersPage from "../pages/admin/Orders/OrdersPage";
+
 
 const routes = [
   {
@@ -44,7 +47,6 @@ const routes = [
     component: <Login />,
     ispublic: false,
     isAuth: true,
-
   },
   {
     path: "/",
@@ -74,17 +76,20 @@ const routes = [
   {
     path: "/event-detail/:id",
     component: <EventDetail />,
-    ispublic: true,
+    ispublic: false,
+    addlayout: false,
   },
   {
     path: "/order-confermation",
     component: <OrderConfermation />,
-    ispublic: true,
+    ispublic: false,
+    addlayout: false,
   },
   {
     path: "/payment-detail",
     component: <PaymentDetail />,
-    ispublic: true,
+    ispublic: false,
+    addlayout: false,
   },
   {
     path: "/products",
@@ -95,30 +100,32 @@ const routes = [
     path: "/productDetail/:id",
     component: <ProductDetail />,
     ispublic: false,
+    addlayout: false,
   },
   {
     path: "/cart",
     component: <CartPage />,
-    ispublic: true,
+    ispublic: false,
+    addlayout: false,
   },
   {
     path: "/shippingInfo",
     component: <ShippinginfoPage />,
-    ispublic: true,
+    ispublic: false,
+    addlayout: false,
   },
   {
     path: "/register/:id?",
     component: <Signup />,
     ispublic: false,
     isAuth: true,
-
   },
   {
     path: "/forgotPassword",
     component: <ForgotPassword />,
     ispublic: false,
     isAuth: true,
- },
+  },
   {
     path: "/services",
     component: <Services />,
@@ -130,19 +137,22 @@ const routes = [
     ispublic: false,
   },
   {
-    path:"/dashboard",
+    path: "/dashboard",
     component: <Dashboard />,
     ispublic: false,
+    addlayout: true,
   },
   {
-    path:"/admin/dashboard",
+    path: "/admin/dashboard",
     component: <AdminDashboard />,
     ispublic: false,
+    addlayout: true,
   },
   {
-    path:"/dashboard/orders",
+    path: "/dashboard/orders",
     component: <OrdersPage />,
     ispublic: false,
+    addlayout: true,
   },
   {
     path: "/availableListing",
@@ -206,31 +216,55 @@ const routes = [
     path: "/admin/products",
     component: <Products />,
     ispublic: false,
+    addlayout: true,
   },
   {
     path: "/admin/products/create",
     component: <CreateProductPage />,
     ispublic: false,
+    addlayout: true,
   },
   {
     path: "/admin/sub-categories",
     component: <SubCategories />,
     ispublic: false,
+    addlayout: true,
   },
   {
     path: "/admin/colors",
     component: <Colors />,
     ispublic: false,
+    addlayout: true,
   },
   {
     path: "/admin/events",
     component: <AllEvents />,
     ispublic: false,
+    addlayout: true,
   },
   {
     path: "/admin/products/edit/:productId",
     component: <CreateProductPage />,
     ispublic: false,
+    addlayout: true,
+  },
+  {
+    path: "/dashboard/wishlist",
+    component: <Wishlist />,
+    ispublic: false,
+    addlayout: true,
+  },
+  {
+    path: "/dashboard/orders",
+    component: <OrdersPage />,
+    ispublic: false,
+    addlayout: true,
+  },
+  {
+    path: "/admin/orders",
+    component: <AdminOrdersPage />,
+    ispublic: false,
+    addlayout: true,
   },
 
   { path: "*", component: <PageNotFound />, ispublic: true },

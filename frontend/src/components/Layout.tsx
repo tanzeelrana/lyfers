@@ -3,7 +3,8 @@ import Box from "@mui/material/Box";
 import { Button, Grid, Typography } from "@mui/material";
 import "./styles.scss";
 import { Container } from "@mui/system";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 
 
 interface Props {
@@ -14,7 +15,13 @@ interface Props {
 export default function Layout(props: Props) {
   const { window, children } = props;
   const navigate = useNavigate();
+  const location = useLocation();
 
+
+  const [activePath, setActivePath] = useState<string>("");
+  useEffect(() => {
+    setActivePath(location.pathname);
+  }, [location]);
   return (
     <Container maxWidth="xl">
     <Box>
@@ -39,7 +46,8 @@ export default function Layout(props: Props) {
               onClick={() => navigate("/dashboard")}
               sx={{
                 fontFamily: "Outfit",
-                textTransform:'capitalize'
+                textTransform: 'capitalize',
+                fontWeight: activePath === "/dashboard" ? "700" : "normal", 
               }}
             >
               Dashboard
@@ -50,29 +58,35 @@ export default function Layout(props: Props) {
               onClick={() => navigate("/dashboard")}
               sx={{
                 fontFamily: "Outfit",
-                textTransform:'capitalize'
+                textTransform:'capitalize',
+                fontWeight: activePath === "/dashboard" ? "700" : "normal", 
+
               }}
             >
               Account Detail
             </Button>
             </Box>
             <Box>
-            <Button
-              onClick={() => navigate("/dashboard")}
-              sx={{
-                fontFamily: "Outfit",
-                textTransform:'capitalize'
-              }}
-            >
-              Wishlist
-            </Button>
+            <Box>
+                <Button
+                  onClick={() => navigate("/dashboard/wishlist")}
+                  sx={{
+                    fontFamily: "Outfit",
+                    textTransform: 'capitalize',
+                    fontWeight: activePath === "/dashboard/wishlist" ? "700" : "normal", 
+                  }}
+                >
+                  Wishlist
+                </Button>
+              </Box>
             </Box>
             <Box>
             <Button
-              onClick={() => navigate("/dashboard")}
+              onClick={() => navigate("/dashboard/orders")}
               sx={{
                 fontFamily: "Outfit",
-                textTransform:'capitalize'
+                textTransform:'capitalize',
+                fontWeight: activePath === "/dashboard/orders" ? "700" : "normal", 
               }}
             >
               Orders
@@ -83,7 +97,8 @@ export default function Layout(props: Props) {
               onClick={() => navigate("/dashboard")}
               sx={{
                 fontFamily: "Outfit",
-                textTransform:'capitalize'
+                textTransform:'capitalize',
+                fontWeight: activePath === "/dashboard" ? "700" : "normal", 
               }}
             >
               Payment Details
@@ -94,14 +109,13 @@ export default function Layout(props: Props) {
               onClick={() => navigate("/dashboard")}
               sx={{
                 fontFamily: "Outfit",
-                textTransform:'capitalize'
+                textTransform:'capitalize',
+                fontWeight: activePath === "/dashboard" ? "700" : "normal", 
               }}
             >
               Logout
             </Button>
             </Box>
-          
-            
           </Box>
         </Grid>
         <Grid item xs={12} md={9}>

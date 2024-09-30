@@ -13,6 +13,7 @@ import {
   CardMedia,
   CardContent,
   CardActions,
+  CircularProgress,
 } from "@mui/material";
 import ImageGallery from "react-image-gallery";
 import { useEffect, useState } from "react";
@@ -91,7 +92,26 @@ const ProductDetail = () => {
   }, []);
 
   if (!productDetailItem) {
-    return <Typography>Loading...</Typography>;
+    return (
+      <Grid
+        container
+        justifyContent="center"
+        alignItems="center"
+        height="100vh"
+      >
+        <Typography
+          sx={{
+            fontFamily: "Outfit",
+            fontSize: "24px",
+            fontWeight: 600,
+            textAlign: "center",
+            color: "#000",
+          }}
+        >
+          Product Not Found
+        </Typography>{" "}
+      </Grid>
+    );
   }
   const handleColorChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSelectedColor(event.target.value);
@@ -123,8 +143,8 @@ const ProductDetail = () => {
         userId,
         productId: productDetailItem.id,
         quantity,
-       color: selectedColor,
-       size: selectedSize,
+        color: selectedColor,
+        size: selectedSize,
       });
 
       toast.success("Item added to cart successfully!");
@@ -133,7 +153,7 @@ const ProductDetail = () => {
       alert("There was an error adding the item to your cart.");
     }
   };
-  
+
   return (
     <>
       <Box padding={4}>

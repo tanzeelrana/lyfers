@@ -88,6 +88,7 @@ const ProductComponent: React.FC<ProductProps> = ({
   };
 
   const handleAddToCart = async () => {
+    
     try {
       const user_d = userId;
       const quantity = 1;
@@ -97,7 +98,7 @@ const ProductComponent: React.FC<ProductProps> = ({
         productId: product.id,
         quantity,
         color: product.colors[0]?.name ?? "N/A",
-        size: product.size[0] ?? "N/A",
+        size: product?.size[2]+''+product?.size[3] ?? "N/A",
       });
 
       toast.success(response.data.message);

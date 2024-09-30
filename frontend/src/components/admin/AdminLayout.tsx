@@ -48,6 +48,18 @@ export default function Layout(props: Props) {
                   Admin Dashboard
                 </Button>
               </Box>
+              <Box>
+                <Button
+                  onClick={() => navigate("/admin/orders")}
+                  sx={{
+                    fontFamily: "Outfit",
+                    textTransform: 'capitalize',
+                    fontWeight: activePath === "/admin/orders" ? "700" : "normal", 
+                  }}
+                >
+                  Orders
+                </Button>
+              </Box>
 
               <Box>
                 <Button
@@ -59,6 +71,18 @@ export default function Layout(props: Props) {
                   }}
                 >
                   Products
+                </Button>
+              </Box>
+              <Box>
+                <Button
+                  onClick={() => navigate("/dashboard/wishlist")}
+                  sx={{
+                    fontFamily: "Outfit",
+                    textTransform: 'capitalize',
+                    fontWeight: activePath === "/dashboard/wishlist" ? "700" : "normal", 
+                  }}
+                >
+                  Wishlist
                 </Button>
               </Box>
 

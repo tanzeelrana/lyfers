@@ -18,6 +18,7 @@ import {
   TableRow,
   Paper,
   Snackbar,
+  CircularProgress,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import axios from "axios";
@@ -106,13 +107,17 @@ export default function Colors() {
 
       if (editMode && currentColorId !== null) {
         // Update existing color
-        await axios.put(`${baseUrl}/colors/${currentColorId}`, colorData);
+       const response = await axios.put(`${baseUrl}/colors/${currentColorId}`, colorData);
+       toast.success( response.data.message);
       } else {
         // Create new color
-        await axios.post(`${baseUrl}/colors`, colorData);
+      const response = await axios.post(`${baseUrl}/colors`, colorData);
+      toast.success( response.data.message);
+
       }
 
       handleCloseModal();
+
       // Refetch colors after creating or updating
       const response = await axios.get<Color[]>(`${baseUrl}/colors`);
       setColors(response.data);
@@ -146,7 +151,31 @@ export default function Colors() {
   };
 
   if (loading) {
-    return <Typography>Loading...</Typography>;
+    return (
+      <Grid
+        container
+        justifyContent="center"
+        alignItems="center"
+        height="100vh"
+      >
+        <CircularProgress />
+      </Grid>
+    );
+  }
+
+  if (error) {
+    return (
+      <Grid
+        container
+        justifyContent="center"
+        alignItems="center"
+        height="100vh"
+      >
+        <Typography variant="h6" color="error">
+          {error}
+        </Typography>
+      </Grid>
+    );
   }
 
   return (

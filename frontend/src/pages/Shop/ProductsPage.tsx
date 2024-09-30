@@ -89,21 +89,30 @@ function ProductsPage() {
 
   if (loading) {
     return (
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          height: "100vh",
-        }}
+      <Grid
+        container
+        justifyContent="center"
+        alignItems="center"
+        height="100vh"
       >
         <CircularProgress />
-      </Box>
+      </Grid>
     );
   }
 
   if (error) {
-    return <Typography>{error}</Typography>;
+    return (
+      <Grid
+        container
+        justifyContent="center"
+        alignItems="center"
+        height="100vh"
+      >
+        <Typography variant="h6" color="error">
+          {error}
+        </Typography>
+      </Grid>
+    );
   }
 
   const filteredProducts = selectedCategory

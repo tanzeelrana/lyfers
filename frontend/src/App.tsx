@@ -36,39 +36,48 @@ const App = () => {
 
   return (
     <div>
-      <BrowserRouter>
-        <Routes>
-          {routes.map((route, i) => {
-            return (
-              <Route
-                key={i}
-                path={route.path}
-                element={
-                  !route.ispublic ? (
-                    !route.isAuth ? (
-                      <PrivateRoute>
-                        <FrontLayout>
-                          {userDetails?.role === "admin" ? (
+     <BrowserRouter>
+      <Routes>
+        {routes.map((route, i) => {
+          return (
+            <Route
+              key={i}
+              path={route.path}
+              element={
+                !route.ispublic ? (
+                  !route.isAuth ? (
+                    <PrivateRoute>
+                      <FrontLayout>
+                        {userDetails?.role === "admin" ? (
+                          route.addlayout ? (
                             <AdminLayout>{route.component}</AdminLayout>
                           ) : (
-                            <Layout>{route.component}</Layout>
-                          )}
-                        </FrontLayout>
-                      </PrivateRoute>
-                    ) : (
-                      <PrivateRoute>{ route.component}</PrivateRoute>
-                    )
+                            route.component
+                          )
+                        ) : 
+                        
+                        route.addlayout ? (
+                          <Layout>{route.component}</Layout>
+                        ) : (
+                          route.component
+                        )
+                       }
+                      </FrontLayout>
+                    </PrivateRoute>
                   ) : (
-                    <PublicRoute>
-                      <FrontLayout>{route.component}</FrontLayout>
-                    </PublicRoute>
+                    <PrivateRoute>{route.component}</PrivateRoute>
                   )
-                }
-              />
-            );
-          })}
-        </Routes>
-      </BrowserRouter>
+                ) : (
+                  <PublicRoute>
+                    <FrontLayout>{route.component}</FrontLayout>
+                  </PublicRoute>
+                )
+              }
+            />
+          );
+        })}
+      </Routes>
+    </BrowserRouter>
     </div>
   );
 };

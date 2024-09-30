@@ -80,7 +80,8 @@ exports.createSubcategory = [
     const { name, categoryId } = req.body;
     try {
       const subcategory = await Subcategory.create({ name, categoryId });
-      res.status(201).json(subcategory);
+      res.status(201).json({ message: "Category created successfully" ,subcategory:subcategory});
+
     } catch (error) {
       res.status(500).json({ error: 'Failed to create subcategory' });
     }
@@ -103,7 +104,7 @@ exports.updateSubcategory = [
       subcategory.name = name || subcategory.name;
       subcategory.categoryId = categoryId || subcategory.categoryId;
       await subcategory.save();
-      res.status(200).json(subcategory);
+      res.status(200).json({ message: "Category updated successfully" ,subcategory:subcategory});
     } catch (error) {
       res.status(500).json({ error: 'Failed to update subcategory' });
     }

@@ -61,12 +61,13 @@ const CartPage: React.FC = () => {
         const items = response.data.CartItems.map((item: any) => ({
           id: item.id,
           image:
-            item.Product.images[0].fullPath ||
+            item.Product.images[0]?.fullPath ??
             "https://via.placeholder.com/150",
+          productId: item.Product.id,
           name: item.Product.title,
           price: parseFloat(item.Product.price),
           quantity: item.quantity,
-          size: item.size,
+          size: item.size ?? "N/A",
           color: item.color || "N/A",
           selected: false,
         }));
@@ -121,7 +122,7 @@ const CartPage: React.FC = () => {
       setCartItems((prevItems) => prevItems.filter((item) => item.id !== id));
       if (response.status === 200) {
         setCartItems((prevItems) => prevItems.filter((item) => item.id !== id));
-        toast.success("Product removed from cart successfully.");
+        toast.success(response.data.message);
       }
     } catch (error) {
       toast.error("Failed to remove item from the cart.");
@@ -135,6 +136,19 @@ const CartPage: React.FC = () => {
 
   // Check if any items are selected
   const hasSelectedItems = cartItems.some((item) => item.selected);
+
+  const handleContinueToPayment = () => {
+    const selectedItems = cartItems.filter((item) => item.selected);
+    if (selectedItems.length > 0) {
+      navigate("/shippingInfo", {
+        state: {
+          cartItems: selectedItems,
+          currentUser: currentUser,
+          subtotal: subtotal,
+        },
+      });
+    }
+  };
 
   return (
     <Container maxWidth={"xl"}>
@@ -156,7 +170,6 @@ const CartPage: React.FC = () => {
               alignItems="center"
               sx={{
                 marginBottom: { xs: "10px", sm: "15px", md: "20px" },
-                // padding: { xs: "8px", sm: "12px", md: "16px" },
               }}
             >
               <Typography
@@ -411,7 +424,7 @@ const CartPage: React.FC = () => {
                         type="button"
                         disabled={!hasSelectedItems}
                         sx={{ padding: { xs: "10px", sm: "15px" } }}
-                        onClick={() => navigate("/payment-detail")}
+                        onClick={() => handleContinueToPayment()}
                       >
                         {hasSelectedItems
                           ? "Continue to Payment"

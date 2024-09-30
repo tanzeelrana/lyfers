@@ -96,10 +96,15 @@ module.exports = (sequelize, DataTypes) => {
   };
   User.associate = function(models) {
     User.hasMany(models.UserReferralPoints, { foreignKey: 'user_id' });
+    User.hasMany(models.Order, {
+      foreignKey: 'userId',
+      as: 'orders',
+    });
     User.belongsToMany(models.Product, {
     through: 'Wishlist',
     as: 'wishlist',
     foreignKey: 'userId'
+    
   });
   };
 

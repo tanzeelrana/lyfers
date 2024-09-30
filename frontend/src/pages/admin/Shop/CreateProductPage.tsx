@@ -179,20 +179,20 @@ export default function CreateProductPage() {
     });
     try {
       if (productId) {
-        await axios.put(`${baseUrl}/products/${productId}`, formData, {
+        const response = await axios.put(`${baseUrl}/products/${productId}`, formData, {
           headers: {
             "Content-Type": "multipart/form-data",
           },
         });
-        toast.success("Product Updated successfully!");
+        toast.success( response.data.message);
         navigate("/admin/products");
       } else {
-        await axios.post(`${baseUrl}/products`, formData, {
+        const response = await axios.post(`${baseUrl}/products`, formData, {
           headers: {
             "Content-Type": "multipart/form-data",
           },
         });
-        toast.success("Product created successfully!");
+        toast.success( response.data.message);
         navigate("/admin/products");
       }
     } catch (error) {

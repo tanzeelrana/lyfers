@@ -25,6 +25,8 @@ exports.createColor = [
     try {
       const { name, code } = req.body;
       const color = await Color.create({ name, code });
+      res.status(200).json({ message: "Color Added successfully" ,color:color});
+
       res.status(201).json(color);
     } catch (error) {
       res.status(500).json({ error: 'Failed to create color' });
@@ -35,8 +37,9 @@ exports.createColor = [
 // Get all colors
 exports.getAllColors = async (req, res) => {
   try {
-    const colors = await Color.findAll();
-    res.status(200).json(colors);
+    const colors = await Color.findAll({
+      order: [['createdAt', 'DESC']],
+    });    res.status(200).json(colors);
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch colors' });
   }
@@ -73,7 +76,7 @@ exports.updateColor = [
       color.name = name || color.name;
       color.code = code || color.code;
       await color.save();
-      res.status(200).json(color);
+      res.status(200).json({ message: "Color updated successfully" ,color:color});
     } catch (error) {
       res.status(500).json({ error: 'Failed to update color' });
     }
