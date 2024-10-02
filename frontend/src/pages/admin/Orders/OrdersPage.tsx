@@ -301,7 +301,7 @@ function OrdersPage() {
                             </Box>
                           </TableCell>
                           <TableCell>
-                            <Box>
+                            <Box maxWidth={200}>
                               <Typography
                                 sx={{
                                   fontFamily: "Outfit",
@@ -335,7 +335,7 @@ function OrdersPage() {
                                   },
                                 }}
                               >
-                               created at:  {new Date(order.createdAt).toLocaleDateString(
+                                {new Date(order.createdAt).toLocaleDateString(
                                   "en-US",
                                   {
                                     year: "numeric",

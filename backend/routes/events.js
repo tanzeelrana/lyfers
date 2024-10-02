@@ -9,17 +9,18 @@ const {
     updateEvent,
     deleteEvent,
 } = require('../controllers/eventController');
+const upload = require("../middleware/multerConfig");
 
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, 'public/uploads'); // Save files in the 'public/uploads' directory
-    },
-    filename: (req, file, cb) => {
-        cb(null, Date.now() + path.extname(file.originalname));
-    },
-});
 
-const upload = multer({ storage });
+router.post(
+    "/",
+    (req, res, next) => {
+      req.folder = "events";
+      next();
+    },
+    upload.single("image"),
+    createEvent
+  );
 
 // Get all events
 router.get('/', getAllEvents);
@@ -27,11 +28,13 @@ router.get('/', getAllEvents);
 // Get a single event by ID
 router.get('/:id', getEventById);
 
-// Create a new event
-router.post('/', upload.single('image'), createEvent);
 
 // Update an existing event
-router.put('/:id', updateEvent);
+router.put('/:id',(req, res, next) => {
+    req.folder = "events";
+    next();
+  },
+  upload.single("image"), updateEvent);
 
 // Delete an event
 router.delete('/:id', deleteEvent);

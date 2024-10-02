@@ -23,11 +23,17 @@ module.exports = (sequelize, DataTypes) => {
       image: {
         type: DataTypes.STRING,
         allowNull: true,
+        get() {
+          const imagePath = this.getDataValue('image');
+          return imagePath ? `${process.env.BASE_URL}/uploads/images/events/${imagePath}` : null; 
+        },
       },
+      
       location: {
         type: DataTypes.STRING,
         allowNull: true,
       },
+      
     });
   
     Event.associate = (models) => {

@@ -437,6 +437,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import detailEventCover from '../../assets/images/detailEventCover.png';
 import teamImage from '../../assets/images/teamImage.png';
 import { format } from 'date-fns';
+import { useSelector } from 'react-redux';
 
 
 // Define TypeScript interface for Event
@@ -448,6 +449,7 @@ interface Event {
     id: number;
     title: string;
     date: string;
+    image:string;
     description: string;
     ticketPrice: number;
     location: string;
@@ -456,6 +458,7 @@ interface Event {
 }
 
 export default function EventDetail() {
+    const currentUser = useSelector((state: any) => state?.Auth?.currentUser);
     const navigate = useNavigate();
     const { id } = useParams<{ id: string }>();
     const [event, setEvent] = useState<Event | null>(null);
@@ -481,7 +484,7 @@ export default function EventDetail() {
         return <Typography justifyContent={'center'} display={'flex'} alignItems={'center'}>Loading...</Typography>;
     }
 
-    const { title, date, ticketPrice, description, location, about, category } = event;
+    const { title, date, ticketPrice, description, location, about, category ,image } = event;
 
     // Calculate totals based on count and ticketPrice
     const subtotal = count * ticketPrice;
@@ -498,11 +501,15 @@ export default function EventDetail() {
     const handleContinueToPayment = () => {
         navigate('/payment-detail', {
             state: {
-                count,
-                subtotal,
-                discount,
-                tax,
-                grandTotal
+                orderType:'event',
+                currentUser: currentUser,
+                paymentDetail: {
+                    count :count,
+                    discount: discount,
+                    tax: tax,
+                    subtotal: grandTotal,
+                    total:subtotal - discount + tax ,
+                  },
             }
         });
     };
@@ -523,7 +530,7 @@ export default function EventDetail() {
               flexShrink={0}
               padding={{ xs: 2, sm: 4, md: 6 }}
               sx={{
-                backgroundImage: `url(${detailEventCover})`,
+                backgroundImage: `url(${image ? image : detailEventCover})`,
                 backgroundPosition: "center center",
                 backgroundRepeat: "no-repeat",
                 backgroundSize: "cover",

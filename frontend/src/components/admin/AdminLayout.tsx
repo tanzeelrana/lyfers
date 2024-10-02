@@ -75,14 +75,14 @@ export default function Layout(props: Props) {
               </Box>
               <Box>
                 <Button
-                  onClick={() => navigate("/dashboard/wishlist")}
+                  onClick={() => navigate("/admin/events")}
                   sx={{
                     fontFamily: "Outfit",
                     textTransform: 'capitalize',
-                    fontWeight: activePath === "/dashboard/wishlist" ? "700" : "normal", 
+                    fontWeight: activePath === "/admin/events" ? "700" : "normal", 
                   }}
                 >
-                  Wishlist
+                  Events
                 </Button>
               </Box>
 
