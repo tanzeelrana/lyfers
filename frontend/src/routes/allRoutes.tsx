@@ -39,6 +39,10 @@ import AllEvents from "../pages/admin/Events/AllEvents";
 import AdminDashboard from "../pages/admin/Dashboard/AdminDashboard";
 import Wishlist from "../pages/Wishlist/Wishlist";
 import AdminOrdersPage from "../pages/admin/Orders/OrdersPage";
+import EventsForm from "../pages/admin/Events/EventsForm";
+import CheckoutPage from "../pages/PaymentDetail/CheckoutPage";
+import Testimonials from "../pages/admin/Testimonials/Testimonials";
+import Posts from "../pages/admin/Posts/Posts";
 
 
 const routes = [
@@ -237,8 +241,32 @@ const routes = [
     addlayout: true,
   },
   {
+    path: "/admin/testimonials",
+    component: <Testimonials />,
+    ispublic: false,
+    addlayout: true,
+  },
+  {
+    path: "/admin/posts",
+    component: <Posts />,
+    ispublic: false,
+    addlayout: true,
+  },
+  {
     path: "/admin/events",
     component: <AllEvents />,
+    ispublic: false,
+    addlayout: true,
+  },
+  {
+    path: "/admin/events/create",
+    component: <EventsForm />,
+    ispublic: false,
+    addlayout: true,
+  },
+  {
+    path: "/admin/events/edit/:eventId",
+    component: <EventsForm />,
     ispublic: false,
     addlayout: true,
   },
@@ -263,6 +291,12 @@ const routes = [
   {
     path: "/admin/orders",
     component: <AdminOrdersPage />,
+    ispublic: false,
+    addlayout: true,
+  },
+  {
+    path: "/payment",
+    component: <CheckoutPage />,
     ispublic: false,
     addlayout: true,
   },

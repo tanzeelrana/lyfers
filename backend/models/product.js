@@ -36,7 +36,12 @@ module.exports = (sequelize, DataTypes) => {
     subcategoryId: {
       type: DataTypes.INTEGER,
       allowNull: true,
-    }
+    },
+    is_soldout: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false,
+    },
   });
 
   Product.associate = function(models) {

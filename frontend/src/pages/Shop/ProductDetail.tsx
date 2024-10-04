@@ -38,6 +38,7 @@ interface ProductDetailItem {
   title: string;
   description: string;
   price: string;
+  is_soldout: boolean;
   colors: { name: string; code: string }[];
   size: string[];
   image: string;
@@ -55,6 +56,8 @@ const ProductDetail = () => {
   const [images, setImages] = useState<
     { original: string; thumbnail: string }[]
   >([]);
+  const [inCart, setInCart] = useState<boolean>(false);
+  const [isFavorited, setIsFavorited] = useState(false);
 
   useEffect(() => {
     const fetchProductDetail = async () => {
@@ -146,11 +149,59 @@ const ProductDetail = () => {
         color: selectedColor,
         size: selectedSize,
       });
-
+      setInCart(true);
       toast.success("Item added to cart successfully!");
     } catch (error) {
       console.error("Error adding item to cart:", error);
       alert("There was an error adding the item to your cart.");
+    }
+  };
+
+  const handleRemoveFromCart = async () => {
+    try {
+      const userId = currentUser.user?.id;
+
+      // Remove from cart
+      await axios.delete(
+        `${baseUrl}/cart/remove/${userId}/${productDetailItem.id}`
+      );
+      setInCart(false); // Update the cart status
+      toast.success("Item removed from cart successfully!");
+    } catch (error) {
+      console.error("Error removing item from cart:", error);
+      alert("There was an error removing the item from your cart.");
+    }
+  };
+
+  const handleCartToggle = () => {
+    if (inCart) {
+      handleRemoveFromCart();
+    } else {
+      handleAddToCart();
+    }
+  };
+  const handleFavoriteClick = async () => {
+    try {
+      const userId = currentUser.user?.id;
+
+      if (isFavorited) {
+        // Remove product from wishlist
+        const response = await axios.delete(
+          `${baseUrl}/wishlist/${userId}/${productDetailItem.id}`
+        );
+        toast.success(response.data.message);
+      } else {
+        // Add product to wishlist
+        const response = await axios.post(`${baseUrl}/wishlist`, {
+          userId,
+          productId: productDetailItem.id,
+        });
+        toast.success(response.data.message);
+      }
+
+      setIsFavorited(!isFavorited);
+    } catch (error) {
+      console.error("Failed to update wishlist:", error);
     }
   };
 
@@ -170,6 +221,7 @@ const ProductDetail = () => {
                 showBullets={true}
               />
             </Paper>
+
             <Grid item xs={12} marginTop={4}>
               <Accordion defaultExpanded>
                 <AccordionSummary
@@ -485,55 +537,86 @@ const ProductDetail = () => {
                 </svg>
               </Typography>
             </Box>
-            <Box
-              marginTop={2}
-              display={"flex"}
-              justifyContent={"space-between"}
-            >
-              <Button
-                variant="contained"
-                fullWidth
-                sx={{
-                  backgroundColor: "white",
-                  color: "black",
-                  border: "1px solid",
-                  borderRadius: "20px",
-                  fontFamily: "Outfit",
-                  fontSize: "20px",
-                }}
-                onClick={handleAddToCart}
-              >
-                Add to Cart
-              </Button>
-              <Box
-                sx={{
-                  marginLeft: "20px",
-                  border: "1px solid",
-                  borderRadius: "20px",
-                  padding: "10px",
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-              >
-                <FavoriteBorderIcon style={{ color: "black", fontSize: 34 }} />
-              </Box>
-            </Box>
             <Box marginTop={2}>
-              <Button
-                variant="contained"
-                color="primary"
-                fullWidth
-                size="large"
-                sx={{
-                  borderRadius: "20px",
-                  fontFamily: "Outfit",
-                  fontSize: "20px",
-                  fontWeight: 600,
-                  padding: "15px",
-                }}
-              >
-                Buy It Now
-              </Button>
+              {productDetailItem.is_soldout ? (
+                // Display the 'Sold Out' box if the item is sold
+                <Box
+                  sx={{
+                    height: "80px",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    backgroundColor: "lightgray",
+                    borderRadius: "20px",
+                    fontFamily: "Outfit",
+                    fontSize: "24px",
+                    fontWeight: "bold",
+                  }}
+                >
+                  Sold Out
+                </Box>
+              ) : (
+                // Display buttons if the item is not sold
+                <>
+                  <Box display="flex" justifyContent="space-between">
+                    <Button
+                      variant="contained"
+                      fullWidth
+                      sx={{
+                        backgroundColor: "white",
+                        color: "black",
+                        border: "1px solid",
+                        borderRadius: "20px",
+                        fontFamily: "Outfit",
+                        fontSize: "20px",
+                      }}
+                      onClick={handleCartToggle}
+                    >
+                      {inCart ? "Remove from Cart" : "Add to Cart"}
+                    </Button>
+
+                    <Box
+                      sx={{
+                        marginLeft: "20px",
+                        border: "1px solid",
+                        borderRadius: "20px",
+                        padding: "10px",
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                      }}
+                      onClick={handleFavoriteClick}
+                    >
+                      {isFavorited ? (
+                        <FavoriteBorderIcon
+                          style={{ color: "red", fontSize: 34 }}
+                        />
+                      ) : (
+                        <FavoriteBorderIcon
+                          style={{ color: "black", fontSize: 34 }}
+                        />
+                      )}
+                    </Box>
+                  </Box>
+                  <Box marginTop={2}>
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      fullWidth
+                      size="large"
+                      sx={{
+                        borderRadius: "20px",
+                        fontFamily: "Outfit",
+                        fontSize: "20px",
+                        fontWeight: 600,
+                        padding: "15px",
+                      }}
+                    >
+                      Buy It Now
+                    </Button>
+                  </Box>
+                </>
+              )}
             </Box>
           </Grid>
           <Grid item xs={12}>

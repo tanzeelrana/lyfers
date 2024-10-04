@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react";
 import { Box, Typography, Card, CardMedia } from "@mui/material";
 import tshirt from "../../assets/images/tshirt.jpeg";
@@ -6,12 +7,10 @@ import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import AddCircleOutlineOutlinedIcon from "@mui/icons-material/AddCircleOutlineOutlined";
 import RemoveCircleOutlineOutlinedIcon from "@mui/icons-material/RemoveCircleOutlineOutlined";
-
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import baseUrl from "../../config/apiConfig";
 import { toast } from "react-toastify";
-import { color } from "@mui/system";
 
 interface ProductProps {
   product: {
@@ -19,6 +18,7 @@ interface ProductProps {
     title: string;
     description: string;
     image: string;
+    is_soldout: boolean;
     colors: { name: string; code: string }[];
     size: string[];
     images: {
@@ -88,17 +88,13 @@ const ProductComponent: React.FC<ProductProps> = ({
   };
 
   const handleAddToCart = async () => {
-    
     try {
-      const user_d = userId;
-      const quantity = 1;
-
       const response = await axios.post(`${baseUrl}/cart/add`, {
-        userId: user_d,
+        userId,
         productId: product.id,
-        quantity,
+        quantity: 1,
         color: product.colors[0]?.name ?? "N/A",
-        size: product?.size[2]+''+product?.size[3] ?? "N/A",
+        size: product?.size[2] + "" + product?.size[3] ?? "N/A",
       });
 
       toast.success(response.data.message);
@@ -108,17 +104,58 @@ const ProductComponent: React.FC<ProductProps> = ({
       alert("There was an error adding the item to your cart.");
     }
   };
+
   const handleRemoveFromCart = async (pId: number) => {
-    toast.error("Already Added in Your Cart");
+    try {
+      const response = await axios.delete(`${baseUrl}/cart/remove/${userId}/${pId}`);
+      toast.success(response.data.message);
+      setIsAddedToCart(false); 
+    } catch (error) {
+      console.error("Error removing item from cart:", error);
+      toast.error("There was an error removing the item from your cart.");
+    }
   };
 
   return (
     <Card sx={{ borderRadius: "36px", position: "relative" }}>
-      <CardMedia
-        sx={{ height: 270, objectFit: "cover" }}
-        image={product.images?.[0]?.fullPath ?? tshirt}
-        title={product.title}
-      />
+      <Box sx={{ position: "relative" }}>
+        <CardMedia
+          sx={{
+            height: 270,
+            objectFit: "cover",
+            transition: "0.5s ease-in-out",
+            ...(product.is_soldout && {
+              filter: "grayscale(100%)", // Optional: To give a sold-out feel
+            }),
+          }}
+          image={product.images?.[0]?.fullPath ?? tshirt}
+          title={product.title}
+        />
+
+        {/* Sold Out Overlay */}
+        {product.is_soldout && (
+          <Box
+            sx={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              width: "100%",
+              height: "100%",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              backgroundColor: "rgba(0, 0, 0, 0.5)",
+              color: "white",
+              fontSize: "24px",
+              fontWeight: "bold",
+              textTransform: "uppercase",
+              transition: "background-color 0.3s ease",
+            }}
+          >
+            Sold Out
+          </Box>
+        )}
+      </Box>
 
       {/* Favorite Icon */}
       <Box
@@ -142,34 +179,37 @@ const ProductComponent: React.FC<ProductProps> = ({
         )}
       </Box>
 
-      <Box
-        sx={{
-          position: "absolute",
-          bottom: 93,
-          right: 17,
-          backgroundColor: "white",
-          height: "50px",
-          display: "flex",
-          padding: "6px",
-          borderTopLeftRadius: "45%",
-          borderTopRightRadius: "45%",
-          justifyContent: "center",
-          alignItems: "start",
-        }}
-        onClick={() =>
-          isAddedToCart ? handleRemoveFromCart(product.id) : handleAddToCart()
-        }
-      >
-        {isAddedToCart ? (
-          <RemoveCircleOutlineOutlinedIcon
-            style={{ color: "black", fontSize: 34 }}
-          />
-        ) : (
-          <AddCircleOutlineOutlinedIcon
-            style={{ color: "black", fontSize: 34 }}
-          />
-        )}
-      </Box>
+      {/* Add/Remove from Cart */}
+      {!product.is_soldout && (
+        <Box
+          sx={{
+            position: "absolute",
+            bottom: 93,
+            right: 17,
+            backgroundColor: "white",
+            height: "50px",
+            display: "flex",
+            padding: "6px",
+            borderTopLeftRadius: "45%",
+            borderTopRightRadius: "45%",
+            justifyContent: "center",
+            alignItems: "start",
+          }}
+          onClick={() =>
+            isAddedToCart ? handleRemoveFromCart(product.id) : handleAddToCart()
+          }
+        >
+          {isAddedToCart ? (
+            <RemoveCircleOutlineOutlinedIcon
+              style={{ color: "black", fontSize: 34 }}
+            />
+          ) : (
+            <AddCircleOutlineOutlinedIcon
+              style={{ color: "black", fontSize: 34 }}
+            />
+          )}
+        </Box>
+      )}
 
       <Box sx={{ padding: "12px 20px" }}>
         <Box

@@ -31,6 +31,7 @@ interface Product {
   image: string;
   colors: { name: string; code: string }[];
   size: string[];
+  is_soldout: boolean;
   images: {
     fullPath: string;
     id: number;

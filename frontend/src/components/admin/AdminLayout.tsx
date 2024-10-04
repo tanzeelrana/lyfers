@@ -111,6 +111,30 @@ export default function Layout(props: Props) {
                   Colors
                 </Button>
               </Box>
+              <Box>
+                <Button
+                  onClick={() => navigate("/admin/posts")}
+                  sx={{
+                    fontFamily: "Outfit",
+                    textTransform: 'capitalize',
+                    fontWeight: activePath === "/admin/posts" ? "700" : "normal", 
+                  }}
+                >
+                  Events
+                </Button>
+              </Box>
+              <Box>
+                <Button
+                  onClick={() => navigate("/admin/testimonials")}
+                  sx={{
+                    fontFamily: "Outfit",
+                    textTransform: 'capitalize',
+                    fontWeight: activePath === "/admin/testimonials" ? "700" : "normal", 
+                  }}
+                >
+                  Testimonials
+                </Button>
+              </Box>
 
               <Box>
                 <Button

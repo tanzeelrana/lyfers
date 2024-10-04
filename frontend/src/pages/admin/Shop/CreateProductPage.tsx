@@ -14,6 +14,7 @@ import {
   Checkbox,
   ListItemText,
   FormHelperText,
+  FormControlLabel,
 } from "@mui/material";
 import ImageIcon from "@mui/icons-material/Image";
 import CloseIcon from "@mui/icons-material/Close";
@@ -42,6 +43,7 @@ interface Product {
   quantity: number;
   subcategoryId: string;
   size: string;
+  is_soldout: boolean;
   colors: Color[];
   images: {
     fullPath: string;
@@ -59,6 +61,8 @@ export default function CreateProductPage() {
   const [price, setPrice] = useState<number | null>(null);
   const [quantity, setQuantity] = useState<number | null>(null);
   const [selectedImages, setSelectedImages] = useState<File[]>([]);
+  const [isSoldOut, setIsSoldOut] = useState(false);
+
   const [selectedSizes, setSelectedSizes] = useState<string[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [subcategoryId, setSubcategoryId] = useState<string>("");
@@ -91,6 +95,7 @@ export default function CreateProductPage() {
           setTitle(productData.title);
           setDescription(productData.description);
           setPrice(productData.price);
+          setIsSoldOut(productData.is_soldout);
           setQuantity(productData.quantity);
           if (productData.size != null) {
             const sizes: string[] = JSON.parse(productData.size);
@@ -167,6 +172,7 @@ export default function CreateProductPage() {
     formData.append("price", price!.toString());
     formData.append("quantity", quantity!.toString());
     formData.append("subcategoryId", subcategoryId);
+    formData.append("is_soldout", isSoldOut ? "1" : "0");
     formData.append("sizes", JSON.stringify(selectedSizes));
     formData.append("colorIds", JSON.stringify(selectedColors));
     formData.append("removedImageIds", JSON.stringify(removedImageIds));
@@ -179,12 +185,16 @@ export default function CreateProductPage() {
     });
     try {
       if (productId) {
-        const response = await axios.put(`${baseUrl}/products/${productId}`, formData, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        });
-        toast.success( response.data.message);
+        const response = await axios.put(
+          `${baseUrl}/products/${productId}`,
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
+        toast.success(response.data.message);
         navigate("/admin/products");
       } else {
         const response = await axios.post(`${baseUrl}/products`, formData, {
@@ -192,7 +202,7 @@ export default function CreateProductPage() {
             "Content-Type": "multipart/form-data",
           },
         });
-        toast.success( response.data.message);
+        toast.success(response.data.message);
         navigate("/admin/products");
       }
     } catch (error) {
@@ -432,7 +442,7 @@ export default function CreateProductPage() {
                 )}
               </FormControl>
             </Grid>
-            <Grid item xs={12}>
+            <Grid item xs={6}>
               <InputLabel>Colors</InputLabel>
               <Box
                 sx={{
@@ -466,7 +476,7 @@ export default function CreateProductPage() {
                           width: 10,
                           height: 10,
                           borderRadius: "50%",
-                          backgroundColor: "#fff", 
+                          backgroundColor: "#fff",
                           position: "absolute",
                           top: "50%",
                           left: "50%",
@@ -480,6 +490,17 @@ export default function CreateProductPage() {
               {errors.selectedColors && (
                 <Typography color="error">{errors.selectedColors}</Typography>
               )}
+            </Grid>
+            <Grid item xs={6}>
+              <FormControlLabel sx={{marginTop:2}}
+                control={
+                  <Checkbox size="large"
+                    checked={isSoldOut}
+                    onChange={(e) => setIsSoldOut(e.target.checked)}
+                  />
+                }
+                label="Sold Out"
+              />
             </Grid>
 
             <Grid item xs={12}>
