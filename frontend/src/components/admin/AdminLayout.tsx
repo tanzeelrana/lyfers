@@ -4,6 +4,8 @@ import { Button, Grid, Typography } from "@mui/material";
 import { Container } from "@mui/system";
 import { useNavigate, useLocation } from "react-router-dom";
 import "../styles.scss";
+import { logout } from "../../store/auth/actions";
+import { useDispatch } from "react-redux";
 
 interface Props {
   window?: () => Window;
@@ -14,13 +16,18 @@ export default function Layout(props: Props) {
   const { window, children } = props;
   const navigate = useNavigate();
   const location = useLocation();
-  
+  const dispatch = useDispatch();
+
   // Determine the active path
   const [activePath, setActivePath] = useState<string>("");
 
   useEffect(() => {
     setActivePath(location.pathname);
   }, [location]);
+
+  const handleLogout = () => {
+    dispatch(logout());
+  };
 
   return (
     <Container maxWidth="xl">
@@ -120,7 +127,7 @@ export default function Layout(props: Props) {
                     fontWeight: activePath === "/admin/posts" ? "700" : "normal", 
                   }}
                 >
-                  Events
+                  Posts
                 </Button>
               </Box>
               <Box>
@@ -135,15 +142,27 @@ export default function Layout(props: Props) {
                   Testimonials
                 </Button>
               </Box>
+              <Box>
+                <Button
+                  onClick={() => navigate("/admin/members")}
+                  sx={{
+                    fontFamily: "Outfit",
+                    textTransform: 'capitalize',
+                    fontWeight: activePath === "/admin/members" ? "700" : "normal", 
+                  }}
+                >
+                  Members
+                </Button>
+              </Box>
 
               <Box>
                 <Button
-                  onClick={() => navigate("/dashboard")}
                   sx={{
                     fontFamily: "Outfit",
                     textTransform: 'capitalize',
                     fontWeight: activePath === "/dashboard" ? "700" : "normal", 
                   }}
+                  onClick={handleLogout}
                 >
                   Logout
                 </Button>

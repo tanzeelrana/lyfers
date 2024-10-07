@@ -61,9 +61,15 @@ exports.getCartItems = async (req, res) => {
 
 exports.removeFromCart = async (req, res) => {
   try {
-    const { cartItemId } = req.params;
+    const { userId,cartItemId } = req.params;
+    const cart = await Cart.findOne({
+      where: { userId },
+    });
+  
 
-    const cartItem = await CartItem.findByPk(cartItemId);
+    const cartItem = await CartItem.findOne({
+      where: { cartId:cart.id , productId:cartItemId},
+    });
     if (!cartItem) {
       return res.status(404).json({ message: "Cart item not found" });
     }

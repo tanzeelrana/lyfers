@@ -10,6 +10,7 @@ interface Product  {
     title: string;
     description: string;
     image: string;
+    is_soldout: boolean;
     colors: { name: string; code: string }[];
     size: [];
     images: {

@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { User } = require('../models');
 
-const { login,signup,logout, forgotPassword } = require('../../backend/controllers/authController');
+const { login,signup,logout, forgotPassword,members,userDelete } = require('../../backend/controllers/authController');
 
 router.post('/signup', signup);
 
@@ -60,6 +60,10 @@ router.put('/update-profile/:id', async (req, res) => {
       res.status(500).json({ message: 'An error occurred while updating the profile' });
     }
   });
+
+  router.get('/members', members);
+  router.delete('/user/:id', userDelete);
+
 
 
 

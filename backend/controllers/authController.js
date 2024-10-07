@@ -243,4 +243,36 @@ const forgotPassword = async (req, res) => {
   }
 };
 
-module.exports = { login, signup, logout, forgotPassword };
+
+const members = async (req, res) => {
+  
+
+  try {
+    // Check if the user exists
+    const users = await User.findAll();
+    res.status(200).json(users);
+    
+  } catch (error) {
+    console.error("Login error:", error);
+    return res.status(500).json({ success: false, message: "Server error", error });
+  }
+};
+
+const userDelete = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    // Check if the user exists
+    const user = await User.findByPk(id);
+    if (!user) {
+      return res.status(200).json({ success: false, message: "User not found" });
+    }
+
+    return res.status(200).json({ success: true, message: "User deleted succesfully" });
+  } catch (error) {
+    console.error("Login error:", error);
+    return res.status(500).json({ success: false, message: "Server error", error });
+  }
+};
+
+module.exports = { login, signup, logout, forgotPassword,members ,userDelete };

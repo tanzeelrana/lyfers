@@ -38,6 +38,7 @@ exports.createProduct = [
         sizes,
         colorIds,
         subcategoryId,
+        is_soldout
       } = req.body;
       const imageFiles = req.files;
 
@@ -49,6 +50,7 @@ exports.createProduct = [
         price,
         size:parsedSize,
         subcategoryId,
+        is_soldout
       });
       const parsedColorIds = colorIds ? JSON.parse(colorIds) : [];
 
@@ -172,6 +174,7 @@ exports.updateProduct = [
         colorIds,
         subcategoryId,
         removedImageIds,
+        is_soldout
       } = req.body;
       const imageFiles = req.files;
 
@@ -226,6 +229,7 @@ exports.updateProduct = [
         price,
         size:parsedSize,
         subcategoryId,
+        is_soldout
       });
       const parsedColorIds = colorIds ? JSON.parse(colorIds) : [];
 
