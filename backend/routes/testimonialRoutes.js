@@ -1,12 +1,13 @@
 const express = require('express');
 const router = express.Router();
 const testimonialController = require('../controllers/testimonialController');
+const {authenticateAdmin,authenticate} = require("../middleware/authMiddleware")
 
 // Routes for testimonials CRUD
-router.post('/', testimonialController.createTestimonial); 
+router.post('/',authenticateAdmin, testimonialController.createTestimonial); 
 router.get('/', testimonialController.getTestimonials); 
 router.get('/:id', testimonialController.getTestimonialById); 
-router.put('/:id', testimonialController.updateTestimonial); 
-router.delete('/:id', testimonialController.deleteTestimonial); 
+router.put('/:id',authenticateAdmin, testimonialController.updateTestimonial); 
+router.delete('/:id',authenticateAdmin, testimonialController.deleteTestimonial); 
 
 module.exports = router;

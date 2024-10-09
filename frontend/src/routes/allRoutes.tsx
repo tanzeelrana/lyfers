@@ -43,6 +43,9 @@ import EventsForm from "../pages/admin/Events/EventsForm";
 import CheckoutPage from "../pages/PaymentDetail/CheckoutPage";
 import Testimonials from "../pages/admin/Testimonials/Testimonials";
 import Posts from "../pages/admin/Posts/Posts";
+import MemberPage from "../pages/admin/Members/MemberPage";
+import PostDetail from "../pages/admin/Posts/PostDetail";
+import AccessDeniedPage from "./AccessDeniedPage";
 
 
 const routes = [
@@ -151,6 +154,7 @@ const routes = [
     component: <AdminDashboard />,
     ispublic: false,
     addlayout: true,
+    adminOnly:true,
   },
   {
     path: "/dashboard/orders",
@@ -190,6 +194,14 @@ const routes = [
     path: "/profile",
     component: <Profile />,
     ispublic: false,
+    addlayout: true,
+  },
+  {
+    path: "/admin/profile",
+    component: <Profile />,
+    ispublic: false,
+    addlayout: true,
+    adminOnly:true,
   },
   {
     path: "/chat",
@@ -221,60 +233,77 @@ const routes = [
     component: <Products />,
     ispublic: false,
     addlayout: true,
+    adminOnly:true,
   },
   {
     path: "/admin/products/create",
     component: <CreateProductPage />,
     ispublic: false,
     addlayout: true,
+    adminOnly:true,
   },
   {
     path: "/admin/sub-categories",
     component: <SubCategories />,
     ispublic: false,
     addlayout: true,
+    adminOnly:true,
   },
   {
     path: "/admin/colors",
     component: <Colors />,
     ispublic: false,
     addlayout: true,
+    adminOnly:true,
   },
   {
     path: "/admin/testimonials",
     component: <Testimonials />,
     ispublic: false,
     addlayout: true,
+    adminOnly:true,
   },
   {
     path: "/admin/posts",
     component: <Posts />,
     ispublic: false,
     addlayout: true,
+    adminOnly:true,
+  },
+  {
+    path: "/admin/posts/:postId",
+    component: <PostDetail />,
+    ispublic: false,
+    addlayout: true,
+    adminOnly:true,
   },
   {
     path: "/admin/events",
     component: <AllEvents />,
     ispublic: false,
     addlayout: true,
+    adminOnly:true,
   },
   {
     path: "/admin/events/create",
     component: <EventsForm />,
     ispublic: false,
     addlayout: true,
+    adminOnly:true,
   },
   {
     path: "/admin/events/edit/:eventId",
     component: <EventsForm />,
     ispublic: false,
     addlayout: true,
+    adminOnly:true,
   },
   {
     path: "/admin/products/edit/:productId",
     component: <CreateProductPage />,
     ispublic: false,
     addlayout: true,
+    adminOnly:true,
   },
   {
     path: "/dashboard/wishlist",
@@ -286,13 +315,20 @@ const routes = [
     path: "/dashboard/orders",
     component: <OrdersPage />,
     ispublic: false,
-    addlayout: true,
   },
   {
     path: "/admin/orders",
     component: <AdminOrdersPage />,
     ispublic: false,
     addlayout: true,
+    adminOnly:true,
+  },
+  {
+    path: "/admin/members",
+    component: <MemberPage />,
+    ispublic: false,
+    addlayout: true,
+    adminOnly:true,
   },
   {
     path: "/payment",
@@ -302,6 +338,8 @@ const routes = [
   },
 
   { path: "*", component: <PageNotFound />, ispublic: true },
+  { path: "/access-denied", component: <AccessDeniedPage />, ispublic: true },
+
   { path: "/*", component: <PageNotFound />, ispublic: true },
   { path: "/*/*", component: <PageNotFound />, ispublic: true },
 ];

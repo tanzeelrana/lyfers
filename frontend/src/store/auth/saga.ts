@@ -26,7 +26,7 @@ function* loginRequest({ payload }: any): Generator<any, void, any> {
       setBtnloading(false);
       toast.success('Login successfully');
       if(response.data.user.user_type == 'admin'){
-        navigate('/admin/dashboard');
+        navigate('/admin/orders');
 
       }else{
         navigate('/dashboard');

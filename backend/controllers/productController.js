@@ -38,7 +38,7 @@ exports.createProduct = [
         sizes,
         colorIds,
         subcategoryId,
-        is_soldout
+        is_soldout,
       } = req.body;
       const imageFiles = req.files;
 
@@ -48,9 +48,9 @@ exports.createProduct = [
         description,
         quantity,
         price,
-        size:parsedSize,
+        size: parsedSize,
         subcategoryId,
-        is_soldout
+        is_soldout,
       });
       const parsedColorIds = colorIds ? JSON.parse(colorIds) : [];
 
@@ -67,8 +67,9 @@ exports.createProduct = [
         await ProductImage.bulkCreate(images);
       }
 
-      res.status(201).json({ message: "Product created successfully" ,product:newProduct});
-
+      res
+        .status(201)
+        .json({ message: "Product created successfully", product: newProduct });
     } catch (error) {
       res.status(500).json({ error: "Failed to create product" });
     }
@@ -99,7 +100,7 @@ exports.getAllProducts = async (req, res) => {
           as: "images",
         },
       ],
-      order: [['createdAt', 'DESC']], 
+      order: [["createdAt", "DESC"]],
     });
     res.status(200).json(products);
   } catch (error) {
@@ -174,7 +175,7 @@ exports.updateProduct = [
         colorIds,
         subcategoryId,
         removedImageIds,
-        is_soldout
+        is_soldout,
       } = req.body;
       const imageFiles = req.files;
 
@@ -227,9 +228,9 @@ exports.updateProduct = [
         description,
         quantity,
         price,
-        size:parsedSize,
+        size: parsedSize,
         subcategoryId,
-        is_soldout
+        is_soldout,
       });
       const parsedColorIds = colorIds ? JSON.parse(colorIds) : [];
 
@@ -257,7 +258,12 @@ exports.updateProduct = [
         ],
       });
 
-      res.status(200).json({ message: "Product updated successfully" ,product:updatedProduct});
+      res
+        .status(200)
+        .json({
+          message: "Product updated successfully",
+          product: updatedProduct,
+        });
     } catch (error) {
       res.status(500).json({ error: "Failed to update product" });
     }
@@ -288,3 +294,136 @@ exports.deleteProduct = [
     }
   },
 ];
+
+exports.getAllProductsByCategory = async (req, res) => {
+  const subcategoryId = req.params.subcategoryId;
+  try {
+    const products = await Product.findAll({
+      where: { subcategoryId },
+      include: [
+        {
+          model: Subcategory,
+          as: "subcategory",
+          include: [
+            {
+              model: Category,
+              as: "category",
+            },
+          ],
+        },
+        {
+          model: Color,
+          as: "colors",
+        },
+        {
+          model: ProductImage,
+          as: "images",
+        },
+      ],
+      limit: 4,
+      order: [["createdAt", "DESC"]],
+    });
+    if(products.length == 0){
+      const products = await Product.findAll({
+        include: [
+          {
+            model: Subcategory,
+            as: "subcategory",
+            include: [
+              {
+                model: Category,
+                as: "category",
+              },
+            ],
+          },
+          {
+            model: Color,
+            as: "colors",
+          },
+          {
+            model: ProductImage,
+            as: "images",
+          },
+        ],
+        limit: 4,
+        order: [["createdAt", "DESC"]],
+      });
+      res.status(200).json(products);
+    }
+    res.status(200).json(products);
+  } catch (error) {
+    console.error(error);
+    
+    res.status(500).json({ error: "Failed to fetch products" });
+  }
+};
+
+exports.getRamdomProducts = async (req, res) => {
+  try {
+    const products = await Product.findAll({
+      include: [
+        {
+          model: Subcategory,
+          as: "subcategory",
+          include: [
+            {
+              model: Category,
+              as: "category",
+            },
+          ],
+        },
+        {
+          model: Color,
+          as: "colors",
+        },
+        {
+          model: ProductImage,
+          as: "images",
+        },
+      ],
+    });
+
+    const shuffledProducts = products.sort(() => 0.5 - Math.random());
+    
+    // Take only the first 4 products from the shuffled array
+    const randomProducts = shuffledProducts.slice(0, 4);
+    res.status(200).json(randomProducts);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch products" });
+  }
+};
+
+exports.getHomePageProducts = async (req, res) => {
+  try {
+    const products = await Product.findAll({
+      include: [
+        {
+          model: Subcategory,
+          as: "subcategory",
+          include: [
+            {
+              model: Category,
+              as: "category",
+            },
+          ],
+        },
+        {
+          model: Color,
+          as: "colors",
+        },
+        {
+          model: ProductImage,
+          as: "images",
+        },
+      ],
+    });
+
+    const shuffledProducts = products.sort(() => 0.5 - Math.random());
+    
+    // Take only the first 4 products from the shuffled array
+    const randomProducts = shuffledProducts.slice(0, 8);
+    res.status(200).json(randomProducts);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch products" });
+  }
+};

@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { Box, Typography, Card, CardMedia } from "@mui/material";
 import tshirt from "../../assets/images/tshirt.jpeg";
@@ -11,6 +10,9 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import baseUrl from "../../config/apiConfig";
 import { toast } from "react-toastify";
+import { handleApiError } from "../common/Api-error-handler";
+import { useDispatch, useSelector } from "react-redux";
+import { logout } from "../../store/auth/actions";
 
 interface ProductProps {
   product: {
@@ -39,13 +41,18 @@ const ProductComponent: React.FC<ProductProps> = ({
   removeFromWishlist,
 }) => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const currentUser = useSelector((state: any) => state?.Auth?.currentUser);
+
   const [isFavorited, setIsFavorited] = useState(false);
   const [isAddedToCart, setIsAddedToCart] = useState(false);
 
   useEffect(() => {
     const fetchWishlist = async () => {
       try {
-        const response = await axios.get(`${baseUrl}/wishlist/${userId}`);
+        const response = await axios.get(`${baseUrl}/wishlist/${userId}`,{
+          headers: { Authorization: `Bearer ${currentUser?.token}` },
+        });
         const wishlistProductIds = response.data.map(
           (item: any) => item.productId
         );
@@ -55,7 +62,14 @@ const ProductComponent: React.FC<ProductProps> = ({
           setIsFavorited(true);
         }
       } catch (error) {
-        console.error("Failed to fetch wishlist:", error);
+        const { message, navigateTo } = handleApiError(error);
+        toast.error(message);
+        if (navigateTo) {
+          if (navigateTo == "login") {
+            dispatch(logout());
+          }
+          navigate(`/${navigateTo}`);
+        }
       }
     };
 
@@ -68,7 +82,12 @@ const ProductComponent: React.FC<ProductProps> = ({
       if (isFavorited) {
         // Remove product from wishlist
         const response = await axios.delete(
-          `${baseUrl}/wishlist/${userId}/${product.id}`
+          `${baseUrl}/wishlist/${userId}/${product.id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${currentUser?.token}`, 
+            },
+          }
         );
         removeFromWishlist(product.id);
         toast.success(response.data.message);
@@ -77,13 +96,26 @@ const ProductComponent: React.FC<ProductProps> = ({
         const response = await axios.post(`${baseUrl}/wishlist`, {
           userId,
           productId: product.id,
-        });
+        },  
+        {
+          headers: {
+            Authorization: `Bearer ${currentUser?.token}`, 
+          },
+        }
+      );
         toast.success(response.data.message);
       }
 
       setIsFavorited(!isFavorited);
     } catch (error) {
-      console.error("Failed to update wishlist:", error);
+      const { message, navigateTo } = handleApiError(error);
+      toast.error(message);
+      if (navigateTo) {
+        if (navigateTo == "login") {
+          dispatch(logout());
+        }
+        navigate(`/${navigateTo}`);
+      }
     }
   };
 
@@ -95,24 +127,48 @@ const ProductComponent: React.FC<ProductProps> = ({
         quantity: 1,
         color: product.colors[0]?.name ?? "N/A",
         size: product?.size[2] + "" + product?.size[3] ?? "N/A",
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${currentUser?.token}`, 
+        },
       });
 
       toast.success(response.data.message);
       setIsAddedToCart(true);
     } catch (error) {
-      console.error("Error adding item to cart:", error);
-      alert("There was an error adding the item to your cart.");
+      const { message, navigateTo } = handleApiError(error);
+      toast.error(message);
+      if (navigateTo) {
+        if (navigateTo == "login") {
+          dispatch(logout());
+        }
+        navigate(`/${navigateTo}`);
+      }
     }
   };
 
   const handleRemoveFromCart = async (pId: number) => {
     try {
-      const response = await axios.delete(`${baseUrl}/cart/remove/${userId}/${pId}`);
+      const response = await axios.delete(
+        `${baseUrl}/cart/remove/${userId}/${pId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${currentUser?.token}`, 
+          },
+        }
+      );
       toast.success(response.data.message);
-      setIsAddedToCart(false); 
+      setIsAddedToCart(false);
     } catch (error) {
-      console.error("Error removing item from cart:", error);
-      toast.error("There was an error removing the item from your cart.");
+      const { message, navigateTo } = handleApiError(error);
+      toast.error(message);
+      if (navigateTo) {
+        if (navigateTo == "login") {
+          dispatch(logout());
+        }
+        navigate(`/${navigateTo}`);
+      }
     }
   };
 

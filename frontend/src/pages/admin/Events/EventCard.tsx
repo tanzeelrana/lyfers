@@ -20,6 +20,9 @@ import axios from "axios";
 import baseUrl from "../../../config/apiConfig";
 import { toast } from "react-toastify";
 import { Box } from "@mui/system";
+import { handleApiError } from "../../common/Api-error-handler";
+import { useDispatch, useSelector } from "react-redux";
+import { logout } from "../../../store/auth/actions";
 
 interface Category {
   id: number;
@@ -45,6 +48,9 @@ const EventCard: React.FC<EventCardProps> = ({ event, onDelete }) => {
   const navigate = useNavigate();
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedEventId, setSelectedEventId] = useState<number | null>(null);
+  const currentUser = useSelector((state: any) => state?.Auth?.currentUser);
+  const dispatch = useDispatch();
+
 
   const handleDeleteClick = (eventId: number) => {
     setSelectedEventId(eventId);
@@ -59,13 +65,25 @@ const EventCard: React.FC<EventCardProps> = ({ event, onDelete }) => {
     if (selectedEventId !== null) {
       try {
         const response = await axios.delete(
-          `${baseUrl}/events/${selectedEventId}`
+          `${baseUrl}/events/${selectedEventId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${currentUser?.token}`, 
+            },
+          }
         );
         toast.success(response.data.message);
         onDelete(selectedEventId);
         setOpenDialog(false);
       } catch (error) {
-        console.error("Error deleting product:", error);
+        const { message, navigateTo } = handleApiError(error);
+        toast.error(message);
+        if (navigateTo) {
+          if (navigateTo =='login'){
+            dispatch(logout());
+          }
+          navigate(`/${navigateTo}`);
+        }
       }
     }
   };
@@ -74,7 +92,7 @@ const EventCard: React.FC<EventCardProps> = ({ event, onDelete }) => {
       <Card sx={{ display: "flex", boxShadow: 3 }}>
         <CardMedia
           component="img"
-          sx={{ width: 200, height:200, borderRadius: 2 }}
+          sx={{ width: 200, height: 200, borderRadius: 2 }}
           image={event.image ? event.image : eventsimg}
           alt={event.title}
         />
@@ -132,7 +150,7 @@ const EventCard: React.FC<EventCardProps> = ({ event, onDelete }) => {
             </Grid>
 
             <Grid item xs={12} md={6} sm={6}>
-              <Box display="flex" flexDirection="column" height="100%"  >
+              <Box display="flex" flexDirection="column" height="100%">
                 <Box flexGrow={1}>
                   <Typography
                     sx={{

@@ -5,8 +5,10 @@ import {
   Grid,
   Paper,
   TextField,
-  Typography,InputAdornment, IconButton, 
-  CircularProgress
+  Typography,
+  InputAdornment,
+  IconButton,
+  CircularProgress,
 } from "@mui/material";
 import { Box } from "@mui/system";
 import axios from "axios";
@@ -14,6 +16,10 @@ import baseUrl from "../../../config/apiConfig";
 import ProductsComponent from "./ProductsComponent";
 import { useNavigate } from "react-router-dom";
 import SearchIcon from "@mui/icons-material/Search";
+import { handleApiError } from "../../common/Api-error-handler";
+import { toast } from "react-toastify";
+import { useDispatch } from "react-redux";
+import { logout } from "../../../store/auth/actions";
 
 interface Product {
   id: number;
@@ -29,7 +35,8 @@ interface Product {
 }
 
 export default function Products() {
-    const navigate = useNavigate();
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -43,7 +50,14 @@ export default function Products() {
         setProducts(response.data);
         setLoading(false);
       } catch (error) {
-        setError("Error fetching products");
+        const { message, navigateTo } = handleApiError(error);
+        toast.error(message);
+        if (navigateTo) {
+          if (navigateTo =='login'){
+            dispatch(logout());
+          }
+          navigate(`/${navigateTo}`);
+        }
         setLoading(false);
       }
     };
@@ -52,7 +66,7 @@ export default function Products() {
   }, []);
 
   const handleProductDelete = (deletedProductId: number) => {
-    setProducts(products.filter(product => product.id !== deletedProductId));
+    setProducts(products.filter((product) => product.id !== deletedProductId));
   };
 
   const filteredProducts = products.filter((product) =>
@@ -61,7 +75,12 @@ export default function Products() {
 
   if (loading) {
     return (
-      <Grid container justifyContent="center" alignItems="center" height="100vh">
+      <Grid
+        container
+        justifyContent="center"
+        alignItems="center"
+        height="100vh"
+      >
         <CircularProgress />
       </Grid>
     );
@@ -69,7 +88,12 @@ export default function Products() {
 
   if (error) {
     return (
-      <Grid container justifyContent="center" alignItems="center" height="100vh">
+      <Grid
+        container
+        justifyContent="center"
+        alignItems="center"
+        height="100vh"
+      >
         <Typography variant="h6" color="error">
           {error}
         </Typography>
@@ -128,31 +152,30 @@ export default function Products() {
             </Typography>
           </Grid>
           <Grid item display={"flex"} justifyContent={"flex-end"} gap={2}>
+            <TextField
+              label="Search"
+              variant="outlined"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton>
+                      <SearchIcon />
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
+            />
 
-          <TextField
-          label="Search"
-          variant="outlined"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          InputProps={{
-            endAdornment: (
-              <InputAdornment position="end">
-                <IconButton>
-                  <SearchIcon />
-                </IconButton>
-              </InputAdornment>
-            ),
-          }}
-        />
-            
             <Button
               variant="contained"
               color="primary"
               sx={{
                 padding: { xs: "10px", sm: "15px" },
-                textTransform:'capitalize'
+                textTransform: "capitalize",
               }}
-              onClick={() => navigate('/admin/products/create')}
+              onClick={() => navigate("/admin/products/create")}
             >
               Add New Product
             </Button>
@@ -162,7 +185,10 @@ export default function Products() {
           {filteredProducts.length > 0 ? (
             filteredProducts.map((product) => (
               <Grid item xs={12} sm={6} md={4} key={product.id}>
-                <ProductsComponent product={product} onDelete={handleProductDelete} />
+                <ProductsComponent
+                  product={product}
+                  onDelete={handleProductDelete}
+                />
               </Grid>
             ))
           ) : (

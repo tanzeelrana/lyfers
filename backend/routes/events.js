@@ -8,12 +8,15 @@ const {
     createEvent,
     updateEvent,
     deleteEvent,
+    getUpcomingEvents,
 } = require('../controllers/eventController');
 const upload = require("../middleware/multerConfig");
+const authenticateJWT = require("../middleware/authenticateJWT");
+const {authenticateAdmin,authenticate} = require("../middleware/authMiddleware")
 
 
 router.post(
-    "/",
+    "/", authenticateAdmin,
     (req, res, next) => {
       req.folder = "events";
       next();
@@ -24,19 +27,21 @@ router.post(
 
 // Get all events
 router.get('/', getAllEvents);
+router.get('/upcoming', getUpcomingEvents);
+
 
 // Get a single event by ID
-router.get('/:id', getEventById);
+router.get('/:id',authenticate, getEventById);
 
 
 // Update an existing event
-router.put('/:id',(req, res, next) => {
+router.put('/:id' ,authenticateAdmin,(req, res, next) => {
     req.folder = "events";
     next();
   },
   upload.single("image"), updateEvent);
 
 // Delete an event
-router.delete('/:id', deleteEvent);
+router.delete('/:id',authenticateAdmin, deleteEvent);
 
 module.exports = router;

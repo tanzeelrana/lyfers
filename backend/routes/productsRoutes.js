@@ -3,10 +3,12 @@ const router = express.Router();
 const upload = require("../middleware/multerConfig");
 
 const productController = require("../controllers/productController");
+const {authenticateAdmin,authenticate} = require("../middleware/authMiddleware")
 
 // Handle multiple image uploads
 router.post(
   "/",
+
   (req, res, next) => {
     req.folder = "products";
     next();
@@ -15,9 +17,15 @@ router.post(
   productController.createProduct
 );
 router.get("/", productController.getAllProducts);
-router.get("/:id", productController.getProductById);
+router.get("/random", productController.getRamdomProducts);
+router.get("/features", productController.getHomePageProducts);
+
+
+router.get("/:id",authenticate, productController.getProductById);
+router.get("/category/:subcategoryId",authenticate, productController.getAllProductsByCategory);
+
 router.put(
-  "/:id",
+  "/:id", authenticateAdmin,
   (req, res, next) => {
     req.folder = "products";
     next();
@@ -25,6 +33,6 @@ router.put(
   upload.array("images"),
   productController.updateProduct
 );
-router.delete("/:id", productController.deleteProduct);
+router.delete("/:id",authenticateAdmin, productController.deleteProduct);
 
 module.exports = router;

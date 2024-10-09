@@ -12,7 +12,11 @@ import {
   CircularProgress,
 } from "@mui/material";
 import baseUrl from "../../../config/apiConfig";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { handleApiError } from "../../common/Api-error-handler";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
+import { logout } from "../../../store/auth/actions";
 
 // Define Product, OrderItem, and Order interfaces
 interface Product {
@@ -54,34 +58,29 @@ function OrdersPage() {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const currentUser = useSelector((state: any) => state?.Auth?.currentUser);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   // Fetch orders data from the API
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const response = await axios.get(`${baseUrl}/orders`);
+        const response = await axios.get(`${baseUrl}/orders`, {
+          headers: {
+            Authorization: `Bearer ${currentUser?.token}`,
+          },
+        });
         setOrders(response.data);
         setLoading(false);
       } catch (err) {
         setLoading(false);
-        if (axios.isAxiosError(err) && err.response) {
-          // Handle different status codes
-          switch (err.response.status) {
-            case 404:
-              setError(err.response.data.message || "No orders found.");
-              break;
-            case 400:
-              setError("Bad request. Please check your input.");
-              break;
-            case 500:
-              setError("Server error. Please try again later.");
-              break;
-            default:
-              setError("An unknown error occurred.");
-              break;
+        const { message, navigateTo } = handleApiError(error);
+        toast.error(message);
+        if (navigateTo) {
+          if (navigateTo == "login") {
+            dispatch(logout());
           }
-        } else {
-          setError("Failed to fetch orders.");
+          navigate(`/${navigateTo}`);
         }
       }
     };
@@ -186,22 +185,21 @@ function OrdersPage() {
         <Grid item xs={12}>
           <Grid container direction={"row"}>
             <Grid item xs={12}>
+              <Typography
+                sx={{
+                  fontFamily: "Outfit",
+                  fontSize: { xs: "16px", sm: "24px", md: "32px" },
+                  fontWeight: 700,
+                  color: "#4E4949",
+                }}
+              >
+                Order Details
+              </Typography>
               <TableContainer>
                 <Table>
-                  <Typography
-                    sx={{
-                      fontFamily: "Outfit",
-                      fontSize: { xs: "16px", sm: "24px", md: "32px" },
-                      fontWeight: 700,
-                      color: "#4E4949",
-                    }}
-                  >
-                    Order Details
-                  </Typography>
                   <TableBody>
                     {orders.map((order) => {
                       const shippingInfo = JSON.parse(order.shippingAddress);
-
                       // Check if there are no items in the order
                       if (order.orderItems.length === 0) {
                         return (
@@ -308,7 +306,7 @@ function OrdersPage() {
                                   fontSize: {
                                     xs: "16px",
                                     sm: "20px",
-                                    textAlign:'center'
+                                    textAlign: "center",
                                   },
                                 }}
                               >
@@ -320,11 +318,14 @@ function OrdersPage() {
                                   fontSize: {
                                     xs: "16px",
                                     sm: "20px",
-                                    textAlign:'center'
+                                    textAlign: "center",
                                   },
                                 }}
                               >
-                                {shippingInfo.shippingDeliveryAddress}, {shippingInfo.shippingCity} , {shippingInfo.shippingState}  , {shippingInfo.shippingPostalCode}  
+                                {shippingInfo.shippingDeliveryAddress},{" "}
+                                {shippingInfo.shippingCity} ,{" "}
+                                {shippingInfo.shippingState} ,{" "}
+                                {shippingInfo.shippingPostalCode}
                               </Typography>
                               <Typography
                                 sx={{
@@ -359,6 +360,7 @@ function OrdersPage() {
                                 textAlign: "center",
                                 borderRadius: "10px",
                                 color: "white",
+                                padding:'2px'
                               }}
                             >
                               {order.status}

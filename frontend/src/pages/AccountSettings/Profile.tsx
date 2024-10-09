@@ -30,10 +30,9 @@ const Profile: FC = () => {
     lastName: "",
     email: "",
     dateOfBirth: "",
-    password: "",
     securityQuestion: "",
     answer: "",
-    fullName: "",
+    fullname: "",
     phone: "",
     address: "",
     city: "",
@@ -46,10 +45,9 @@ const Profile: FC = () => {
     lastName: "",
     email: "",
     dateOfBirth: "",
-    password: "",
     securityQuestion: "",
     answer: "",
-    fullName: "",
+    fullname: "",
     phone: "",
     address: "",
     city: "",
@@ -59,24 +57,40 @@ const Profile: FC = () => {
 
   // UseEffect to set initial form values from currentUser
   useEffect(() => {
-    if (currentUser) {
-      setFormValues({
-        firstName: currentUser.user.firstName || "",
-        lastName: currentUser.user.lastName || "",
-        email: currentUser.user.email || "",
-        dateOfBirth: currentUser.user.dateOfBirth || "",
-        password: "",
-        securityQuestion: currentUser.user.security_question_id || "",
-        answer: currentUser.user.security_answer || "",
-        fullName: currentUser.user.fullname || "",
-        phone: currentUser.user.phone || "",
-        address: currentUser.user.address || "",
-        city: currentUser.user.city || "",
-        state: currentUser.user.state || "",
-        postalCode: currentUser.user.postalCode || "",
-      });
-    }
-  }, [currentUser]);
+    const fetchUserData = async () => {
+      try {
+        const response = await axios.get(
+          `${baseUrl}/auth/user/${currentUser.user.id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${currentUser?.token}`,
+            },
+          }
+        );
+        const user = response.data;
+
+        setFormValues({
+          firstName: user.firstName || "",
+          lastName: user.lastName || "",
+          email: user.email || "",
+          dateOfBirth: user.dateOfBirth || "",
+          securityQuestion: user.security_question_id || "",
+          answer: user.security_answer || "",
+          fullname: user.fullname || "",
+          phone: user.phone || "",
+          address: user.address || "",
+          city: user.city || "",
+          state: user.state || "",
+          postalCode: user.postalCode || "",
+        });
+      } catch (error) {
+        console.error("Error fetching user data", error);
+        toast.error("Failed to fetch user data.");
+      }
+    };
+
+    fetchUserData();
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -90,11 +104,7 @@ const Profile: FC = () => {
       errors.email = "Email is invalid";
     if (!formValues.dateOfBirth)
       errors.dateOfBirth = "Date of Birth is required";
-    if (!formValues.password) errors.password = "Password is required";
-    if (!formValues.securityQuestion)
-      errors.securityQuestion = "Security Question is required";
-    if (!formValues.answer) errors.answer = "Answer is required";
-    if (!formValues.fullName) errors.fullName = "Full Name is required";
+    if (!formValues.fullname) errors.fullname = "Full Name is required";
     if (!formValues.phone) errors.phone = "Phone number is required";
     if (!formValues.address) errors.address = "Address is required";
     if (!formValues.city) errors.city = "City is required";
@@ -116,7 +126,7 @@ const Profile: FC = () => {
         try {
           const response = await axios.put(
             `${baseUrl}/auth/update-profile/${currentUser.user.id}`,
-            formValues,
+            formValues
           );
 
           toast.success(response.data.message);
@@ -263,46 +273,6 @@ const Profile: FC = () => {
             </Grid>
           </Grid>
 
-          <Grid container spacing={2} mt={2}>
-            <Grid item xs={12}>
-              <TextField
-                label="Password"
-                name="password"
-                type="password"
-                value={formValues.password}
-                onChange={handleInputChange}
-                fullWidth
-                error={!!formErrors.password}
-                helperText={formErrors.password}
-                disabled={!isEditable}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                label="Security Question"
-                name="securityQuestion"
-                value={formValues.securityQuestion}
-                onChange={handleInputChange}
-                fullWidth
-                error={!!formErrors.securityQuestion}
-                helperText={formErrors.securityQuestion}
-                disabled={!isEditable}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                label="Answer"
-                name="answer"
-                value={formValues.answer}
-                onChange={handleInputChange}
-                fullWidth
-                error={!!formErrors.answer}
-                helperText={formErrors.answer}
-                disabled={!isEditable}
-              />
-            </Grid>
-          </Grid>
-
           <Divider sx={{ marginY: 2 }} />
 
           {/* Shipping Details */}
@@ -313,12 +283,12 @@ const Profile: FC = () => {
             <Grid item xs={12} md={12}>
               <TextField
                 label="Full Name"
-                name="fullName"
-                value={formValues.fullName}
+                name="fullname"
+                value={formValues.fullname}
                 onChange={handleInputChange}
                 fullWidth
-                error={!!formErrors.fullName}
-                helperText={formErrors.fullName}
+                error={!!formErrors.fullname}
+                helperText={formErrors.fullname}
                 disabled={!isEditable}
               />
             </Grid>

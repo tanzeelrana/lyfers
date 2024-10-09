@@ -30,8 +30,11 @@ import { useNavigate, useParams } from "react-router-dom";
 import baseUrl from "../../config/apiConfig";
 import axios from "axios";
 import CartPage from "../CartPage/CartPage";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
+import { handleApiError } from "../common/Api-error-handler";
+import { logout } from "../../store/auth/actions";
+import ProductComponent from "./ProductComponent";
 
 interface ProductDetailItem {
   id: number;
@@ -42,9 +45,34 @@ interface ProductDetailItem {
   colors: { name: string; code: string }[];
   size: string[];
   image: string;
+  subcategoryId: number;
+}
+
+interface Product {
+  id: number;
+  title: string;
+  description: string;
+  image: string;
+  colors: { name: string; code: string }[];
+  size: string[];
+  is_soldout: boolean;
+  images: {
+    fullPath: string;
+    id: number;
+    productId: number;
+    image: string;
+  }[];
+  price: number;
+  subcategoryId: number;
+}
+
+interface Category {
+  id: number;
+  name: string;
 }
 const ProductDetail = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const currentUser = useSelector((state: any) => state?.Auth?.currentUser);
 
   const { id } = useParams<{ id: string }>();
@@ -58,11 +86,15 @@ const ProductDetail = () => {
   >([]);
   const [inCart, setInCart] = useState<boolean>(false);
   const [isFavorited, setIsFavorited] = useState(false);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [products, setProducts] = useState<Product[]>([]);
 
   useEffect(() => {
     const fetchProductDetail = async () => {
       try {
-        const response = await axios.get(`${baseUrl}/products/${id}`);
+        const response = await axios.get(`${baseUrl}/products/${id}`, {
+          headers: { Authorization: `Bearer ${currentUser?.token}` },
+        });
         const data = response.data;
         const colors = data.colors.map((color: any) => ({
           name: color.name,
@@ -86,13 +118,50 @@ const ProductDetail = () => {
           thumbnail: image.fullPath,
         }));
         setImages(imageGallery);
+
+        if (response.data?.subcategoryId) {
+          const responseData = await axios.get(
+            `${baseUrl}/products/category/${response.data?.subcategoryId}`,
+            {
+              headers: { Authorization: `Bearer ${currentUser?.token}` },
+            }
+          );
+          setProducts(responseData.data);
+        } else {
+          const responseData = await axios.get(`${baseUrl}/products/random`, {
+            headers: { Authorization: `Bearer ${currentUser?.token}` },
+          });
+          setProducts(responseData.data);
+        }
+        setLoading(false);
       } catch (error) {
-        console.error("Error fetching product details:", error);
+        const { message, navigateTo } = handleApiError(error);
+        toast.error(message);
+        if (navigateTo) {
+          if (navigateTo == "login") {
+            dispatch(logout());
+          }
+          navigate(`/${navigateTo}`);
+        }
+        setLoading(false);
       }
     };
 
     fetchProductDetail();
   }, []);
+
+  if (loading) {
+    return (
+      <Grid
+        container
+        justifyContent="center"
+        alignItems="center"
+        height="100vh"
+      >
+        <CircularProgress />
+      </Grid>
+    );
+  }
 
   if (!productDetailItem) {
     return (
@@ -134,7 +203,7 @@ const ProductDetail = () => {
 
   const handleAddToCart = async () => {
     if (!selectedColor || !selectedSize) {
-      alert("Please select both color and size.");
+      toast.error("Please select both color and size.");
       return;
     }
 
@@ -142,18 +211,32 @@ const ProductDetail = () => {
       const userId = currentUser.user?.id;
       const quantity = 1;
 
-      await axios.post(`${baseUrl}/cart/add`, {
-        userId,
-        productId: productDetailItem.id,
-        quantity,
-        color: selectedColor,
-        size: selectedSize,
-      });
+      await axios.post(
+        `${baseUrl}/cart/add`,
+        {
+          userId,
+          productId: productDetailItem.id,
+          quantity,
+          color: selectedColor,
+          size: selectedSize,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${currentUser?.token}`,
+          },
+        }
+      );
       setInCart(true);
       toast.success("Item added to cart successfully!");
     } catch (error) {
-      console.error("Error adding item to cart:", error);
-      alert("There was an error adding the item to your cart.");
+      const { message, navigateTo } = handleApiError(error);
+      toast.error(message);
+      if (navigateTo) {
+        if (navigateTo == "login") {
+          dispatch(logout());
+        }
+        navigate(`/${navigateTo}`);
+      }
     }
   };
 
@@ -163,13 +246,24 @@ const ProductDetail = () => {
 
       // Remove from cart
       await axios.delete(
-        `${baseUrl}/cart/remove/${userId}/${productDetailItem.id}`
+        `${baseUrl}/cart/remove/${userId}/${productDetailItem.id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${currentUser?.token}`,
+          },
+        }
       );
       setInCart(false); // Update the cart status
       toast.success("Item removed from cart successfully!");
     } catch (error) {
-      console.error("Error removing item from cart:", error);
-      alert("There was an error removing the item from your cart.");
+      const { message, navigateTo } = handleApiError(error);
+      toast.error(message);
+      if (navigateTo) {
+        if (navigateTo == "login") {
+          dispatch(logout());
+        }
+        navigate(`/${navigateTo}`);
+      }
     }
   };
 
@@ -187,27 +281,48 @@ const ProductDetail = () => {
       if (isFavorited) {
         // Remove product from wishlist
         const response = await axios.delete(
-          `${baseUrl}/wishlist/${userId}/${productDetailItem.id}`
+          `${baseUrl}/wishlist/${userId}/${productDetailItem.id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${currentUser?.token}`,
+            },
+          }
         );
         toast.success(response.data.message);
       } else {
         // Add product to wishlist
-        const response = await axios.post(`${baseUrl}/wishlist`, {
-          userId,
-          productId: productDetailItem.id,
-        });
+        const response = await axios.post(
+          `${baseUrl}/wishlist`,
+          {
+            userId,
+            productId: productDetailItem.id,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${currentUser?.token}`,
+            },
+          }
+        );
         toast.success(response.data.message);
       }
 
       setIsFavorited(!isFavorited);
     } catch (error) {
-      console.error("Failed to update wishlist:", error);
+      const { message, navigateTo } = handleApiError(error);
+      toast.error(message);
+      if (navigateTo) {
+        if (navigateTo == "login") {
+          dispatch(logout());
+        }
+        navigate(`/${navigateTo}`);
+      }
     }
   };
+  const removeFromWishlist = (productId: number) => {};
 
   return (
     <>
-      <Box padding={4}>
+      <Box padding={4} sx={{ marginBottom: "40px" }}>
         <Grid container spacing={4}>
           <Grid item xs={12} md={6}>
             <Paper elevation={3}>
@@ -255,43 +370,7 @@ const ProductDetail = () => {
                   </Typography>
                 </AccordionDetails>
               </Accordion>
-              <Accordion>
-                <AccordionSummary
-                  expandIcon={<ExpandMoreIcon />}
-                  aria-controls="panel1-content"
-                  id="panel1-header"
-                >
-                  <Typography
-                    variant="body1"
-                    gutterBottom
-                    sx={{
-                      fontFamily: "Outfit",
-                      fontSize: { xs: "12px", sm: "18px" },
-                      fontWeight: 600,
-                      textAlign: "center",
-                    }}
-                  >
-                    Location Detail
-                  </Typography>
-                </AccordionSummary>
-                <AccordionDetails>
-                  <Typography
-                    variant="body1"
-                    gutterBottom
-                    sx={{
-                      fontFamily: "Outfit",
-                      fontSize: { xs: "12px", sm: "18px" },
-                    }}
-                  >
-                    The Satan Design T-Shirt offers an elevated crew neck style
-                    crafted from 100% premium cotton. This slim-fit garment
-                    features rib knit trims at the neckline, cuffs, and hem,
-                    providing a refined finish. The defining design element is
-                    the bold contrasting edging, making this shirt a standout
-                    piece in any wardrobe.
-                  </Typography>
-                </AccordionDetails>
-              </Accordion>
+
               <Accordion>
                 <AccordionSummary
                   expandIcon={<ExpandMoreIcon />}
@@ -426,24 +505,24 @@ const ProductDetail = () => {
                     label={
                       <Box
                         sx={{
-                          width: 50,
-                          height: 50,
+                          width: 30,
+                          height: 30,
                           backgroundColor: color.code,
                           borderRadius: "50%",
                           display: "flex",
                           alignItems: "center",
                           justifyContent: "center",
                           "& svg": {
-                            width: "80%",
-                            height: "80%",
+                            width: "50%",
+                            height: "50%",
                           },
                         }}
                       >
                         {selectedColor === color.name && (
                           <Box
                             sx={{
-                              width: 12,
-                              height: 12,
+                              width: 8,
+                              height: 8,
                               backgroundColor: "white",
                               borderRadius: "50%",
                             }}
@@ -478,8 +557,8 @@ const ProductDetail = () => {
                           display: "flex",
                           alignItems: "center",
                           justifyContent: "center",
-                          width: 50,
-                          height: 50,
+                          width: 30,
+                          height: 30,
                           borderRadius: "50%",
                           border: `2px solid ${
                             selectedSize === size ? "transparent" : "gray"
@@ -650,105 +729,24 @@ const ProductDetail = () => {
           </Grid>
           <Grid item width={"100%"}>
             <Grid container spacing={3}>
-              {[1, 2, 3, 4].map((index) => (
-                <Grid item xs={12} sm={12} md={3} key={index}>
-                  <Card sx={{ borderRadius: "36px", position: "relative" }}>
-                    <CardMedia
-                      sx={{ height: 290, objectFit: "cover" }}
-                      image={tshirt}
-                      title="product"
+              {products.length > 0 ? (
+                products.map((product) => (
+                  <Grid item xs={12} sm={6} md={3} key={product.id}>
+                    <ProductComponent
+                      product={product}
+                      userId={currentUser?.user?.id ?? 0}
+                      removeFromWishlist={removeFromWishlist}
                     />
-                    {/* Wishlist Icon */}
-                    <Box
-                      sx={{
-                        position: "absolute",
-                        bottom: 230,
-                        right: 30,
-                        backgroundColor: "white",
-                        borderRadius: "50%",
-                        padding: "5px",
-                        justifyContent: "center",
-                        alignItems: "center",
-                      }}
-                    >
-                      <FavoriteBorderIcon
-                        style={{ color: "black", fontSize: 34 }}
-                      />
-                    </Box>
-                    <Box
-                      sx={{
-                        position: "absolute",
-                        bottom: 157,
-                        right: 30,
-                        backgroundColor: "white",
-                        height: "50px",
-                        display: "flex",
-                        padding: "6px",
-                        borderTopLeftRadius: "45%",
-                        borderTopRightRadius: "45%",
-                        justifyContent: "center",
-                        alignItems: "start",
-                      }}
-                    >
-                      <AddCircleOutlineOutlinedIcon
-                        style={{ color: "black", fontSize: 34 }}
-                      />
-                    </Box>
-                    <CardContent
-                      sx={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                      }}
-                    >
-                      <Typography
-                        gutterBottom
-                        component="div"
-                        sx={{
-                          fontFamily: "Outfit",
-                          fontSize: "50px",
-                          fontWeight: 400,
-                          lineHeight: "60px",
-                        }}
-                      >
-                        Lizard
-                      </Typography>
-                      <Typography
-                        color="text.secondary"
-                        sx={{
-                          fontFamily: "Syne",
-                          fontSize: "60px",
-                          fontWeight: 700,
-                          lineHeight: "75px",
-                          color: "#FF5A00",
-                        }}
-                      >
-                        $50
-                      </Typography>
-                    </CardContent>
-                    <CardActions>
-                      <Typography
-                        color="text.secondary"
-                        sx={{
-                          fontFamily: "Outfit",
-                          fontSize: "28px",
-                          fontWeight: 400,
-                          lineHeight: "40px",
-                          color: "#FBB03A",
-                        }}
-                        onClick={() => navigate("/productDetail")}
-                      >
-                        View Detail
-                      </Typography>
-                      <span>
-                        {" "}
-                        <ArrowRightAltIcon
-                          style={{ color: "#FBB03A", fontSize: 34 }}
-                        />
-                      </span>
-                    </CardActions>
-                  </Card>
-                </Grid>
-              ))}
+                  </Grid>
+                ))
+              ) : (
+                <Typography
+                  variant="h6"
+                  sx={{ width: "100%", textAlign: "center" }}
+                >
+                  No records found
+                </Typography>
+              )}
             </Grid>
           </Grid>
         </Grid>

@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const subcategoryController = require('../controllers/subcategoryController');
+const {authenticateAdmin,authenticate} = require("../middleware/authMiddleware")
 
 // Get all subcategories
 router.get('/', subcategoryController.getAllSubcategories);
@@ -11,12 +12,12 @@ router.get('/categories', subcategoryController.getAllCategories);
 router.get('/:id', subcategoryController.getSubcategoryById);
 
 // Create a new subcategory
-router.post('/', subcategoryController.createSubcategory);
+router.post('/',authenticateAdmin, subcategoryController.createSubcategory);
 
 // Update a subcategory by ID
-router.put('/:id', subcategoryController.updateSubcategory);
+router.put('/:id',authenticateAdmin, subcategoryController.updateSubcategory);
 
 // Delete a subcategory by ID
-router.delete('/:id', subcategoryController.deleteSubcategory);
+router.delete('/:id',authenticateAdmin, subcategoryController.deleteSubcategory);
 
 module.exports = router;

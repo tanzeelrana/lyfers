@@ -30,10 +30,28 @@ export default function Layout(props: Props) {
   };
 
   return (
-    <Container maxWidth="xl">
+    <Container maxWidth="xl" sx={{
+      marginBottom: "80px",
+    }}>
       <Box>
         <Grid container direction="row" spacing={1}>
-          <Grid item xs={12} md={3} marginTop={{ xs: 4, md: 16 }}>
+          <Grid item xs={12} md={3} marginTop={{ xs: 4, md: 13 }}>
+            <Box>
+            <Typography
+                  sx={{
+                    fontFamily: "Syne",
+                    fontSize: { xs: "16px", sm: "24px", md: "32px" },
+                    fontStyle: "normal",
+                    fontWeight: 700,
+                    lineHeight: "120%",
+                    textAlign: "center",
+                    color: "#000000",
+                  }}
+                >
+                  Admin Dashboard
+                </Typography>
+            </Box>
+            
             <Box
               sx={{
                 width: "auto",
@@ -43,7 +61,7 @@ export default function Layout(props: Props) {
                 padding: '10px',
               }}
             >
-              <Box>
+              {/* <Box>
                 <Button
                   onClick={() => navigate("/admin/dashboard")}
                   sx={{
@@ -54,7 +72,20 @@ export default function Layout(props: Props) {
                 >
                   Admin Dashboard
                 </Button>
-              </Box>
+              </Box> */}
+              <Box>
+            <Button
+              onClick={() => navigate("/admin/profile")}
+              sx={{
+                fontFamily: "Outfit",
+                textTransform:'capitalize',
+                fontWeight: activePath === "/admin/profile" ? "700" : "normal", 
+
+              }}
+            >
+              Account Detail
+            </Button>
+            </Box>
               <Box>
                 <Button
                   onClick={() => navigate("/admin/orders")}

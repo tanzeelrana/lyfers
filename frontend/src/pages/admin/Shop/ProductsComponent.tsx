@@ -17,6 +17,9 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import baseUrl from "../../../config/apiConfig";
 import { toast } from "react-toastify";
+import { handleApiError } from "../../common/Api-error-handler";
+import { useDispatch, useSelector } from "react-redux";
+import { logout } from "../../../store/auth/actions";
 
 interface ProductProps {
   product: {
@@ -36,11 +39,15 @@ interface ProductProps {
 
 const ProductsComponent: React.FC<ProductProps> = ({ product, onDelete }) => {
   const navigate = useNavigate();
-  const [openDialog, setOpenDialog] = useState(false); 
-  const [selectedProductId, setSelectedProductId] = useState<number | null>(null);
+  const [openDialog, setOpenDialog] = useState(false);
+  const [selectedProductId, setSelectedProductId] = useState<number | null>(
+    null
+  );
+  const currentUser = useSelector((state: any) => state?.Auth?.currentUser);
+  const dispatch = useDispatch();
 
   const handleDeleteClick = (productId: number) => {
-    setSelectedProductId(productId); 
+    setSelectedProductId(productId);
     setOpenDialog(true);
   };
 
@@ -51,12 +58,26 @@ const ProductsComponent: React.FC<ProductProps> = ({ product, onDelete }) => {
   const confirmDelete = async () => {
     if (selectedProductId !== null) {
       try {
-        const response = await axios.delete(`${baseUrl}/products/${selectedProductId}`);
+        const response = await axios.delete(
+          `${baseUrl}/products/${selectedProductId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${currentUser?.token}`,
+            },
+          }
+        );
         toast.success("Product Deleted successfully");
         onDelete(selectedProductId);
         setOpenDialog(false);
       } catch (error) {
-        console.error("Error deleting product:", error);
+        const { message, navigateTo } = handleApiError(error);
+        toast.error(message);
+        if (navigateTo) {
+          if (navigateTo =='login'){
+            dispatch(logout());
+          }
+          navigate(`/${navigateTo}`);
+        }
       }
     }
   };
@@ -187,7 +208,8 @@ const ProductsComponent: React.FC<ProductProps> = ({ product, onDelete }) => {
                   },
                   color: "red",
                 }}
-                onClick={() => handleDeleteClick(product.id)}             >
+                onClick={() => handleDeleteClick(product.id)}
+              >
                 Delete
               </Typography>
               <ArrowRightAltIcon
@@ -217,10 +239,17 @@ const ProductsComponent: React.FC<ProductProps> = ({ product, onDelete }) => {
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
       >
-        <DialogTitle id="alert-dialog-title" textAlign={'center'} fontWeight={'bold'}>{"Confirm Deletion"}</DialogTitle>
+        <DialogTitle
+          id="alert-dialog-title"
+          textAlign={"center"}
+          fontWeight={"bold"}
+        >
+          {"Confirm Deletion"}
+        </DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
-            Are you sure you want to delete this product? This action cannot be undone.
+            Are you sure you want to delete this product? This action cannot be
+            undone.
           </DialogContentText>
         </DialogContent>
         <DialogActions>

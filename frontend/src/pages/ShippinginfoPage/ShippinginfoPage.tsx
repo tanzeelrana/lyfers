@@ -160,6 +160,7 @@ const ShippinginfoPage: React.FC = () => {
     if (validate()) {
       navigate("/payment-detail", {
         state: {
+          orderType:'product',
           cartItems: cartItems,
           currentUser: currentUser,
           paymentDetail: {

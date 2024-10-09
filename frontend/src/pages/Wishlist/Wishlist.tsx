@@ -3,7 +3,11 @@ import { Grid, Typography, CircularProgress } from "@mui/material";
 import axios from "axios";
 import baseUrl from "../../config/apiConfig";
 import ProductComponent from "../Shop/ProductComponent";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { handleApiError } from "../common/Api-error-handler";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
+import { logout } from "../../store/auth/actions";
 
 interface Product  {
     id: number;
@@ -37,16 +41,31 @@ export default function Wishlist() {
   const [wishlistItems, setWishlistItems] = useState<WishlistItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const navigate =useNavigate();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const fetchWishlist = async () => {
       try {
         const userId = currentUser?.user?.id ?? 0; 
-        const response = await axios.get(`${baseUrl}/wishlist/${userId}`);
+        const response = await axios.get(`${baseUrl}/wishlist/${userId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${currentUser?.token}`, 
+          },
+        }
+        );
         setWishlistItems(response.data);
         setLoading(false);
       } catch (error) {
-        setError("Failed to fetch wishlist");
+        const { message, navigateTo } = handleApiError(error);
+        toast.error(message);
+        if (navigateTo) {
+          if (navigateTo == "login") {
+            dispatch(logout());
+          }
+          navigate(`/${navigateTo}`);
+        }
         setLoading(false);
       }
     };

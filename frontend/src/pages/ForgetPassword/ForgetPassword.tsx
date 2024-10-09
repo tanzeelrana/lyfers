@@ -17,12 +17,14 @@ import {
 import logo from "../../assets/logos/LogoDefault.svg";
 import signIn from "../../assets/images/signIn.png";
 import { useNavigate } from "react-router-dom";
-import '../Login/login.css';
+import "../Login/login.css";
 import axios from "axios";
 import baseUrl from "../../config/apiConfig";
 import { ForgotPasswordPayload } from "../../store/auth/types";
-import { forgotpassord } from "../../store/auth/actions";
+import { forgotpassord, logout } from "../../store/auth/actions";
 import { useDispatch } from "react-redux";
+import { handleApiError } from "../common/Api-error-handler";
+import { toast } from "react-toastify";
 
 const styles = {
   buttonStyle: {
@@ -45,7 +47,7 @@ const styles = {
 
 const ForgetPassword: FC = () => {
   const navigate = useNavigate();
-  const dispatch =useDispatch();
+  const dispatch = useDispatch();
   const [formValues, setFormValues] = useState({
     email: "",
     securityQuestion: "",
@@ -69,7 +71,14 @@ const ForgetPassword: FC = () => {
         const response = await axios.get(`${baseUrl}/api/security-questions`);
         setSecurityQuestions(response.data.data);
       } catch (error) {
-        console.error("Error fetching security questions:", error);
+        const { message, navigateTo } = handleApiError(error);
+        toast.error(message);
+        if (navigateTo) {
+          if (navigateTo == "login") {
+            dispatch(logout());
+          }
+          navigate(`/${navigateTo}`);
+        }
       } finally {
         setLoadingQuestions(false);
       }
@@ -150,7 +159,7 @@ const ForgetPassword: FC = () => {
           setBtnloading: setBtnLoading,
           navigate: navigate,
         };
-  
+
         dispatch(forgotpassord(forgotPasswordPayload));
       } finally {
         setIsSubmitting(false);
@@ -160,18 +169,16 @@ const ForgetPassword: FC = () => {
 
   return (
     <Container maxWidth={"xl"}>
-      <Grid
-        container
-        direction="row"
-        spacing={4}
-        flexShrink={0}
-      >
-        <Grid item xs={12} md={6} alignItems={'center'} justifyContent={'center'} display={'flex'}>
-          <Grid
-            container
-            direction={"column"}
-            spacing={3}
-          >
+      <Grid container direction="row" spacing={4} flexShrink={0}>
+        <Grid
+          item
+          xs={12}
+          md={6}
+          alignItems={"center"}
+          justifyContent={"center"}
+          display={"flex"}
+        >
+          <Grid container direction={"column"} spacing={3}>
             <Grid
               item
               xs={12}
@@ -179,11 +186,7 @@ const ForgetPassword: FC = () => {
               alignItems={"center"}
               justifyContent={"center"}
             >
-              <img
-                src={logo}
-                alt="Logo"
-                className="responsive-logo"
-              />
+              <img src={logo} alt="Logo" className="responsive-logo" />
             </Grid>
             <Grid
               item
@@ -351,7 +354,7 @@ const ForgetPassword: FC = () => {
           md={6}
           sx={{
             display: { xs: "none", md: "block" },
-            height: "100vh", 
+            height: "100vh",
           }}
         >
           <img
@@ -359,9 +362,9 @@ const ForgetPassword: FC = () => {
             alt="Sign In"
             style={{
               width: "100%",
-              height: "100vh", 
-              objectFit: "cover", 
-              borderTopLeftRadius: "50px", 
+              height: "100vh",
+              objectFit: "cover",
+              borderTopLeftRadius: "50px",
               borderBottomLeftRadius: "50px",
             }}
           />

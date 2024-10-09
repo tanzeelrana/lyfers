@@ -28,6 +28,10 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import SearchIcon from "@mui/icons-material/Search";
 import { toast } from "react-toastify";
+import { handleApiError } from "../../common/Api-error-handler";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { logout } from "../../../store/auth/actions";
 
 interface Category {
   id: number;
@@ -58,6 +62,9 @@ export default function SubCategories() {
     nameError?: string;
     categoryError?: string;
   }>({});
+  const currentUser = useSelector((state: any) => state?.Auth?.currentUser);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -67,7 +74,14 @@ export default function SubCategories() {
         );
         setCategories(response.data);
       } catch (error) {
-        setError("Error fetching categories");
+        const { message, navigateTo } = handleApiError(error);
+        toast.error(message);
+        if (navigateTo) {
+          if (navigateTo =='login'){
+            dispatch(logout());
+          }
+          navigate(`/${navigateTo}`);
+        }
       }
     };
 
@@ -83,8 +97,14 @@ export default function SubCategories() {
         setSubCategories(response.data);
         setLoading(false);
       } catch (error) {
-        setError("Error fetching subcategories");
-        setLoading(false);
+        const { message, navigateTo } = handleApiError(error);
+        toast.error(message);
+        if (navigateTo) {
+          if (navigateTo =='login'){
+            dispatch(logout());
+          }
+          navigate(`/${navigateTo}`);
+        }
       }
     };
 
@@ -139,17 +159,28 @@ export default function SubCategories() {
 
       if (editMode && currentSubCategoryId !== null) {
         // Update existing subcategory
-        const response =  await axios.put(
+        const response = await axios.put(
           `${baseUrl}/subcategories/${currentSubCategoryId}`,
-          subCategoryData
+          subCategoryData,
+          {
+            headers: {
+              Authorization: `Bearer ${currentUser?.token}`,
+            },
+          }
         );
-        toast.success( response.data.message);
-
+        toast.success(response.data.message);
       } else {
         // Create new subcategory
-        const response =  await axios.post(`${baseUrl}/subcategories`, subCategoryData);
-        toast.success( response.data.message);
-
+        const response = await axios.post(
+          `${baseUrl}/subcategories`,
+          subCategoryData,
+          {
+            headers: {
+              Authorization: `Bearer ${currentUser?.token}`,
+            },
+          }
+        );
+        toast.success(response.data.message);
       }
 
       handleCloseModal();
@@ -159,15 +190,13 @@ export default function SubCategories() {
       );
       setSubCategories(response.data);
     } catch (error) {
-      if (axios.isAxiosError(error) && error.response?.status === 400) {
-        const messages = error.response.data.errors
-          .map((err: any) => err.msg)
-          .join(", ");
-        handleError(messages || "Validation error");
-      } else {
-        handleError(
-          editMode ? "Error updating subcategory" : "Error creating subcategory"
-        );
+      const { message, navigateTo } = handleApiError(error);
+      toast.error(message);
+      if (navigateTo) {
+        if (navigateTo =='login'){
+          dispatch(logout());
+        }
+        navigate(`/${navigateTo}`);
       }
     }
   };
@@ -178,13 +207,24 @@ export default function SubCategories() {
 
   const handleDelete = async (id: number) => {
     try {
-      await axios.delete(`${baseUrl}/subcategories/${id}`);
+      await axios.delete(`${baseUrl}/subcategories/${id}`, {
+        headers: {
+          Authorization: `Bearer ${currentUser?.token}`,
+        },
+      });
       setSubCategories((prev) =>
         prev.filter((subcategory) => subcategory.id !== id)
       );
       setDeleteConfirmOpen(false);
     } catch (error) {
-      setError("Error deleting subcategory");
+      const { message, navigateTo } = handleApiError(error);
+      toast.error(message);
+      if (navigateTo) {
+        if (navigateTo =='login'){
+          dispatch(logout());
+        }
+        navigate(`/${navigateTo}`);
+      }
     }
   };
 

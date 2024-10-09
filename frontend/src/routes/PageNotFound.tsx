@@ -1,11 +1,20 @@
+import { Box, Typography } from '@mui/material';
+
 export default function PageNotFound() {
   return (
-    <>
-      <h3>Whoops!</h3>
-      <p className="text-lg font-semibold">404 Page Not Found</p>
-      <p className="mt-1 text-sm text-grey-500">
-        We couldn't find the page you are looking for...
-      </p>
-    </>
+    <Box
+    display="flex"
+    justifyContent="center"
+    alignItems="center"
+    height="100vh"
+    flexDirection="column"
+    textAlign="center"
+  >
+    <Typography variant="h3">Whoops!</Typography>
+    <Typography variant="h6" fontWeight="bold" mt={2}>
+      Page Not Found!.
+    </Typography>
+    
+  </Box>
   );
 }

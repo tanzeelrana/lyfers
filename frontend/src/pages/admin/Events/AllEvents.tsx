@@ -5,6 +5,10 @@ import SearchIcon from "@mui/icons-material/Search";
 import axios from 'axios';
 import baseUrl from '../../../config/apiConfig';
 import { useNavigate } from 'react-router-dom';
+import { handleApiError } from '../../common/Api-error-handler';
+import { toast } from 'react-toastify';
+import { useDispatch } from 'react-redux';
+import { logout } from '../../../store/auth/actions';
 
 interface Category {
   id: number;
@@ -27,7 +31,8 @@ const AllEvents: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const navigate  = useNavigate()
-
+  const dispatch = useDispatch();
+  
   // Fetch events from API on component mount
   useEffect(() => {
     const fetchEvents = async () => {
@@ -37,7 +42,14 @@ const AllEvents: React.FC = () => {
         setEvents(response.data);
         setLoading(false);
       } catch (err) {
-        setError('Failed to fetch events');
+        const { message, navigateTo } = handleApiError(err);
+        toast.error(message);
+        if (navigateTo) {
+          if (navigateTo =='login'){
+            dispatch(logout());
+          }
+          navigate(`/${navigateTo}`);
+        }
         setLoading(false);
       }
     };

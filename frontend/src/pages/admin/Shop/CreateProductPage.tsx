@@ -22,6 +22,9 @@ import axios from "axios";
 import baseUrl from "../../../config/apiConfig";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
+import { handleApiError } from "../../common/Api-error-handler";
+import { useDispatch, useSelector } from "react-redux";
+import { logout } from "../../../store/auth/actions";
 
 const sizesList = ["XS", "S", "M", "L", "XL"];
 
@@ -71,8 +74,10 @@ export default function CreateProductPage() {
   const [existingImages, setExistingImages] = useState<string[]>([]);
   const [existingImageIds, setExistingImageIds] = useState<number[]>([]);
   const [removedImageIds, setRemovedImageIds] = useState<number[]>([]);
+  const currentUser = useSelector((state: any) => state?.Auth?.currentUser);
 
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   // Validation state
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
@@ -107,7 +112,14 @@ export default function CreateProductPage() {
           setExistingImageIds(productData.images.map((img) => img.id));
         }
       } catch (error) {
-        console.error("Error fetching data:", error);
+        const { message, navigateTo } = handleApiError(error);
+        toast.error(message);
+        if (navigateTo) {
+          if (navigateTo =='login'){
+            dispatch(logout());
+          }
+          navigate(`/${navigateTo}`);
+        }
       }
     }
     fetchData();
@@ -191,6 +203,7 @@ export default function CreateProductPage() {
           {
             headers: {
               "Content-Type": "multipart/form-data",
+              Authorization: `Bearer ${currentUser?.token}`,
             },
           }
         );
@@ -200,14 +213,21 @@ export default function CreateProductPage() {
         const response = await axios.post(`${baseUrl}/products`, formData, {
           headers: {
             "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${currentUser?.token}`,
           },
         });
         toast.success(response.data.message);
         navigate("/admin/products");
       }
     } catch (error) {
-      console.error("Error submitting form:", error);
-      alert("Failed to submit form");
+      const { message, navigateTo } = handleApiError(error);
+      toast.error(message);
+      if (navigateTo) {
+        if (navigateTo =='login'){
+          dispatch(logout());
+        }
+        navigate(`/${navigateTo}`);
+      }
     }
   };
 
@@ -492,9 +512,11 @@ export default function CreateProductPage() {
               )}
             </Grid>
             <Grid item xs={6}>
-              <FormControlLabel sx={{marginTop:2}}
+              <FormControlLabel
+                sx={{ marginTop: 2 }}
                 control={
-                  <Checkbox size="large"
+                  <Checkbox
+                    size="large"
                     checked={isSoldOut}
                     onChange={(e) => setIsSoldOut(e.target.checked)}
                   />

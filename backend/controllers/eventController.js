@@ -1,6 +1,6 @@
 const { Event, EventCategory } = require("../models");
 const { body, validationResult } = require("express-validator");
-
+const { Op } = require('sequelize');
 // Get all events
 const getAllEvents = async (req, res) => {
   try {
@@ -141,10 +141,38 @@ const deleteEvent = async (req, res) => {
   }
 };
 
+const getUpcomingEvents = async (req, res) => {
+  try {
+    const currentDate = new Date(); 
+
+    const events = await Event.findAll({
+      where: {
+        date: {
+          [Op.gt]: currentDate, 
+        },
+      },
+      include: {
+        model: EventCategory,
+        as: "category",
+        attributes: ["id", "name"],
+      },
+      limit: 2,
+      order: [['date', 'ASC'], ['createdAt', 'DESC']],
+    });
+    
+
+    res.status(200).json(events); 
+  } catch (error) {
+    console.error(error); 
+    res.status(500).json({ message: "Error retrieving events", error }); 
+  }
+};
+
 module.exports = {
   getAllEvents,
   getEventById,
   createEvent,
   updateEvent,
   deleteEvent,
+  getUpcomingEvents
 };

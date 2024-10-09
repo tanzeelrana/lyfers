@@ -12,6 +12,11 @@ import TabList from "@mui/lab/TabList";
 import TabPanel from "@mui/lab/TabPanel";
 import axios from "axios";
 import baseUrl from "../../config/apiConfig";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
+import {handleApiError} from '../../pages/common/Api-error-handler';
+import { useDispatch } from "react-redux";
+import { logout } from "../../store/auth/actions";
 
 interface TabData {
   id: string;
@@ -37,6 +42,8 @@ export default function EventsPage() {
   const [events, setEvents] = useState<EventData[]>([]);
   const [filteredEvents, setFilteredEvents] = useState<EventData[]>([]);
   const [loading, setLoading] = useState<boolean>(true); // Loading state
+  const navigate = useNavigate();
+  const dispatch =useDispatch();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -48,9 +55,17 @@ export default function EventsPage() {
         setEvents(eventResponse.data);
         setFilteredEvents(eventResponse.data);
       } catch (error) {
-        console.error("Error fetching tab data:", error);
+        const { message, navigateTo } = handleApiError(error);
+        toast.error(message);
+        if (navigateTo) {
+          if (navigateTo == "login") {
+            dispatch(logout());
+          }
+          navigate(`/${navigateTo}`);
+        }
+    
       } finally {
-        setLoading(false); // Set loading to false after data fetching
+        setLoading(false);
       }
     };
 

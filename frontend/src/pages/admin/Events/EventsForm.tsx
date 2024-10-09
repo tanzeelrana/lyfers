@@ -1,11 +1,24 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import { TextField, Button, Grid, Typography, MenuItem, Select, InputLabel, FormControl, IconButton } from '@mui/material';
-import axios from 'axios';
-import baseUrl from '../../../config/apiConfig';
-import { Box } from '@mui/system';
+import React, { useState, useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import {
+  TextField,
+  Button,
+  Grid,
+  Typography,
+  MenuItem,
+  Select,
+  InputLabel,
+  FormControl,
+  IconButton,
+} from "@mui/material";
+import axios from "axios";
+import baseUrl from "../../../config/apiConfig";
+import { Box } from "@mui/system";
 import ImageIcon from "@mui/icons-material/Image";
-import { toast } from 'react-toastify';
+import { toast } from "react-toastify";
+import { handleApiError } from "../../common/Api-error-handler";
+import { useDispatch, useSelector } from "react-redux";
+import { logout } from "../../../store/auth/actions";
 
 interface Category {
   id: number;
@@ -17,7 +30,7 @@ interface Event {
   title: string;
   date: string;
   description: string;
-  location:string;
+  location: string;
   ticketPrice: string;
   categoryId: number;
   image?: string; // Image URL if editing an existing event
@@ -25,11 +38,11 @@ interface Event {
 
 const EventsForm: React.FC = () => {
   const { eventId } = useParams<{ eventId: string }>(); // Get eventId from route
-  const [title, setTitle] = useState<string>('');
-  const [date, setDate] = useState<string>('');
-  const [description, setDescription] = useState<string>('');
-  const [ticketPrice, setTicketPrice] = useState<string>('');
-  const [location, setLocation] = useState<string>('');
+  const [title, setTitle] = useState<string>("");
+  const [date, setDate] = useState<string>("");
+  const [description, setDescription] = useState<string>("");
+  const [ticketPrice, setTicketPrice] = useState<string>("");
+  const [location, setLocation] = useState<string>("");
 
   const [categoryId, setCategoryId] = useState<number>(0);
   const [categories, setCategories] = useState<Category[]>([]);
@@ -38,7 +51,11 @@ const EventsForm: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const currentUser = useSelector((state: any) => state?.Auth?.currentUser);
+
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
 
   // Fetch categories dynamically from API
   useEffect(() => {
@@ -47,7 +64,14 @@ const EventsForm: React.FC = () => {
         const response = await axios.get(`${baseUrl}/eventCategories`);
         setCategories(response.data);
       } catch (err) {
-        setError('Failed to load categories');
+        const { message, navigateTo } = handleApiError(error);
+        toast.error(message);
+        if (navigateTo) {
+          if (navigateTo =='login'){
+            dispatch(logout());
+          }
+          navigate(`/${navigateTo}`);
+        }
       }
     };
 
@@ -59,18 +83,27 @@ const EventsForm: React.FC = () => {
     const fetchEvent = async () => {
       if (eventId) {
         try {
-          const response = await axios.get(`${baseUrl}/events/${eventId}`);
+          const response = await axios.get(`${baseUrl}/events/${eventId}`,{
+            headers: { Authorization: `Bearer ${currentUser?.token}` },
+          });
           const event = response.data;
-          console.log(event)
+          console.log(event);
           setTitle(event.title);
-          setDate(new Date(event.date).toISOString().split('T')[0]);
+          setDate(new Date(event.date).toISOString().split("T")[0]);
           setDescription(event.description);
           setTicketPrice(event.ticketPrice);
           setLocation(event.location);
           setCategoryId(event.categoryId);
           setImagePreview(event.image || null);
         } catch (err) {
-          setError('Failed to load event details');
+          const { message, navigateTo } = handleApiError(err);
+        toast.error(message);
+        if (navigateTo) {
+          if (navigateTo =='login'){
+            dispatch(logout());
+          }
+          navigate(`/${navigateTo}`);
+        }
         }
       }
     };
@@ -99,48 +132,61 @@ const EventsForm: React.FC = () => {
     setSuccessMessage(null);
 
     const formData = new FormData();
-    formData.append('title', title);
-    formData.append('location', location);
-    formData.append('date', date);
-    formData.append('description', description);
-    formData.append('ticketPrice', ticketPrice);
-    formData.append('categoryId', categoryId.toString());
+    formData.append("title", title);
+    formData.append("location", location);
+    formData.append("date", date);
+    formData.append("description", description);
+    formData.append("ticketPrice", ticketPrice);
+    formData.append("categoryId", categoryId.toString());
     if (imageFile) {
-      formData.append('image', imageFile);
+      formData.append("image", imageFile);
     }
 
     try {
       if (eventId) {
         // Update existing event
-        const response = await axios.put(`${baseUrl}/events/${eventId}`, formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-        });
-        toast.success( response.data.message);
+        const response = await axios.put(
+          `${baseUrl}/events/${eventId}`,
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+              Authorization: `Bearer ${currentUser?.token}`,
+            },
+          }
+        );
+        toast.success(response.data.message);
         navigate("/admin/events");
       } else {
         // Create new event
         const response = await axios.post(`${baseUrl}/events`, formData, {
           headers: {
-            'Content-Type': 'multipart/form-data',
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${currentUser?.token}`,
           },
         });
-        toast.success( response.data.message);
+        toast.success(response.data.message);
         navigate("/admin/events");
-    }
+      }
       setLoading(false);
       // Clear form
-      setTitle('');
-      setDate('');
-      setDescription('');
-      setTicketPrice('');
+      setTitle("");
+      setDate("");
+      setDescription("");
+      setTicketPrice("");
       setCategoryId(0);
       setImageFile(null);
       setImagePreview(null);
     } catch (err) {
       setLoading(false);
-      setError(eventId ? 'Failed to update event' : 'Failed to add event');
+      const { message, navigateTo } = handleApiError(err);
+        toast.error(message);
+        if (navigateTo) {
+          if (navigateTo =='login'){
+            dispatch(logout());
+          }
+          navigate(`/${navigateTo}`);
+        }
     }
   };
 
@@ -176,12 +222,16 @@ const EventsForm: React.FC = () => {
                 marginLeft: { xs: 0, md: 20 },
               }}
             >
-              {eventId ? 'Edit Event' : 'Add Event'}
+              {eventId ? "Edit Event" : "Add Event"}
             </Typography>
           </Grid>
         </Grid>
       </Grid>
-      <Grid item xs={12} sx={{ borderRadius: 4, border: "1px solid", padding: 2 }}>
+      <Grid
+        item
+        xs={12}
+        sx={{ borderRadius: 4, border: "1px solid", padding: 2 }}
+      >
         <form onSubmit={handleSubmit}>
           <Grid container spacing={2}>
             <Grid item xs={12} display="flex" justifyContent="center">
@@ -228,7 +278,12 @@ const EventsForm: React.FC = () => {
                 <img
                   src={imagePreview}
                   alt="Selected"
-                  style={{ maxWidth: '100%', maxHeight: '200px', borderRadius: '8px', marginTop: '10px' }}
+                  style={{
+                    maxWidth: "100%",
+                    maxHeight: "200px",
+                    borderRadius: "8px",
+                    marginTop: "10px",
+                  }}
                 />
               </Grid>
             )}
@@ -266,7 +321,9 @@ const EventsForm: React.FC = () => {
                   onChange={(e) => setCategoryId(Number(e.target.value))}
                   label="Category"
                 >
-                  <MenuItem value={0} disabled>Select Category</MenuItem>
+                  <MenuItem value={0} disabled>
+                    Select Category
+                  </MenuItem>
                   {categories.map((category) => (
                     <MenuItem key={category.id} value={category.id}>
                       {category.name}
@@ -310,7 +367,7 @@ const EventsForm: React.FC = () => {
                 required
               />
             </Grid>
-           
+
             <Grid item xs={12} display="flex" justifyContent="center">
               <Button
                 variant="contained"
@@ -318,7 +375,7 @@ const EventsForm: React.FC = () => {
                 type="submit"
                 disabled={loading}
               >
-                {loading ? 'Saving...' : eventId ? 'Update Event' : 'Add Event'}
+                {loading ? "Saving..." : eventId ? "Update Event" : "Add Event"}
               </Button>
             </Grid>
             {error && (
@@ -339,4 +396,3 @@ const EventsForm: React.FC = () => {
 };
 
 export default EventsForm;
-

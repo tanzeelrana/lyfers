@@ -14,12 +14,7 @@ exports.addToWishlist = async (req, res) => {
     const existingWishlistItem = await Wishlist.findOne({
       where: { userId, productId },
     });
-    if (existingWishlistItem) {
-      return res
-        .status(400)
-        .json({ message: "Product is already in your wishlist" });
-    }
-
+    
     // Add to wishlist
     await Wishlist.create({ userId, productId });
     res.status(200).json({ message: "Product added to wishlist" });

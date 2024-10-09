@@ -1,29 +1,92 @@
-import React, { FC } from "react";
+import React, { FC, useEffect, useState } from "react";
 import {
   Box,
   Button,
   Typography,
   Grid,
-  Card,
-  CardMedia,
   Container,
+  CircularProgress,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import rectangle from "../../assets/images/Rectangle.png";
 import homeCover from "../../assets/images/homeCover.png";
-import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
-import AddCircleOutlineOutlinedIcon from "@mui/icons-material/AddCircleOutlineOutlined";
-import tshirt from "../../assets/images/tshirt.jpeg";
-import ArrowRightAltIcon from "@mui/icons-material/ArrowRightAlt";
 import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
 import teamImage from "../../assets/images/teamImage.png";
-import love from "../../assets/images/6Pillers/love.png";
-import youthful from "../../assets/images/6Pillers/youthful.png";
+import love from "../../assets/images/6Pillers/Love.png";
+import youthful from "../../assets/images/6Pillers/Youthful.png";
+import empower from "../../assets/images/6Pillers/Empower.png";
+import Resilient from "../../assets/images/6Pillers/Resilient.png";
+import strength from "../../assets/images/6Pillers/Strength.png";
+import forgiving from "../../assets/images/6Pillers/Forgiving.png";
+import axios from "axios";
+import baseUrl from "../../config/apiConfig";
+import { handleApiError } from "../common/Api-error-handler";
+import { toast } from "react-toastify";
+import { logout } from "../../store/auth/actions";
+import ProductComponent from "../Shop/ProductComponent";
 
+interface Product {
+  id: number;
+  title: string;
+  description: string;
+  image: string;
+  colors: { name: string; code: string }[];
+  size: string[];
+  is_soldout: boolean;
+  images: {
+    fullPath: string;
+    id: number;
+    productId: number;
+    image: string;
+  }[];
+  price: number;
+  subcategoryId: number;
+}
 const HomePage: FC = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const currentUser = useSelector((state: any) => state?.Auth?.currentUser);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await axios.get<Product[]>(
+          `${baseUrl}/products/features`
+        );
+        setProducts(response.data);
+        setLoading(false);
+      } catch (error) {
+        const { message, navigateTo } = handleApiError(error);
+        toast.error(message);
+        if (navigateTo) {
+          if (navigateTo == "login") {
+            dispatch(logout());
+          }
+          navigate(`/${navigateTo}`);
+        }
+        setLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, []);
+  const removeFromWishlist = (productId: number) => {};
+
+  if (loading) {
+    return (
+      <Grid
+        container
+        justifyContent="center"
+        alignItems="center"
+        height="100vh"
+      >
+        <CircularProgress />
+      </Grid>
+    );
+  }
 
   return (
     <>
@@ -76,7 +139,7 @@ const HomePage: FC = () => {
         <Grid container>
           <Grid item xs={12}>
             <Box sx={{ margin: "40px 0px" }}>
-              <Grid container spacing={{ xs: 1,sm: 2,md: 3}}>
+              <Grid container spacing={{ xs: 1, sm: 2, md: 3 }}>
                 <Grid item xs={12}>
                   <Typography
                     sx={{
@@ -93,7 +156,14 @@ const HomePage: FC = () => {
                 </Grid>
 
                 <Grid item xs={5} md={5}>
-                  <Box
+                  <Box>
+                    <img
+                      src={love}
+                      alt="My Example"
+                      style={{ width: "100%", height: "auto" }}
+                    />
+                  </Box>
+                  {/* <Box
                     sx={{
                       display: "flex",
                       flexDirection: "column",
@@ -384,10 +454,17 @@ const HomePage: FC = () => {
                         />
                       </svg>
                     </Box>
-                  </Box>
+                  </Box> */}
                 </Grid>
                 <Grid item xs={7} md={7}>
-                  <Box
+                  <Box>
+                    <img
+                      src={youthful}
+                      alt="My Example"
+                      style={{ width: "100%", height: "auto" }}
+                    />
+                  </Box>
+                  {/* <Box
                     sx={{
                       display: "flex",
                       flexDirection: "column",
@@ -925,10 +1002,44 @@ const HomePage: FC = () => {
                         />
                       </svg>
                     </Box>
-                  </Box>
+                  </Box> */}
                 </Grid>
                 <Grid item xs={7} md={5}>
                   <Box
+                    sx={{
+                      display: {
+                        sm: "none",
+                        xs: "none",
+                        md: "block",
+                        lg: "block",
+                        xl: "block",
+                      },
+                    }}
+                  >
+                    <img
+                      src={forgiving}
+                      alt="My Example"
+                      style={{ width: "100%", height: "339px" }}
+                    />
+                  </Box>
+                  <Box
+                    sx={{
+                      display: {
+                        sm: "block",
+                        xs: "block",
+                        md: "none",
+                        lg: "none",
+                        xl: "none",
+                      },
+                    }}
+                  >
+                    <img
+                      src={forgiving}
+                      alt="My Example"
+                      style={{ width: "100%", height: "111px" }}
+                    />
+                  </Box>
+                  {/* <Box
                     sx={{
                       display: "flex",
                       flexDirection: "column",
@@ -1273,7 +1384,7 @@ const HomePage: FC = () => {
                         />
                       </svg>
                     </Box>
-                  </Box>
+                  </Box> */}
                 </Grid>
                 <Grid item xs={5} md={7}>
                   <Grid container spacing={3}>
@@ -1392,7 +1503,14 @@ const HomePage: FC = () => {
                       </Grid>
                     </Grid>
                     <Grid item xs={12} md={6}>
-                      <Box
+                      <Box>
+                        <img
+                          src={empower}
+                          alt="My Example"
+                          style={{ width: "100%", height: "auto" }}
+                        />
+                      </Box>
+                      {/* <Box
                         sx={{
                           display: "flex",
                           flexDirection: "column",
@@ -1689,13 +1807,13 @@ const HomePage: FC = () => {
                             />
                           </svg>
                         </Box>
-                      </Box>
+                      </Box> */}
                     </Grid>
                   </Grid>
                 </Grid>
 
                 <Grid item xs={5} md={5}>
-                  <Box
+                  {/* <Box
                     sx={{
                       display: "flex",
                       flexDirection: "column",
@@ -2092,10 +2210,23 @@ const HomePage: FC = () => {
                         />
                       </svg>
                     </Box>
+                  </Box> */}
+                  <Box>
+                    <img
+                      src={Resilient}
+                      alt="My Example"
+                      style={{ width: "100%", height: "auto" }}
+                    />
                   </Box>
                 </Grid>
                 <Grid item xs={7} md={7}>
-                  <Box
+                  <img
+                    src={strength}
+                    alt="My Example"
+                    style={{ width: "100%", height: "auto" }}
+                  />
+
+                  {/* <Box
                     sx={{
                       display: "flex",
                       flexDirection: "column",
@@ -2714,7 +2845,7 @@ const HomePage: FC = () => {
                         />
                       </svg>
                     </Box>
-                  </Box>
+                  </Box> */}
                 </Grid>
               </Grid>
             </Box>
@@ -2765,6 +2896,7 @@ const HomePage: FC = () => {
                       transform: "scale(1.05)",
                     },
                   }}
+                  onClick={() => navigate("/become-a-lyfer")}
                 >
                   Learn More
                 </Button>
@@ -2790,281 +2922,27 @@ const HomePage: FC = () => {
                     Buy LYFERS Merchandise
                   </Typography>
                 </Grid>
-                <Grid item xs={12} md={6}>
-                  <Grid container direction={"row"} spacing={3}>
-                    {[1, 2, 3, 4].map((index) => (
-                      <Grid item xs={6} sm={4}   md={6} key={index}>
-                        <Card
-                          sx={{
-                            borderRadius: {
-                              xs: "15px",
-                              sm: "20px",
-                              md: "36px",
-                            },
-                          }}
-                        >
-                          <Box sx={{ position: "relative" }}>
-                            <CardMedia
-                              sx={{
-                                height: {
-                                  xs: "115px",
-                                  sm: "150px",
-                                  md: "262px",
-                                },
-                              }}
-                              image={tshirt}
-                              title="product"
-                            />
-                            <Box
-                              sx={{
-                                position: "absolute",
-                                bottom: { xs: "40px", sm: "55px", md: "60px" },
-                                right: { xs: "3px", sm: "15px", md: "25px" },
-                                backgroundColor: "white",
-                                height: { xs: "28px", sm: "40px", md: "40px" },
-                                width: { xs: "28px", sm: "40px", md: "40px" },
-                                borderRadius: "100%",
-                                justifyContent: "center",
-                                alignItems: "center",
-                              }}
-                            >
-                              <FavoriteBorderIcon
-                                sx={{
-                                  color: "black",
-                                  fontSize: {
-                                    xs: "25px",
-                                    sm: "30px",
-                                    md: "34px",
-                                  },
-                                  padding: {
-                                    xs: "2px 2px",
-                                    sm: "6px 5px",
-                                    md: "6px 5px",
-                                    lg: "6px 5px",
-                                    xl: "6px 5px",
-                                  },
-                                }}
-                              />
-                            </Box>
-                            <Box
-                              sx={{
-                                position: "absolute",
-                                bottom: 0,
-                                right: { xs: "3px", sm: "15px", md: "25px" },
-                                backgroundColor: "white",
-                                height: { xs: "30px", sm: "40px", md: "40px" },
-                                display: "flex",
-                                padding: { xs: "1px", sm: "3px", md: "4px" },
-                                borderTopLeftRadius: "45%",
-                                borderTopRightRadius: "45%",
-                                justifyContent: "center",
-                                alignItems: "start",
-                              }}
-                            >
-                              <AddCircleOutlineOutlinedIcon
-                                sx={{
-                                  color: "black",
-                                  fontSize: {
-                                    xs: "25px",
-                                    sm: "30px",
-                                    md: "34px",
-                                  },
-                                }}
-                              />
-                            </Box>
-                          </Box>
-                          <Box sx={{ padding: "12px 20px" }}>
-                            <Box
-                              sx={{
-                                display: "flex",
-                                justifyContent: "space-between",
-                              }}
-                            >
-                              <Typography
-                                variant="body1"
-                                sx={{
-                                  fontFamily: "Outfit",
-                                  fontSize: {
-                                    xs: "18px",
-                                    sm: "24px",
-                                    md: "30px",
-                                  },
-                                  fontWeight: 600,
-                                  lineHeight: "38px",
-                                }}
-                              >
-                                Lizard
-                              </Typography>
-                              <Typography
-                                color="text.secondary"
-                                sx={{
-                                  fontFamily: "Syne",
-                                  fontSize: {
-                                    xs: "18px",
-                                    sm: "24px",
-                                    md: "30px",
-                                  },
-                                  fontWeight: 700,
-                                  lineHeight: "35px",
-                                  color: "#FF5A00",
-                                }}
-                              >
-                                $50
-                              </Typography>
-                            </Box>
-                            <Box sx={{ display: "flex", marginTop: {
-                                    xs: "1px",
-                                    sm: "4px",
-                                    md: "8px",
-                                  }, }}>
-                              <Typography
-                                color="text.secondary"
-                                sx={{
-                                  fontFamily: "Outfit",
-                                  fontSize: {
-                                    xs: "10px",
-                                    sm: "14px",
-                                    md: "18px",
-                                  },
-                                  color: "#FBB03A",
-                                }}
-                              >
-                                View Detail
-                              </Typography>
-                              <ArrowRightAltIcon
-                                sx={{
-                                  color: "#FBB03A",
-                                  fontSize: {
-                                    xs: "14px",
-                                    sm: "18px",
-                                    md: "20px",
-                                  },
-                                  marginTop: {
-                                    xs: "2px",
-                                    sm: "0px",
-                                    md: "4px",
-                                  },
-                                }}
-                              />
-                            </Box>
-                          </Box>
-                        </Card>
-                      </Grid>
-                    ))}
+                <Grid item xs={12} sx={{ marginBottom: "80px" }}>
+                  <Grid container direction={"row"} spacing={4}>
+                    {products.length > 0 ? (
+                      products.map((product) => (
+                        <Grid item xs={12} sm={6} md={3} key={product.id}>
+                          <ProductComponent
+                            product={product}
+                            userId={currentUser?.user?.id ?? 0}
+                            removeFromWishlist={removeFromWishlist}
+                          />
+                        </Grid>
+                      ))
+                    ) : (
+                      <Typography
+                        variant="h6"
+                        sx={{ width: "100%", textAlign: "center" }}
+                      >
+                        No records found
+                      </Typography>
+                    )}
                   </Grid>
-                </Grid>
-                <Grid item xs={12} md={6}>
-                  <Card
-                    sx={{
-                      borderRadius: "36px",
-                      display: {
-                        sm: "none",
-                        xs: "none",
-                        md: "block",
-                        lg: "block",
-                        xl: "block",
-                      },
-                    }}
-                  >
-                    <Box sx={{ position: "relative" }}>
-                      <CardMedia
-                        sx={{ height: 645 }}
-                        image={tshirt}
-                        title="product"
-                      />
-                      <Box
-                        sx={{
-                          position: "absolute",
-                          bottom: 60,
-                          right: 26,
-                          backgroundColor: "white",
-                          height: "42px",
-                          width: "42px",
-                          borderRadius: "100%",
-                          justifyContent: "center",
-                          alignItems: "center",
-                        }}
-                      >
-                        <FavoriteBorderIcon
-                          style={{
-                            color: "black",
-                            fontSize: 32,
-                            padding: "6px 5px",
-                          }}
-                        />
-                      </Box>
-                      <Box
-                        sx={{
-                          position: "absolute",
-                          bottom: 0,
-                          right: 25,
-                          backgroundColor: "white",
-                          height: "40px",
-                          display: "flex",
-                          padding: "4px",
-                          borderTopLeftRadius: "45%",
-                          borderTopRightRadius: "45%",
-                          justifyContent: "center",
-                          alignItems: "start",
-                        }}
-                      >
-                        <AddCircleOutlineOutlinedIcon
-                          style={{ color: "black", fontSize: 34 }}
-                        />
-                      </Box>
-                    </Box>
-                    <Box sx={{ padding: "12px 20px" }}>
-                      <Box
-                        sx={{
-                          display: "flex",
-                          justifyContent: "space-between",
-                        }}
-                      >
-                        <Typography
-                          variant="body1"
-                          sx={{
-                            fontFamily: "Outfit",
-                            fontSize: "30px",
-                            fontWeight: 600,
-                            lineHeight: "38px",
-                          }}
-                        >
-                          Lizard
-                        </Typography>
-                        <Typography
-                          color="text.secondary"
-                          sx={{
-                            fontFamily: "Syne",
-                            fontSize: "30px",
-                            fontWeight: 700,
-                            lineHeight: "35px",
-                            color: "#FF5A00",
-                          }}
-                        >
-                          $50
-                        </Typography>
-                      </Box>
-                      <Box sx={{ display: "flex", marginTop: "8px" }}>
-                        <Typography
-                          color="text.secondary"
-                          sx={{
-                            fontFamily: "Outfit",
-                            fontSize: "18px",
-                            color: "#FBB03A",
-                          }}
-                        >
-                          View Detail
-                        </Typography>
-                        <ArrowRightAltIcon
-                          style={{
-                            color: "#FBB03A",
-                            fontSize: 20,
-                            marginTop: "4px",
-                          }}
-                        />
-                      </Box>
-                    </Box>
-                  </Card>
                 </Grid>
                 <Grid
                   item
@@ -3084,12 +2962,12 @@ const HomePage: FC = () => {
                       padding: "8px 28px",
                       display: "flex",
                       alignItems: "center",
-                      marginTop: "50px",
                       "&:hover": {
                         backgroundColor: "primary.dark",
                         transform: "scale(1.05)",
                       },
                     }}
+                    onClick={() => navigate("/products")}
                   >
                     <VisibilityOutlinedIcon
                       sx={{ color: "white", fontSize: 20, mr: 1 }}

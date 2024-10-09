@@ -22,7 +22,11 @@ import { Carousel } from "react-responsive-carousel";
 import axios from "axios";
 import baseUrl from "../../config/apiConfig";
 import { Container } from "@mui/system";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { handleApiError } from "../common/Api-error-handler";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
+import { logout } from "../../store/auth/actions";
 
 interface Product {
   id: number;
@@ -60,6 +64,8 @@ function ProductsPage() {
   const [error, setError] = useState<string | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState<boolean>(false);
   const [sortOrder, setSortOrder] = useState<string>("");
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -68,7 +74,14 @@ function ProductsPage() {
         setProducts(response.data);
         setLoading(false);
       } catch (error) {
-        setError("Error fetching products");
+        const { message, navigateTo } = handleApiError(error);
+        toast.error(message);
+        if (navigateTo) {
+          if (navigateTo == "login") {
+            dispatch(logout());
+          }
+          navigate(`/${navigateTo}`);
+        }
         setLoading(false);
       }
     };
@@ -80,7 +93,14 @@ function ProductsPage() {
         );
         setCategories(response.data);
       } catch (error) {
-        console.error("Error fetching categories", error);
+        const { message, navigateTo } = handleApiError(error);
+        toast.error(message);
+        if (navigateTo) {
+          if (navigateTo == "login") {
+            dispatch(logout());
+          }
+          navigate(`/${navigateTo}`);
+        }
       }
     };
 

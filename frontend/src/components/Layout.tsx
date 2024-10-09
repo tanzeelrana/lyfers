@@ -23,13 +23,14 @@ export default function Layout(props: Props) {
     setActivePath(location.pathname);
   }, [location]);
   return (
-    <Container maxWidth="xl">
+    <Container maxWidth="xl" sx={{
+      marginBottom: "80px",
+    }}>
     <Box>
       <Grid
         container
         direction="row"
         spacing={1}
-        
       >
         <Grid item xs={12} md={3} marginTop={{xs:4, md:16}}>
           <Box
@@ -55,11 +56,11 @@ export default function Layout(props: Props) {
             </Box>
             <Box>
             <Button
-              onClick={() => navigate("/dashboard")}
+              onClick={() => navigate("/profile")}
               sx={{
                 fontFamily: "Outfit",
                 textTransform:'capitalize',
-                fontWeight: activePath === "/dashboard" ? "700" : "normal", 
+                fontWeight: activePath === "/profile" ? "700" : "normal", 
 
               }}
             >

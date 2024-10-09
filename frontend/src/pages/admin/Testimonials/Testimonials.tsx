@@ -14,15 +14,21 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
+  Menu,
+  MenuItem,
 } from "@mui/material";
 import axios from "axios";
 import baseUrl from "../../../config/apiConfig";
 import SearchIcon from "@mui/icons-material/Search";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
+import { MoreHoriz } from "@mui/icons-material";
+import { handleApiError } from "../../common/Api-error-handler";
+import { logout } from "../../../store/auth/actions";
 dayjs.extend(relativeTime);
 
 interface Testimonial {
@@ -49,7 +55,12 @@ const Testimonials = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [id, setId] = useState<string | null>("");
-
+  const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null);
+  const [selectedTestimonialId, setSelectedTestimonialId] = useState<
+    string | null
+  >(null);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
   const currentUser = useSelector((state: any) => state?.Auth?.currentUser);
 
   const [open, setOpen] = useState<boolean>(false);
@@ -75,7 +86,14 @@ const Testimonials = () => {
       setFilteredTestimonials(response.data);
     } catch (error) {
       setLoading(false);
-      setError("Error fetching testimonials:");
+      const { message, navigateTo } = handleApiError(error);
+      toast.error(message);
+      if (navigateTo) {
+        if (navigateTo =='login'){
+          dispatch(logout());
+        }
+        navigate(`/${navigateTo}`);
+      }
     }
   };
 
@@ -90,7 +108,14 @@ const Testimonials = () => {
       });
       setOpen(true);
     } catch (error) {
-      toast.error("Error fetching testimonial for editing.");
+      const { message, navigateTo } = handleApiError(error);
+      toast.error(message);
+      if (navigateTo) {
+        if (navigateTo =='login'){
+          dispatch(logout());
+        }
+        navigate(`/${navigateTo}`);
+      }
     }
   };
 
@@ -155,26 +180,36 @@ const Testimonials = () => {
       if (id) {
         const response = await axios.put(
           `${baseUrl}/testimonials/${id}`,
-          newTestimonial
+          newTestimonial,
+          {
+            headers: {
+              Authorization: `Bearer ${currentUser?.token}`,
+            },
+          }
         );
         toast.success(response.data.message);
       } else {
         const response = await axios.post(
           `${baseUrl}/testimonials`,
-          newTestimonial
+          newTestimonial,
+          {
+            headers: {
+              Authorization: `Bearer ${currentUser?.token}`,
+            },
+          }
         );
         toast.success(response.data.message);
       }
       fetchTestimonials();
       handleClose();
     } catch (error) {
-      if (axios.isAxiosError(error) && error.response?.status === 400) {
-        const messages = error.response.data.errors
-          .map((err: any) => err.msg)
-          .join(", ");
-        toast.error(messages || "Validation error");
-      } else {
-        toast.error("Error creating testimonial:");
+      const { message, navigateTo } = handleApiError(error);
+      toast.error(message);
+      if (navigateTo) {
+        if (navigateTo =='login'){
+          dispatch(logout());
+        }
+        navigate(`/${navigateTo}`);
       }
     }
   };
@@ -185,12 +220,33 @@ const Testimonials = () => {
 
   const handleDelete = async (id: string) => {
     try {
-      const response = await axios.delete(`${baseUrl}/testimonials/${id}`);
+      const response = await axios.delete(`${baseUrl}/testimonials/${id}`, {
+        headers: {
+          Authorization: `Bearer ${currentUser?.token}`,
+        },
+      });
       toast.success(response.data.message);
       fetchTestimonials();
     } catch (error) {
-      toast.error("Error deleting testimonial.");
+      const { message, navigateTo } = handleApiError(error);
+      toast.error(message);
+      if (navigateTo) {
+        if (navigateTo =='login'){
+          dispatch(logout());
+        }
+        navigate(`/${navigateTo}`);
+      }
     }
+  };
+
+  const handleMenuOpen = (event: React.MouseEvent<HTMLElement>, id: string) => {
+    setMenuAnchorEl(event.currentTarget);
+    setSelectedTestimonialId(id);
+  };
+
+  const handleMenuClose = () => {
+    setMenuAnchorEl(null);
+    setSelectedTestimonialId(null);
   };
 
   if (loading) {
@@ -319,44 +375,57 @@ const Testimonials = () => {
                   </Box>
                   <Box sx={{ flex: 1 }}>
                     <Typography variant="h6">
-                      {testimonial.user.firstName || "John"}{" "}
-                      {testimonial.user.lastName || "Doe"}
+                      {testimonial.user.firstName || testimonial.user.email}{" "}
+                      {testimonial.user.lastName || ""}
                     </Typography>
                     <Typography variant="body2" color="textSecondary">
                       {testimonial.title}
                     </Typography>
                     <Box
-                      display={"flex"}
-                      justifyContent={"space-between"}
+                      display="flex"
+                      justifyContent="space-between"
                       alignItems="center"
                       sx={{ marginTop: 1 }}
                     >
                       <Typography variant="body1" sx={{ flex: 1 }}>
                         {testimonial.description}
                       </Typography>
-                      <Box sx={{ display: "flex", gap: 1 }}>
-                        <Button
-                          variant="outlined"
-                          onClick={() => handleOpen(testimonial.id)}
-                        >
-                          Edit
-                        </Button>
-                        <Button
-                          onClick={() => handleDelete(testimonial.id)}
-                          color="error"
-                        >
-                          Delete
-                        </Button>
-                      </Box>
                     </Box>
                   </Box>
-                  <Typography
-                    variant="body2"
-                    fontWeight="bold"
-                    color="textSecondary"
-                  >
-                    {dayjs(testimonial.createdAt).fromNow()}
-                  </Typography>
+
+                  {/* Place Menu and Date in a row */}
+                  <Box sx={{ display: "flex", alignItems: "center" }}>
+                    <Typography
+                      variant="body2"
+                      fontWeight="bold"
+                      color="textSecondary"
+                      sx={{ marginRight: 1 }}
+                    >
+                      {dayjs(testimonial.createdAt).fromNow()}
+                    </Typography>
+                    <IconButton
+                      onClick={(e) => handleMenuOpen(e, testimonial.id)}
+                    >
+                      <MoreHoriz />
+                    </IconButton>
+
+                    {/* Menu for Edit/Delete */}
+                    <Menu
+                      anchorEl={menuAnchorEl}
+                      open={
+                        Boolean(menuAnchorEl) &&
+                        selectedTestimonialId === testimonial.id
+                      }
+                      onClose={handleMenuClose}
+                    >
+                      <MenuItem onClick={() => handleOpen(testimonial.id)}>
+                        Edit
+                      </MenuItem>
+                      <MenuItem onClick={() => handleDelete(testimonial.id)}>
+                        Delete
+                      </MenuItem>
+                    </Menu>
+                  </Box>
                 </Card>
               </Grid>
             ))

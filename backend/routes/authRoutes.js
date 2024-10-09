@@ -1,16 +1,18 @@
 const express = require('express');
 const router = express.Router();
 const { User } = require('../models');
+const {authenticateAdmin,authenticate} = require("../middleware/authMiddleware")
 
-const { login,signup,logout, forgotPassword,members,userDelete } = require('../../backend/controllers/authController');
+
+const { login,signup,logout, forgotPassword,members,userDelete, userProfile } = require('../../backend/controllers/authController');
 
 router.post('/signup', signup);
 
 router.post('/login', login);
 
-router.post('/logout', logout);
+router.post('/logout',authenticate, logout);
 
-router.post('/forgot-password', forgotPassword);
+router.post('/forgot-password',authenticate, forgotPassword);
 
 router.put('/update-profile/:id', async (req, res) => {
     try {
@@ -20,10 +22,7 @@ router.put('/update-profile/:id', async (req, res) => {
         lastName,
         email,
         dateOfBirth,
-        password,
-        securityQuestion,
-        answer,
-        fullName,
+        fullname,
         phone,
         address,
         city,
@@ -37,10 +36,7 @@ router.put('/update-profile/:id', async (req, res) => {
           lastName,
           email,
           dateOfBirth,
-          password,
-          securityQuestion,
-          answer,
-          fullName,
+          fullname,
           phone,
           address,
           city,
@@ -61,8 +57,10 @@ router.put('/update-profile/:id', async (req, res) => {
     }
   });
 
-  router.get('/members', members);
-  router.delete('/user/:id', userDelete);
+  router.get('/user/:id',authenticate, userProfile);
+
+  router.get('/members',authenticateAdmin, members);
+  router.delete('/user/:id',authenticateAdmin, userDelete);
 
 
 

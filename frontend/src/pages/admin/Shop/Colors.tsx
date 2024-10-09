@@ -24,6 +24,10 @@ import SearchIcon from "@mui/icons-material/Search";
 import axios from "axios";
 import baseUrl from "../../../config/apiConfig";
 import { toast } from "react-toastify";
+import { handleApiError } from "../../common/Api-error-handler";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { logout } from "../../../store/auth/actions";
 
 interface Color {
   id: number;
@@ -46,6 +50,9 @@ export default function Colors() {
     nameError?: string;
     codeError?: string;
   }>({});
+  const currentUser = useSelector((state: any) => state?.Auth?.currentUser);
+  const navigate = useNavigate();
+  const dispatch =useDispatch();
 
   useEffect(() => {
     const fetchColors = async () => {
@@ -53,7 +60,14 @@ export default function Colors() {
         const response = await axios.get<Color[]>(`${baseUrl}/colors`);
         setColors(response.data);
       } catch (error) {
-        setError("Error fetching colors");
+        const { message, navigateTo } = handleApiError(error);
+        toast.error(message);
+        if (navigateTo) {
+          if (navigateTo =='login'){
+            dispatch(logout());
+          }
+          navigate(`/${navigateTo}`);
+        }
       } finally {
         setLoading(false);
       }
@@ -107,13 +121,24 @@ export default function Colors() {
 
       if (editMode && currentColorId !== null) {
         // Update existing color
-       const response = await axios.put(`${baseUrl}/colors/${currentColorId}`, colorData);
-       toast.success( response.data.message);
+        const response = await axios.put(
+          `${baseUrl}/colors/${currentColorId}`,
+          colorData,
+          {
+            headers: {
+              Authorization: `Bearer ${currentUser?.token}`,
+            },
+          }
+        );
+        toast.success(response.data.message);
       } else {
         // Create new color
-      const response = await axios.post(`${baseUrl}/colors`, colorData);
-      toast.success( response.data.message);
-
+        const response = await axios.post(`${baseUrl}/colors`, colorData, {
+          headers: {
+            Authorization: `Bearer ${currentUser?.token}`,
+          },
+        });
+        toast.success(response.data.message);
       }
 
       handleCloseModal();
@@ -122,30 +147,34 @@ export default function Colors() {
       const response = await axios.get<Color[]>(`${baseUrl}/colors`);
       setColors(response.data);
     } catch (error) {
-      if (axios.isAxiosError(error) && error.response?.status === 400) {
-        const messages = error.response.data.errors
-          .map((err: any) => err.msg)
-          .join(", ");
-        handleError(messages || "Validation error");
-      } else {
-        handleError(editMode ? "Error updating color" : "Error creating color");
+      const { message, navigateTo } = handleApiError(error);
+      toast.error(message);
+      if (navigateTo) {
+        if (navigateTo =='login'){
+          dispatch(logout());
+        }
+        navigate(`/${navigateTo}`);
       }
     }
   };
 
   const handleDelete = async (id: number) => {
     try {
-      await axios.delete(`${baseUrl}/colors/${id}`);
+      await axios.delete(`${baseUrl}/colors/${id}`, {
+        headers: {
+          Authorization: `Bearer ${currentUser?.token}`,
+        },
+      });
       setColors((prev) => prev.filter((color) => color.id !== id));
       setDeleteConfirmOpen(false);
     } catch (error) {
-      if (axios.isAxiosError(error) && error.response?.status === 400) {
-        const messages = error.response.data.errors
-          .map((err: any) => err.msg)
-          .join(", ");
-        handleError(messages || "Validation error");
-      } else {
-        handleError("Error deleting color");
+      const { message, navigateTo } = handleApiError(error);
+      toast.error(message);
+      if (navigateTo) {
+        if (navigateTo =='login'){
+          dispatch(logout());
+        }
+        navigate(`/${navigateTo}`);
       }
     }
   };

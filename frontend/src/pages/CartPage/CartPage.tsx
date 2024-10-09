@@ -17,13 +17,14 @@ import {
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 import DeleteIcon from "@mui/icons-material/Delete";
-import tshirt from "../../assets/images/tshirt.jpeg";
 import { Container } from "@mui/system";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import baseUrl from "../../config/apiConfig";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
+import { handleApiError } from "../common/Api-error-handler";
+import { logout } from "../../store/auth/actions";
 
 interface Product {
   id: number;
@@ -34,6 +35,7 @@ interface Product {
   size: string;
   color: string;
   selected: boolean;
+  productId: number;
   images: {
     fullPath: string;
     id: number;
@@ -49,31 +51,45 @@ const CartPage: React.FC = () => {
   const [cartItems, setCartItems] = useState<Product[]>([]);
   const [selectAll, setSelectAll] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
-  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const fetchCartData = async () => {
       try {
         const response = await axios.get(
-          `${baseUrl}/cart/${currentUser.user.id}`
+          `${baseUrl}/cart/${currentUser.user.id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${currentUser?.token}`,
+            },
+          }
         );
-        const items = response.data.CartItems.map((item: any) => ({
-          id: item.id,
-          image:
-            item.Product.images[0]?.fullPath ??
-            "https://via.placeholder.com/150",
-          productId: item.Product.id,
-          name: item.Product.title,
-          price: parseFloat(item.Product.price),
-          quantity: item.quantity,
-          size: item.size ?? "N/A",
-          color: item.color || "N/A",
-          selected: false,
-        }));
-        setCartItems(items);
+        if(response.data){
+          const items = response.data.CartItems.map((item: any) => ({
+            id: item.id,
+            image:
+              item.Product.images[0]?.fullPath ??
+              "https://via.placeholder.com/150",
+            productId: item.Product.id,
+            name: item.Product.title,
+            price: parseFloat(item.Product.price),
+            quantity: item.quantity,
+            size: item.size ?? "N/A",
+            color: item.color || "N/A",
+            selected: false,
+          }));
+          setCartItems(items);
+        }
+      
       } catch (error) {
-        setError("Failed to fetch cart data");
+        const { message, navigateTo } = handleApiError(error);
+        toast.error(message);
+        if (navigateTo) {
+          if (navigateTo == "login") {
+            dispatch(logout());
+          }
+          navigate(`/${navigateTo}`);
+        }
       } finally {
         setLoading(false);
       }
@@ -118,14 +134,32 @@ const CartPage: React.FC = () => {
 
   const handleRemoveItem = async (id: number) => {
     try {
-      const response = await axios.delete(`${baseUrl}/cart/remove/${id}`);
-      setCartItems((prevItems) => prevItems.filter((item) => item.id !== id));
+      const response = await axios.delete(
+        `${baseUrl}/cart/remove/${currentUser.user?.id}/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${currentUser?.token}`,
+          },
+        }
+      );
+      setCartItems((prevItems) =>
+        prevItems.filter((item) => item.productId !== id)
+      );
       if (response.status === 200) {
-        setCartItems((prevItems) => prevItems.filter((item) => item.id !== id));
+        setCartItems((prevItems) =>
+          prevItems.filter((item) => item.productId !== id)
+        );
         toast.success(response.data.message);
       }
     } catch (error) {
-      toast.error("Failed to remove item from the cart.");
+      const { message, navigateTo } = handleApiError(error);
+      toast.error(message);
+      if (navigateTo) {
+        if (navigateTo == "login") {
+          dispatch(logout());
+        }
+        navigate(`/${navigateTo}`);
+      }
     }
   };
 
@@ -321,7 +355,9 @@ const CartPage: React.FC = () => {
                                   textTransform: "capitalize",
                                 }}
                                 startIcon={<DeleteIcon />}
-                                onClick={() => handleRemoveItem(product.id)}
+                                onClick={() =>
+                                  handleRemoveItem(product.productId)
+                                }
                               >
                                 Remove
                               </Button>
