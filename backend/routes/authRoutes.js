@@ -4,7 +4,7 @@ const { User } = require('../models');
 const {authenticateAdmin,authenticate} = require("../middleware/authMiddleware")
 
 
-const { login,signup,logout, forgotPassword,members,userDelete, userProfile } = require('../../backend/controllers/authController');
+const { login,signup,logout, forgotPassword,members,userDelete, userProfile } = require('../../userService/controllers/authController');
 
 router.post('/signup', signup);
 

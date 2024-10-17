@@ -53,7 +53,7 @@ const MemberPage: React.FC = () => {
     useState<boolean>(false);
   const currentUser = useSelector((state: any) => state?.Auth?.currentUser);
   const navigate = useNavigate();
-  const dispatch =useDispatch();
+  const dispatch = useDispatch();
 
   // Fetching users from API
   useEffect(() => {
@@ -69,7 +69,7 @@ const MemberPage: React.FC = () => {
         const { message, navigateTo } = handleApiError(error);
         toast.error(message);
         if (navigateTo) {
-          if (navigateTo =='login'){
+          if (navigateTo == "login") {
             dispatch(logout());
           }
           navigate(`/${navigateTo}`);
@@ -99,7 +99,7 @@ const MemberPage: React.FC = () => {
   // Handle closing of dot menu
   const handleMenuClose = () => {
     setAnchorEl(null);
-    setSelectedUser(null);
+    // setSelectedUser(null);
   };
 
   // Open confirmation dialog
@@ -134,7 +134,7 @@ const MemberPage: React.FC = () => {
         const { message, navigateTo } = handleApiError(error);
         toast.error(message);
         if (navigateTo) {
-          if (navigateTo =='login'){
+          if (navigateTo == "login") {
             dispatch(logout());
           }
           navigate(`/${navigateTo}`);
@@ -268,7 +268,9 @@ const MemberPage: React.FC = () => {
                           open={Boolean(anchorEl && selectedUser === user.id)}
                           onClose={handleMenuClose}
                         >
-                          <MenuItem onClick={handleDeleteUser}>Delete</MenuItem>
+                          <MenuItem onClick={handleOpenConfirmationDialog}>
+                            Delete
+                          </MenuItem>
                         </Menu>
                       </TableCell>
                     </TableRow>

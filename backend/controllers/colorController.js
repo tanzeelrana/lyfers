@@ -1,3 +1,4 @@
+const transporter = require('../config/NodeMailer');
 const { Color } = require('../models');
 const { body, validationResult } = require('express-validator');
 

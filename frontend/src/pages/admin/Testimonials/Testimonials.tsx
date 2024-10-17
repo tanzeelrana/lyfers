@@ -62,7 +62,7 @@ const Testimonials = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const currentUser = useSelector((state: any) => state?.Auth?.currentUser);
-
+  const [confirmationOpen, setConfirmationOpen] = useState<boolean>(false);
   const [open, setOpen] = useState<boolean>(false);
   const [newTestimonial, setNewTestimonial] = useState({
     title: "",
@@ -89,7 +89,7 @@ const Testimonials = () => {
       const { message, navigateTo } = handleApiError(error);
       toast.error(message);
       if (navigateTo) {
-        if (navigateTo =='login'){
+        if (navigateTo == "login") {
           dispatch(logout());
         }
         navigate(`/${navigateTo}`);
@@ -111,7 +111,7 @@ const Testimonials = () => {
       const { message, navigateTo } = handleApiError(error);
       toast.error(message);
       if (navigateTo) {
-        if (navigateTo =='login'){
+        if (navigateTo == "login") {
           dispatch(logout());
         }
         navigate(`/${navigateTo}`);
@@ -206,7 +206,7 @@ const Testimonials = () => {
       const { message, navigateTo } = handleApiError(error);
       toast.error(message);
       if (navigateTo) {
-        if (navigateTo =='login'){
+        if (navigateTo == "login") {
           dispatch(logout());
         }
         navigate(`/${navigateTo}`);
@@ -231,7 +231,7 @@ const Testimonials = () => {
       const { message, navigateTo } = handleApiError(error);
       toast.error(message);
       if (navigateTo) {
-        if (navigateTo =='login'){
+        if (navigateTo == "login") {
           dispatch(logout());
         }
         navigate(`/${navigateTo}`);
@@ -247,6 +247,19 @@ const Testimonials = () => {
   const handleMenuClose = () => {
     setMenuAnchorEl(null);
     setSelectedTestimonialId(null);
+  };
+
+  const confirmDelete = (id: string) => {
+    setSelectedTestimonialId(id);
+    setConfirmationOpen(true);
+  };
+
+  const handleConfirmDelete = () => {
+    if (selectedTestimonialId) {
+      handleDelete(selectedTestimonialId);
+    }
+    setConfirmationOpen(false);
+    handleMenuClose();
   };
 
   if (loading) {
@@ -421,9 +434,9 @@ const Testimonials = () => {
                       <MenuItem onClick={() => handleOpen(testimonial.id)}>
                         Edit
                       </MenuItem>
-                      <MenuItem onClick={() => handleDelete(testimonial.id)}>
+                      <MenuItem onClick={() => confirmDelete(testimonial.id)}>
                         Delete
-                      </MenuItem>
+                      </MenuItem>{" "}
                     </Menu>
                   </Box>
                 </Card>
@@ -441,7 +454,10 @@ const Testimonials = () => {
 
       {/* Modal for creating a new testimonial */}
       <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
-        <DialogTitle textAlign="center">Add New Testimonial</DialogTitle>
+        <DialogTitle textAlign="center">
+          {" "}
+          {!id ? "Add New Testimonial" : "Edit Testimonial"}
+        </DialogTitle>
         <DialogContent>
           <TextField
             fullWidth
@@ -469,6 +485,27 @@ const Testimonials = () => {
         <DialogActions>
           <Button onClick={handleClose}>Cancel</Button>
           <Button onClick={handleSubmit}>Save</Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Delete Confirmation Modal */}
+      <Dialog
+        open={confirmationOpen}
+        onClose={() => setConfirmationOpen(false)}
+      >
+        <DialogTitle>Confirm Delete</DialogTitle>
+        <DialogContent>
+          <Typography>
+            Are you sure you want to delete this testimonial?
+          </Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setConfirmationOpen(false)} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={handleConfirmDelete} color="secondary">
+            Delete
+          </Button>
         </DialogActions>
       </Dialog>
     </Grid>

@@ -177,7 +177,7 @@ function ProductsPage() {
 
   return (
     <>
-      <Grid container sx={{ justifyContent: "center" }}>
+      <Grid container sx={{ justifyContent: "center" ,marginTop:{ xl: "80px"}}}>
         <Grid
           item
           xs={9.2}

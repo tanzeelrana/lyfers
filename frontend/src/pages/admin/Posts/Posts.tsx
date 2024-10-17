@@ -50,10 +50,10 @@ const Posts = () => {
   const [error, setError] = useState<string | null>(null);
   const currentUser = useSelector((state: any) => state?.Auth?.currentUser);
   const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null);
-  const [selectedTestimonialId, setSelectedTestimonialId] = useState<
+  const [selectedPostId, setSelectedPostId] = useState<
     string | null
   >(null);
-  const dispatch =useDispatch();
+  const dispatch = useDispatch();
 
   // Confirmation modal states
   const [openConfirmModal, setOpenConfirmModal] = useState<boolean>(false);
@@ -70,7 +70,7 @@ const Posts = () => {
       const { message, navigateTo } = handleApiError(error);
       toast.error(message);
       if (navigateTo) {
-        if (navigateTo =='login'){
+        if (navigateTo == "login") {
           dispatch(logout());
         }
         navigate(`/${navigateTo}`);
@@ -111,7 +111,7 @@ const Posts = () => {
       const { message, navigateTo } = handleApiError(error);
       toast.error(message);
       if (navigateTo) {
-        if (navigateTo =='login'){
+        if (navigateTo == "login") {
           dispatch(logout());
         }
         navigate(`/${navigateTo}`);
@@ -121,12 +121,12 @@ const Posts = () => {
 
   const handleMenuOpen = (event: React.MouseEvent<HTMLElement>, id: string) => {
     setMenuAnchorEl(event.currentTarget);
-    setSelectedTestimonialId(id);
+    setSelectedPostId(id);
   };
 
   const handleMenuClose = () => {
     setMenuAnchorEl(null);
-    setSelectedTestimonialId(null);
+    setSelectedPostId(null);
   };
 
   const handlePostClick = (postId: string) => {
@@ -208,7 +208,7 @@ const Posts = () => {
                 marginLeft: { xs: 0, md: 20 },
               }}
             >
-              Posts
+              Community Posts
             </Typography>
           </Grid>
         </Grid>
@@ -226,7 +226,7 @@ const Posts = () => {
                 fontWeight: "bold",
               }}
             >
-              LYFERS Posts
+              Community Posts
             </Typography>
           </Grid>
           <Grid item display="flex" justifyContent="flex-end" gap={2}>
@@ -304,7 +304,7 @@ const Posts = () => {
                       anchorEl={menuAnchorEl}
                       open={
                         Boolean(menuAnchorEl) &&
-                        selectedTestimonialId === post.id
+                        selectedPostId === post.id
                       }
                       onClose={handleMenuClose}
                     >

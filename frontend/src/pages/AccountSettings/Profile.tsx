@@ -15,9 +15,13 @@ import "./styles.scss";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import baseUrl from "../../config/apiConfig";
+import { handleApiError } from "../common/Api-error-handler";
+import { logout } from "../../store/auth/actions";
+import { useNavigate } from "react-router-dom";
 
 const Profile: FC = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const currentUser = useSelector((state: any) => state?.Auth?.currentUser);
   const [btnLoading, setBtnLoading] = useState<boolean>(false);
   const [uploadedImage, setUploadedImage] = useState<string>("");
@@ -73,7 +77,7 @@ const Profile: FC = () => {
           firstName: user.firstName || "",
           lastName: user.lastName || "",
           email: user.email || "",
-          dateOfBirth: user.dateOfBirth || "",
+          dateOfBirth:new Date(user.dateOfBirth).toISOString().slice(0, 10) || "",
           securityQuestion: user.security_question_id || "",
           answer: user.security_answer || "",
           fullname: user.fullname || "",
@@ -84,8 +88,14 @@ const Profile: FC = () => {
           postalCode: user.postalCode || "",
         });
       } catch (error) {
-        console.error("Error fetching user data", error);
-        toast.error("Failed to fetch user data.");
+        const { message, navigateTo } = handleApiError(error);
+        toast.error(message);
+        if (navigateTo) {
+          if (navigateTo == "login") {
+            dispatch(logout());
+          }
+          navigate(`/${navigateTo}`);
+        }
       }
     };
 
@@ -114,7 +124,6 @@ const Profile: FC = () => {
     setFormErrors(errors);
 
     if (Object.keys(errors).length === 0) {
-      console.log("Form submitted:", formValues);
 
       const errors: any = {};
 
@@ -131,13 +140,18 @@ const Profile: FC = () => {
 
           toast.success(response.data.message);
         } catch (error) {
-          console.error("Error updating profile", error);
-          toast.error("Failed to update profile. Please try again.");
+          const { message, navigateTo } = handleApiError(error);
+          toast.error(message);
+          if (navigateTo) {
+            if (navigateTo == "login") {
+              dispatch(logout());
+            }
+            navigate(`/${navigateTo}`);
+          }
         } finally {
           setBtnLoading(false);
         }
       }
-      // toast.success("Profile updated successfully!");
     }
   };
 

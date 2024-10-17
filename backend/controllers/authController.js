@@ -264,8 +264,13 @@ const userDelete = async (req, res) => {
   try {
     // Check if the user exists
     const user = await User.findByPk(id);
+    
     if (!user) {
       return res.status(200).json({ success: false, message: "User not found" });
+    }
+    
+    if (user.user_type == 'admin') {
+      return res.status(200).json({ success: false, message: "You can not remove a Admin user" });
     }
 
     return res.status(200).json({ success: true, message: "User deleted succesfully" });
