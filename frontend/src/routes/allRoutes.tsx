@@ -20,12 +20,40 @@ import TestDrives from "../pages/TestDrives/TestDrives";
 import SixPiller from "../pages/SixPiller/SixPiller";
 import ContactUs from "../pages/ContactUs/ContactUs";
 import BecomeALyfer from "../pages/BecomeALyfer/BecomeALyfer";
+import EventsPage from "../pages/Events/EventsPage";
+import EventDetail from "../pages/Events/EventDetail";
+import PaymentDetail from "../pages/PaymentDetail/PaymentDetail";
+import OrderConfermation from "../pages/Orders/OrderConfermation";
+import ProductsPage from "../pages/Shop/ProductsPage";
+import ProductDetail from "../pages/Shop/ProductDetail";
+import CartPage from "../pages/CartPage/CartPage";
+import ShippinginfoPage from "../pages/ShippinginfoPage/ShippinginfoPage";
+import { Component } from "react";
+import Dashboard from "../pages/Dashboard/Dashboard";
+import OrdersPage from "../pages/Orders/OrdersPage";
+import Products from "../pages/admin/Shop/Products";
+import CreateProductPage from "../pages/admin/Shop/CreateProductPage";
+import SubCategories from "../pages/admin/Shop/SubCategories";
+import Colors from "../pages/admin/Shop/Colors";
+import AllEvents from "../pages/admin/Events/AllEvents";
+import AdminDashboard from "../pages/admin/Dashboard/AdminDashboard";
+import Wishlist from "../pages/Wishlist/Wishlist";
+import AdminOrdersPage from "../pages/admin/Orders/OrdersPage";
+import EventsForm from "../pages/admin/Events/EventsForm";
+import CheckoutPage from "../pages/PaymentDetail/CheckoutPage";
+import Testimonials from "../pages/admin/Testimonials/Testimonials";
+import Posts from "../pages/admin/Posts/Posts";
+import MemberPage from "../pages/admin/Members/MemberPage";
+import PostDetail from "../pages/admin/Posts/PostDetail";
+import AccessDeniedPage from "./AccessDeniedPage";
+
 
 const routes = [
   {
     path: "/login",
     component: <Login />,
-    ispublic: true,
+    ispublic: false,
+    isAuth: true,
   },
   {
     path: "/",
@@ -48,14 +76,62 @@ const routes = [
     ispublic: true,
   },
   {
-    path: "/register",
-    component: <Signup />,
+    path: "/events",
+    component: <EventsPage />,
     ispublic: true,
+  },
+  {
+    path: "/event-detail/:id",
+    component: <EventDetail />,
+    ispublic: false,
+    addlayout: false,
+  },
+  {
+    path: "/order-confermation",
+    component: <OrderConfermation />,
+    ispublic: false,
+    addlayout: false,
+  },
+  {
+    path: "/payment-detail",
+    component: <PaymentDetail />,
+    ispublic: false,
+    addlayout: false,
+  },
+  {
+    path: "/products",
+    component: <ProductsPage />,
+    ispublic: true,
+  },
+  {
+    path: "/productDetail/:id",
+    component: <ProductDetail />,
+    ispublic: false,
+    addlayout: false,
+  },
+  {
+    path: "/cart",
+    component: <CartPage />,
+    ispublic: false,
+    addlayout: false,
+  },
+  {
+    path: "/shippingInfo",
+    component: <ShippinginfoPage />,
+    ispublic: false,
+    addlayout: false,
+  },
+  {
+    path: "/register/:id?",
+    component: <Signup />,
+    ispublic: false,
+    isAuth: true,
   },
   {
     path: "/forgotPassword",
     component: <ForgotPassword />,
-    ispublic: true,
+    ispublic: false,
+    isAuth: true,
   },
   {
     path: "/services",
@@ -66,6 +142,25 @@ const routes = [
     path: "/myGarage",
     component: <CarGarage />,
     ispublic: false,
+  },
+  {
+    path: "/dashboard",
+    component: <Dashboard />,
+    ispublic: false,
+    addlayout: true,
+  },
+  {
+    path: "/admin/dashboard",
+    component: <AdminDashboard />,
+    ispublic: false,
+    addlayout: true,
+    adminOnly:true,
+  },
+  {
+    path: "/dashboard/orders",
+    component: <OrdersPage />,
+    ispublic: false,
+    addlayout: true,
   },
   {
     path: "/availableListing",
@@ -99,6 +194,14 @@ const routes = [
     path: "/profile",
     component: <Profile />,
     ispublic: false,
+    addlayout: true,
+  },
+  {
+    path: "/admin/profile",
+    component: <Profile />,
+    ispublic: false,
+    addlayout: true,
+    adminOnly:true,
   },
   {
     path: "/chat",
@@ -125,7 +228,118 @@ const routes = [
     component: <TestDrives />,
     ispublic: false,
   },
+  {
+    path: "/admin/products",
+    component: <Products />,
+    ispublic: false,
+    addlayout: true,
+    adminOnly:true,
+  },
+  {
+    path: "/admin/products/create",
+    component: <CreateProductPage />,
+    ispublic: false,
+    addlayout: true,
+    adminOnly:true,
+  },
+  {
+    path: "/admin/sub-categories",
+    component: <SubCategories />,
+    ispublic: false,
+    addlayout: true,
+    adminOnly:true,
+  },
+  {
+    path: "/admin/colors",
+    component: <Colors />,
+    ispublic: false,
+    addlayout: true,
+    adminOnly:true,
+  },
+  {
+    path: "/admin/testimonials",
+    component: <Testimonials />,
+    ispublic: false,
+    addlayout: true,
+    adminOnly:true,
+  },
+  {
+    path: "/admin/posts",
+    component: <Posts />,
+    ispublic: false,
+    addlayout: true,
+    adminOnly:true,
+  },
+  {
+    path: "/admin/posts/:postId",
+    component: <PostDetail />,
+    ispublic: false,
+    addlayout: true,
+    adminOnly:true,
+  },
+  {
+    path: "/admin/events",
+    component: <AllEvents />,
+    ispublic: false,
+    addlayout: true,
+    adminOnly:true,
+  },
+  {
+    path: "/admin/events/create",
+    component: <EventsForm />,
+    ispublic: false,
+    addlayout: true,
+    adminOnly:true,
+  },
+  {
+    path: "/admin/events/edit/:eventId",
+    component: <EventsForm />,
+    ispublic: false,
+    addlayout: true,
+    adminOnly:true,
+  },
+  {
+    path: "/admin/products/edit/:productId",
+    component: <CreateProductPage />,
+    ispublic: false,
+    addlayout: true,
+    adminOnly:true,
+  },
+  {
+    path: "/dashboard/wishlist",
+    component: <Wishlist />,
+    ispublic: false,
+    addlayout: true,
+  },
+  {
+    path: "/dashboard/orders",
+    component: <OrdersPage />,
+    ispublic: false,
+  },
+  {
+    path: "/admin/orders",
+    component: <AdminOrdersPage />,
+    ispublic: false,
+    addlayout: true,
+    adminOnly:true,
+  },
+  {
+    path: "/admin/members",
+    component: <MemberPage />,
+    ispublic: false,
+    addlayout: true,
+    adminOnly:true,
+  },
+  {
+    path: "/payment",
+    component: <CheckoutPage />,
+    ispublic: false,
+    addlayout: true,
+  },
+
   { path: "*", component: <PageNotFound />, ispublic: true },
+  { path: "/access-denied", component: <AccessDeniedPage />, ispublic: true },
+
   { path: "/*", component: <PageNotFound />, ispublic: true },
   { path: "/*/*", component: <PageNotFound />, ispublic: true },
 ];

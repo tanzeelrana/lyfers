@@ -10,7 +10,13 @@ const AuthReducer = produce((state, action) => {
     case types.LOGIN_SUCCESS:
       state.currentUser = action.payload;
       break;
-    case types.LOGOUT:
+    case types.REGISTER_SUCCESS:
+      state.currentUser = action.payload;
+      break;
+    case types.FORGOTPASSWORD_SUCCESS:
+      state.currentUser = action.payload;
+      break;
+    case types.LOGOUT_SUCCESS:
       state.currentUser = null;
       break;
   }

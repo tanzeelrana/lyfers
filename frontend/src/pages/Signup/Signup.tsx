@@ -1,210 +1,413 @@
-import { FC, useState } from "react";
-import { Box, TextField, Grid, Typography, Link, Card, CardContent } from "@mui/material";
-import { useFormik } from "formik";
-import * as yup from "yup";
-import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
-import { LoadingButton } from "@mui/lab";
-import Parse from "parse";
-interface formikValuesProps {
-  userName: string;
-  email: string;
-  password: string;
-  confirmPassword: string;
-}
-
-const styles = {
-  signUpButtonStyle: {
-    width: "100%",
-    py: 1,
-    borderRadius: "20px",
-    mt: 2,
-  },
-  textField: {
-    width: "100%",
-    mb: 3,
-    "& .MuiInputLabel-root.Mui-focused": {
-      color: "black",
-    },
-    "& .MuiOutlinedInput-notchedOutline": {
-      borderColor: "#c6c6c6 !important",
-    },
-  },
-};
+import { FC, useEffect, useState } from "react";
+import {
+  Box,
+  Button,
+  Paper,
+  TextField,
+  Typography,
+  MenuItem,
+  Select,
+  InputLabel,
+  FormControl,
+  Grid,
+  SelectChangeEvent,
+  Container,
+  CircularProgress,
+} from "@mui/material";
+import signUpImage from "../../assets/images/loginBanner.png";
+import logo from "../../assets/logos/LogoDefault.svg";
+import { useNavigate, useParams } from "react-router-dom";
+import "../Signup/signup.css";
+import { useDispatch } from "react-redux";
+import { RegisterPayload } from "../../store/auth/types";
+import { register } from "../../store/auth/actions";
+import axios from "axios";
+import baseUrl from "../../config/apiConfig";
 
 const Signup: FC = () => {
   const navigate = useNavigate();
-  const [btnloading, setBtnloading] = useState<boolean>(false);
+  const dispatch = useDispatch();
+  const { id } = useParams<{ id: string | undefined }>();
 
-  const initialValues: formikValuesProps = {
-    userName: "",
+  const [formValues, setFormValues] = useState({
+    firstName: "",
+    lastName: "",
     email: "",
     password: "",
     confirmPassword: "",
+    securityQuestion: "",
+    answer: "",
+  });
+  const [errors, setErrors] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+    securityQuestion: "",
+    answer: "",
+  });
+  const [btnLoading, setBtnLoading] = useState(false);
+  // Handle input change
+  const handleChange = (
+    e:
+      | React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+      | SelectChangeEvent<string>
+  ) => {
+    const { name, value } = e.target;
+
+    setFormValues({
+      ...formValues,
+      [name]: value,
+    });
+  };
+  const [securityQuestions, setSecurityQuestions] = useState([]);
+  const [loadingQuestions, setLoadingQuestions] = useState(true);
+
+  useEffect(() => {
+    const fetchSecurityQuestions = async () => {
+      try {
+        const response = await axios.get(`${baseUrl}/api/security-questions`);
+        setSecurityQuestions(response.data.data);
+      } catch (error) {
+        console.error("Error fetching security questions:", error);
+      } finally {
+        setLoadingQuestions(false);
+      }
+    };
+
+    fetchSecurityQuestions();
+  }, []);
+  // Validate form fields
+  const validate = () => {
+    let firstNameError = "";
+    let lastNameError = "";
+    let emailError = "";
+    let passwordError = "";
+    let confirmPasswordError = "";
+    let securityQuestionError = "";
+    let answerError = "";
+
+    if (!formValues.firstName) {
+      firstNameError = "First name is required";
+    }
+
+    if (!formValues.lastName) {
+      lastNameError = "Last name is required";
+    }
+
+    if (!formValues.email) {
+      emailError = "Email is required";
+    } else if (!/\S+@\S+\.\S+/.test(formValues.email)) {
+      emailError = "Email is invalid";
+    }
+
+    if (!formValues.password) {
+      passwordError = "Password is required";
+    } else if (formValues.password.length < 6) {
+      passwordError = "Password must be at least 6 characters";
+    }
+
+    if (formValues.password !== formValues.confirmPassword) {
+      confirmPasswordError = "Passwords do not match";
+    }
+
+    if (!formValues.securityQuestion) {
+      securityQuestionError = "Please select a security question";
+    }
+
+    if (!formValues.answer) {
+      answerError = "Answer to the security question is required";
+    }
+
+    if (
+      firstNameError ||
+      lastNameError ||
+      emailError ||
+      passwordError ||
+      confirmPasswordError ||
+      securityQuestionError ||
+      answerError
+    ) {
+      setErrors({
+        firstName: firstNameError,
+        lastName: lastNameError,
+        email: emailError,
+        password: passwordError,
+        confirmPassword: confirmPasswordError,
+        securityQuestion: securityQuestionError,
+        answer: answerError,
+      });
+      return false;
+    }
+
+    return true;
   };
 
-  const validationSchema = yup.object({
-    userName: yup.string().required("First name is required"),
-    email: yup.string().email("Enter a valid email").required("Email is required"),
-    password: yup.string().required("Password is required").min(8, "Password must be at least 8 characters"),
-    confirmPassword: yup.string().required("Confirm Password is required").oneOf([yup.ref("password")], "Passwords must match"),
-  });
+  // Handle form submission
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+   
+    if (validate()) {
+      const registerPayload: RegisterPayload = {
+        fname: formValues.firstName,
+        lname: formValues.lastName,
+        email: formValues.email,
+        password: formValues.password,
+        Cpassword: formValues.confirmPassword,
+        security_question_id: formValues.securityQuestion,
+        security_answer: formValues.answer,
+        referalUserId:id,
+        setBtnloading: setBtnLoading,
+        navigate: navigate,
+      };
 
-  const formik = useFormik({
-    initialValues,
-    validationSchema: validationSchema,
-    onSubmit: async (values: formikValuesProps) => {
-      handleSubmit(values)
-    },
-  });
-
-  const handleSubmit = async (values: formikValuesProps) => {
-    try {
-      await Parse.Cloud.run("userSignup", {
-        username: values.userName,
-        email: values.email,
-        password: values.password,
-      });
-      setBtnloading(false);
-      toast.success("Signup Successfully");
-      navigate("/");
-    } catch (error: any) {
-      setBtnloading(false);
-      console.log("API Error: ", error);
-      toast.error(error.message);
+      dispatch(register(registerPayload));
+      console.log("Form submitted:", formValues);
     }
   };
 
   return (
-    <Box
-      sx={{
-        display: "flex",
-        justifyContent: "center",
-        flexDirection: "column",
-        alignItems: "center",
-        width: "100%",
-        height: "100vh",
-        background: "white",
-      }}
-    >
-      <Grid
-        container
-        sx={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        <Grid item lg={4} md={6} xs={10} sx={{ px: 2 }}>
-          <Card
-            variant="outlined"
-            sx={{
-              p: 4,
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              flexDirection: "column",
-            }}
-          >
-            <CardContent sx={{ width: "100%", px: 5 }}>
+    <Container maxWidth="xl">
+      <Grid container direction="row" spacing={3} flexShrink={0}>
+        <Grid
+          item
+          xs={12}
+          md={6}
+          display="flex"
+          alignItems="center"
+          justifyContent="center"
+        >
+          <Grid container direction="column" spacing={1}>
+            <Grid
+              item
+              xs={12}
+              display="flex"
+              alignItems="center"
+              justifyContent="center"
+            >
+              <img src={logo} alt="Logo" className="responsive-logo" />
+            </Grid>
+            <Grid
+              item
+              xs={12}
+              display="flex"
+              sx={{
+                gap: "10px",
+                alignItems: "center",
+                justifyContent: "center",
+                marginBottom: { xs: "10px", sm: "15px", md: "10px" },
+              }}
+            >
               <Typography
                 sx={{
-                  fontSize: "30px",
-                  fontWeight: "bold",
-                  textAlign: "center"
+                  fontFamily: "Syne",
+                  fontSize: { xs: "20px", sm: "28px", md: "40px" },
+                  fontStyle: "normal",
+                  fontWeight: 700,
+                  lineHeight: "120%",
+                  textAlign: "center", 
                 }}
               >
-                Signup
+                Sign Up to Become a LYFER
               </Typography>
-              <Box sx={{ mb: 5 }}>
-                {/* <img alt="Logo" src={logo} width="200px" /> */}
-              </Box>
-              <form onSubmit={formik.handleSubmit}>
-                <TextField
-                  id="userName"
-                  name="userName"
-                  label="Username"
-                  fullWidth
-                  value={formik.values.userName}
-                  onChange={formik.handleChange}
-                  error={formik.touched.userName && Boolean(formik.errors.userName)}
-                  helperText={formik.touched.userName && formik.errors.userName}
-                  variant="standard"
-                  sx={styles.textField}
-                />
-                <TextField
-                  id="email"
-                  name="email"
-                  label="Email"
-                  fullWidth
-                  value={formik.values.email}
-                  onChange={formik.handleChange}
-                  error={formik.touched.email && Boolean(formik.errors.email)}
-                  helperText={formik.touched.email && formik.errors.email}
-                  variant="standard"
-                  sx={styles.textField}
-                />
-                <TextField
-                  id="password"
-                  name="password"
-                  label="Password"
-                  type="password"
-                  fullWidth
-                  value={formik.values.password}
-                  onChange={formik.handleChange}
-                  error={formik.touched.password && Boolean(formik.errors.password)}
-                  helperText={formik.touched.password && formik.errors.password}
-                  variant="standard"
-                  sx={styles.textField}
-                />
-                <TextField
-                  id="confirmPassword"
-                  name="confirmPassword"
-                  label="Confirm Password"
-                  type="password"
-                  fullWidth
-                  value={formik.values.confirmPassword}
-                  onChange={formik.handleChange}
-                  error={formik.touched.confirmPassword && Boolean(formik.errors.confirmPassword)}
-                  helperText={formik.touched.confirmPassword && formik.errors.confirmPassword}
-                  variant="standard"
-                  sx={styles.textField}
-                />
-                <Box sx={{ textAlign: "center" }}>
-                  <LoadingButton
-                    fullWidth
-                    type="submit"
-                    variant="contained"
-                    loading={btnloading}
-                    sx={styles.signUpButtonStyle}
-                  >
-                    Signup
-                  </LoadingButton>
-                </Box>
-              </form>
-              <Box
+            </Grid>
+            <Grid item xs={12}>
+              <Paper
+                elevation={10}
                 sx={{
-                  mt: 4,
-                  fontSize: 12,
-                  textAlign: "center",
-                  fontWeight: "bold",
+                  padding: { xs: 2, sm: 3, md: 3},
+                  backgroundColor: "#FFE7DB",
+                  border: "1px solid",
+                  borderRadius: "15px",
                 }}
               >
-                <Link
-                  onClick={() => navigate("/login")}
-                  color="primary"
-                  sx={{
-                    cursor: "pointer",
-                  }}
-                >
-                  Back to login
-                </Link>
-              </Box>
-            </CardContent>
-          </Card>
+                <form onSubmit={handleSubmit}>
+                  <Grid container spacing={2}>
+                    <Grid item xs={12} sm={6}>
+                      <TextField
+                        fullWidth
+                        label="First Name"
+                        variant="outlined"
+                        name="firstName"
+                        value={formValues.firstName}
+                        onChange={handleChange}
+                        error={Boolean(errors.firstName)}
+                        helperText={errors.firstName}
+                      />
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                      <TextField
+                        fullWidth
+                        label="Last Name"
+                        variant="outlined"
+                        name="lastName"
+                        value={formValues.lastName}
+                        onChange={handleChange}
+                        error={Boolean(errors.lastName)}
+                        helperText={errors.lastName}
+                      />
+                    </Grid>
+                    <Grid item xs={12}>
+                      <TextField
+                        fullWidth
+                        label="Email"
+                        variant="outlined"
+                        name="email"
+                        value={formValues.email}
+                        onChange={handleChange}
+                        error={Boolean(errors.email)}
+                        helperText={errors.email}
+                      />
+                    </Grid>
+                    <Grid item xs={12}>
+                      <TextField
+                        fullWidth
+                        label="Password"
+                        variant="outlined"
+                        name="password"
+                        type="password"
+                        value={formValues.password}
+                        onChange={handleChange}
+                        error={Boolean(errors.password)}
+                        helperText={errors.password}
+                      />
+                    </Grid>
+                    <Grid item xs={12}>
+                      <TextField
+                        fullWidth
+                        label="Confirm Password"
+                        variant="outlined"
+                        name="confirmPassword"
+                        type="password"
+                        value={formValues.confirmPassword}
+                        onChange={handleChange}
+                        error={Boolean(errors.confirmPassword)}
+                        helperText={errors.confirmPassword}
+                      />
+                    </Grid>
+                    <Grid item xs={12}>
+                      {loadingQuestions ? (
+                        <Box display="flex" justifyContent="center">
+                          <CircularProgress />
+                        </Box>
+                      ) : (
+                        <FormControl
+                          fullWidth
+                          variant="outlined"
+                          error={Boolean(errors.securityQuestion)}
+                        >
+                          <InputLabel id="security-question-label">
+                            Security Question
+                          </InputLabel>
+                          <Select
+                            labelId="security-question-label"
+                            label="Security Question"
+                            name="securityQuestion"
+                            value={formValues.securityQuestion}
+                            onChange={handleChange}
+                            sx={{ backgroundColor: "white" }}
+                          >
+                            {securityQuestions.map((question: any) => (
+                              <MenuItem key={question.id} value={question.id}>
+                                {question.question}
+                              </MenuItem>
+                            ))}
+                          </Select>
+                          {errors.securityQuestion && (
+                            <Typography color="error">
+                              {errors.securityQuestion}
+                            </Typography>
+                          )}
+                        </FormControl>
+                      )}
+                    </Grid>
+                    <Grid item xs={12}>
+                      <TextField
+                        fullWidth
+                        label="Answer"
+                        variant="outlined"
+                        name="answer"
+                        value={formValues.answer}
+                        onChange={handleChange}
+                        error={Boolean(errors.answer)}
+                        helperText={errors.answer}
+                      />
+                    </Grid>
+                    <Grid item xs={12} textAlign="center">
+                      <Button
+                        fullWidth
+                        size="large"
+                        variant="contained"
+                        color="primary"
+                        type="submit"
+                        sx={{
+                          padding: { xs: "10px", sm: "15px" },
+                        }}
+                      >
+                        Sign Up
+                      </Button>
+                    </Grid>
+                    <Grid
+                      item
+                      xs={12}
+                      textAlign="center"
+                      display="flex"
+                      justifyContent="center"
+                    >
+                      <Typography
+                        sx={{
+                          fontFamily: "Outfit",
+                          fontSize: { xs: "16px", sm: "20px", md: "24px" },
+                          fontStyle: "normal",
+                          lineHeight: "120%",
+                          textAlign: "center", // Center text on all screen sizes
+                        }}
+                      >
+                        Already have an account?
+                      </Typography>
+                      <Typography
+                        sx={{
+                          fontFamily: "Outfit",
+                          fontSize: { xs: "16px", sm: "20px", md: "24px" },
+                          fontStyle: "normal",
+                          lineHeight: "120%",
+                          textDecoration: "underline",
+                          cursor: "pointer",
+                        }}
+                        onClick={() => navigate("/login")}
+                      >
+                        Log In
+                      </Typography>
+                    </Grid>
+                  </Grid>
+                </form>
+              </Paper>
+            </Grid>
+          </Grid>
+        </Grid>
+        <Grid
+          item
+          xs={12}
+          md={6}
+          sx={{
+            display: { xs: "none", md: "block" },
+            height: "100vh",
+          }}
+        >
+          <img
+            src={signUpImage}
+            alt="Sign Up"
+            style={{
+              width: "100%",
+              height: "100vh",
+              borderTopLeftRadius: "50px",
+              borderBottomLeftRadius: "50px",
+            }}
+          />
         </Grid>
       </Grid>
-    </Box>
+    </Container>
   );
 };
 

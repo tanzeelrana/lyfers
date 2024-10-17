@@ -8,8 +8,9 @@ export function PublicRoute({ children }: any) {
   const currentUser = useSelector((state: any) => state?.Auth.currentUser);
   
   if (currentUser) {
-    dispatch(changePath("/myGarage"))
-    return <Navigate to={"/myGarage"} replace />;
+    return children;
+    // dispatch(changePath("/dashboard"))
+    // return <Navigate to={"/dashboard"} replace />;
   } else {
     return children;
   }

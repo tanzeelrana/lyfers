@@ -1,7 +1,9 @@
 @import url('https://fonts.googleapis.com/css2?family=The+Nautigal:wght@400;700&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;700&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;700&display=swap');
-
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap');
+@import "react-responsive-carousel/lib/styles/carousel.min.css";
+/* @import "~react-image-gallery/styles/scss/image-gallery.scss"; */
+@import "~react-image-gallery/styles/css/image-gallery.css";
 
 body {
   margin: 0;

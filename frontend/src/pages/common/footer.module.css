@@ -1,0 +1,25 @@
+#mainContainer {
+    border-radius: var(--Radius-xl, 36px) var(--Radius-xl, 36px) var(--Radius-Sharp, 0px) var(--Radius-Sharp, 0px);
+    background: linear-gradient(90deg, rgba(251, 176, 58, 0.80) 0%, rgba(236, 32, 39, 1.2) 100%);
+    width: 100%;
+}
+
+#clickAbleText {
+    color: var(--Base-Base-Black, #0B0A0A);
+    font-family: Syne;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 120%;
+}
+
+#secondaryContainer {
+    color: var(--Base-Base-Black, #0B0A0A);
+    text-align: center;
+
+    /* Lyfers - 1/Desktop/Body/Content Regular */
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 120%;
+    /* 19.2px */
+}

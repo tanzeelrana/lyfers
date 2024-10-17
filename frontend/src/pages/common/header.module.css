@@ -1,0 +1,48 @@
+#headerBanner {
+    width: 100%;
+    background: linear-gradient(90deg, rgba(251, 176, 58, 0.80) 0%, rgba(236, 32, 39, 1.0) 100%);
+    flex-shrink: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#headerBannerTextNormal {
+    color: var(--Base-Base-Black, #0B0A0A);
+    text-align: center;
+    padding: 8px;
+    font-weight: 400;
+    display: inline;
+}
+
+#headerBannerTextClickable {
+    color: var(--Base-Base-Black, #0B0A0A);
+    display: inline;
+    cursor: pointer;
+    font-weight: 600;
+}
+#headerButtonText {
+    text-align: center;
+    font-style: normal;
+}
+@media only screen and (min-width: 600px) and (max-width: 1024px) {
+    #headerButtonText {
+        font-size: 10px;
+    }
+}
+@media only screen and (min-width: 1024px) and (max-width: 1440px) {
+    #headerButtonText {
+        font-size: 12px;
+    }
+}
+
+#cartButton {
+    color: var(--Base-Base-White, #FAFAFA);
+    text-align: center;
+    font-family: Outfit;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 120%;
+    /* 16.8px */
+}

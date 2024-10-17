@@ -35,7 +35,18 @@ const theme = createTheme({
     MuiAppBar: {
         styleOverrides: {
           root: {
-            backgroundColor: 'white', // AppBar background color
+            backgroundColor: 'white',
+          },
+        },
+      },
+      MuiTextField: {
+        styleOverrides: {
+          root: {
+            backgroundColor: 'white',
+            borderRadius: '10px',
+          '& .MuiOutlinedInput-root': {
+            borderRadius: '10px',
+          },
           },
         },
       },

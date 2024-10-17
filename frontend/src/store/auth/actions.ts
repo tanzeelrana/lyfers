@@ -8,12 +8,40 @@ export const login = (data: dataTypes.LoginPayload) => {
   };
 };
 
+export const register = (data: dataTypes.RegisterPayload) => {
+  return {
+    type: actionTypes.SIGNUP,
+    payload: data,
+  };
+};
+export const forgotpassord = (data: dataTypes.ForgotPasswordPayload) => {
+  return {
+    type: actionTypes.FORGOTPASSWORD,
+    payload: data,
+  };
+};
+
 export const loginSuccess = (data: any) => {
   return {
     type: actionTypes.LOGIN_SUCCESS,
     payload: data,
   };
 };
+
+export const registerSuccess = (data: any) => {
+  return {
+    type: actionTypes.REGISTER_SUCCESS,
+    payload: data,
+  };
+};
+
+export const forgotPassordSuccess = (data: any) => {
+  return {
+    type: actionTypes.FORGOTPASSWORD_SUCCESS,
+    payload: data,
+  };
+};
+
 
 export const changePath = (data: string) => {
   return {
@@ -39,5 +67,12 @@ export const updateProfileSuccess = (data: dataTypes.ProfileSuccessPayload) => {
 export const logout = () => {
   return {
     type: actionTypes.LOGOUT,
+  };
+};
+
+export const logoutSuccess = (data: any) => {
+  return {
+    type: actionTypes.LOGOUT_SUCCESS,
+    payload: data,
   };
 };
