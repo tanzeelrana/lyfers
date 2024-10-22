@@ -28,6 +28,7 @@ const login = async (req, res) => {
   try {
     // Check if the user exists
     const user = await User.findOne({ where: { email } });
+    console.log(user)
     if (!user) {
       return res.status(200).json({ success: false, message: "User not found" });
     }
@@ -292,5 +293,20 @@ const userDelete = async (req, res) => {
   }
 
  }
+ const getUser = async (req, res) =>{
+  try {
+    const user = await User.findByPk(req.params.id, {
+      attributes: ['id', 'firstName', 'lastName', 'email','dateOfBirth','user_type',],
+    });
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    res.json(user);
+  } catch (err) {
+    console.error('Error fetching user:', err);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
 
-module.exports = { login, signup, logout, forgotPassword,members ,userDelete ,userProfile};
+ }
+
+module.exports = { login, signup, logout, forgotPassword,members ,userDelete ,userProfile,getUser};

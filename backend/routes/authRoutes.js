@@ -4,7 +4,7 @@ const { User } = require('../models');
 const {authenticateAdmin,authenticate} = require("../middleware/authMiddleware")
 
 
-const { login,signup,logout, forgotPassword,members,userDelete, userProfile } = require('../../backend/controllers/authController');
+const { login,signup,logout, forgotPassword,members,userDelete, userProfile ,getUser} = require('../../backend/controllers/authController');
 
 router.post('/signup', signup);
 
@@ -58,6 +58,7 @@ router.put('/update-profile/:id', async (req, res) => {
   });
 
   router.get('/user/:id',authenticate, userProfile);
+  router.get('/userById/:id', getUser);
 
   router.get('/members',authenticateAdmin, members);
   router.delete('/user/:id',authenticateAdmin, userDelete);

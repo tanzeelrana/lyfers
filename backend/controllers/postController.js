@@ -1,5 +1,5 @@
 const { body, param, validationResult } = require("express-validator");
-const { Post, PostImage, Comment, User, Group } = require("../models");
+const { Post, PostImage, Comment, User, Group ,PostLike} = require("../models");
 
 // Middleware to validate input
 const validatePost = (req, res, next) => {
@@ -20,7 +20,6 @@ exports.createPost = [
     .withMessage("Title should not exceed 255 characters"),
   body("description").notEmpty().withMessage("Description is required"),
   body("groupId").isInt().withMessage("Group ID must be an integer"),
-  body("userId").isInt().withMessage("User ID must be an integer"),
   validatePost,
   async (req, res) => {
     try {
@@ -41,8 +40,8 @@ exports.createPost = [
         }));
         await PostImage.bulkCreate(images);
       }
+      res.status(201).json({ message: "Post Created successfully" ,newPost:newPost});
 
-      res.status(201).json(newPost);
     } catch (error) {
       res.status(500).json({ error: "Failed to create post" });
     }
@@ -70,11 +69,33 @@ exports.getAllPosts = async (req, res) => {
   }
 };
 
+exports.getAllPostsByAuthor = async (req, res) => {
+  const { userId } = req.params;
+
+  try {
+    const posts = await Post.findAll({
+      where: { userId },
+      include: [
+        { model: PostImage },
+        { model: Comment, include: [User] },
+        {
+          model: User,
+          as: "user",
+          attributes: ["id", "firstName", "lastName", "email"],
+        },
+        { model: Group },
+      ],
+    });
+    res.status(200).json(posts);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch posts" });
+  }
+};
 // Get a post by ID
 exports.getPostById = [
   // Validation rules
-  param("id").isInt().withMessage("Post ID must be an integer"),
-  validatePost,
+  // param("id").isInt().withMessage("Post ID must be an integer"),
+  // validatePost,
   async (req, res) => {
     try {
       const { id } = req.params;
@@ -183,3 +204,57 @@ exports.deletePost = [
     }
   },
 ];
+
+
+
+exports.likePost = async (req, res) => {
+  const { userId, postId } = req.body;
+
+  try {
+    const existingLike = await PostLike.findOne({ where: { userId, postId } });
+
+    if (existingLike) {
+      // If already liked, remove the like
+      await existingLike.destroy();
+      return res.status(200).json({ message: 'Post unliked' });
+    } else {
+      // Add a new like
+      await PostLike.create({ userId, postId });
+      return res.status(201).json({ message: 'Post liked' });
+    }
+  } catch (error) {
+    console.error("Error liking the post", error);
+    return res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
+// Get post likes
+exports.getPostLikes = async (req, res) => {
+  const { postId } = req.params;
+
+  try {
+    const likes = await PostLike.findAll({
+      where: { postId },
+      include: [{ model: User, attributes: ['id', 'email'] }], // Include user details if needed
+    });
+
+    return res.status(200).json(likes);
+  } catch (error) {
+    console.error("Error fetching post likes", error);
+    return res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
+// Check if a user has liked a post
+exports.hasUserLikedPost = async (req, res) => {
+  const { userId, postId } = req.body;
+
+  try {
+    const existingLike = await PostLike.findOne({ where: { userId, postId } });
+
+    return res.status(200).json({ liked: !!existingLike });
+  } catch (error) {
+    console.error("Error checking if user liked the post", error);
+    return res.status(500).json({ message: 'Internal server error' });
+  }
+};

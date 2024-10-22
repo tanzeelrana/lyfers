@@ -1,10 +1,19 @@
-const { body, param, validationResult } = require('express-validator');
-const { Group, Post, User, Comment, PostImage } = require('../models');
+const { body, param, validationResult } = require("express-validator");
+const {
+  Group,
+  Post,
+  User,
+  Comment,
+  PostImage,
+  Sequelize,
+} = require("../models");
 
 exports.createGroup = [
-  body('name')
-    .notEmpty().withMessage('Name is required')
-    .isLength({ max: 255 }).withMessage('Name should not exceed 255 characters'),
+  body("name")
+    .notEmpty()
+    .withMessage("Name is required")
+    .isLength({ max: 255 })
+    .withMessage("Name should not exceed 255 characters"),
   async (req, res) => {
     // Check for validation errors
     const errors = validationResult(req);
@@ -13,26 +22,59 @@ exports.createGroup = [
     }
 
     try {
-      const { name } = req.body;
-      const newGroup = await Group.create({ name });
-      res.status(201).json(newGroup);
+      const { name, description } = req.body;
+      const newGroup = await Group.create({ name, description });
+      res
+        .status(201)
+        .json({ message: "Group Created successfully", newGroup: newGroup });
     } catch (error) {
-      res.status(500).json({ error: 'Failed to create group' });
+      res.status(500).json({ error: "Failed to create group" });
     }
-  }
+  },
 ];
+
+// exports.getAllGroups = async (req, res) => {
+//   try {
+//     const groups = await Group.findAll();
+//     res.status(200).json(groups);
+//   } catch (error) {
+//     res.status(500).json({ error: 'Failed to fetch groups' });
+//   }
+// };
 
 exports.getAllGroups = async (req, res) => {
   try {
-    const groups = await Group.findAll();
+    const groups = await Group.findAll({
+      include: [
+        {
+          model: Post,
+          attributes: [],
+        },
+      ],
+      attributes: {
+        include: [
+          [Sequelize.fn("COUNT", Sequelize.col("Posts.id")), "postsCount"],
+          // Get the date of the latest post
+          [
+            Sequelize.fn("MAX", Sequelize.col("Posts.createdAt")),
+            "lastActivity",
+          ],
+        ],
+      },
+      group: ["Group.id"],
+      order: [[Sequelize.fn("MAX", Sequelize.col("Posts.createdAt")), "DESC"]],
+    });
+
     res.status(200).json(groups);
+
   } catch (error) {
-    res.status(500).json({ error: 'Failed to fetch groups' });
+    console.error(error);
+    res.status(500).json({ error: "Failed to fetch groups" });
   }
 };
 
 exports.getGroupById = [
-  param('id').isInt().withMessage('Group ID must be an integer'),
+  param("id").isInt().withMessage("Group ID must be an integer"),
   async (req, res) => {
     // Check for validation errors
     const errors = validationResult(req);
@@ -44,20 +86,21 @@ exports.getGroupById = [
       const { id } = req.params;
       const group = await Group.findByPk(id);
       if (!group) {
-        return res.status(404).json({ message: 'Group not found' });
+        return res.status(404).json({ message: "Group not found" });
       }
       res.status(200).json(group);
     } catch (error) {
-      res.status(500).json({ error: 'Failed to fetch group' });
+      res.status(500).json({ error: "Failed to fetch group" });
     }
-  }
+  },
 ];
 
 exports.updateGroup = [
-  param('id').isInt().withMessage('Group ID must be an integer'),
-  body('name')
+  param("id").isInt().withMessage("Group ID must be an integer"),
+  body("name")
     .optional()
-    .isLength({ max: 255 }).withMessage('Name should not exceed 255 characters'),
+    .isLength({ max: 255 })
+    .withMessage("Name should not exceed 255 characters"),
   async (req, res) => {
     // Check for validation errors
     const errors = validationResult(req);
@@ -67,22 +110,24 @@ exports.updateGroup = [
 
     try {
       const { id } = req.params;
-      const { name } = req.body;
+      const { name,description } = req.body;
       const group = await Group.findByPk(id);
       if (!group) {
-        return res.status(404).json({ message: 'Group not found' });
+        return res.status(404).json({ message: "Group not found" });
       }
       group.name = name || group.name;
+      group.description = description || group.description
+      
       await group.save();
       res.status(200).json(group);
     } catch (error) {
-      res.status(500).json({ error: 'Failed to update group' });
+      res.status(500).json({ error: "Failed to update group" });
     }
-  }
+  },
 ];
 
 exports.deleteGroup = [
-  param('id').isInt().withMessage('Group ID must be an integer'),
+  param("id").isInt().withMessage("Group ID must be an integer"),
   async (req, res) => {
     // Check for validation errors
     const errors = validationResult(req);
@@ -94,18 +139,18 @@ exports.deleteGroup = [
       const { id } = req.params;
       const group = await Group.findByPk(id);
       if (!group) {
-        return res.status(404).json({ message: 'Group not found' });
+        return res.status(404).json({ message: "Group not found" });
       }
       await group.destroy();
-      res.status(200).json({ message: 'Group deleted successfully' });
+      res.status(200).json({ message: "Group deleted successfully" });
     } catch (error) {
-      res.status(500).json({ error: 'Failed to delete group' });
+      res.status(500).json({ error: "Failed to delete group" });
     }
-  }
+  },
 ];
 
 exports.getPostsByGroupId = [
-  param('id').isInt().withMessage('Group ID must be an integer'),
+  param("id").isInt().withMessage("Group ID must be an integer"),
   async (req, res) => {
     // Check for validation errors
     const errors = validationResult(req);
@@ -120,13 +165,17 @@ exports.getPostsByGroupId = [
         include: [
           { model: PostImage },
           { model: Comment, include: [User] },
-          { model: User },
-          { model: Group }
-        ]
+          {
+            model: User,
+            as: "user",
+            attributes: ["id", "firstName", "lastName", "email"],
+          },
+          { model: Group },
+        ],
       });
       res.status(200).json(posts);
     } catch (error) {
-      res.status(500).json({ error: 'Failed to fetch posts for group' });
+      res.status(500).json({ error: "Failed to fetch posts for group" });
     }
-  }
+  },
 ];
