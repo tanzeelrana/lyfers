@@ -13,7 +13,7 @@ router.post('/',authenticate,  (req, res, next) => {
   upload.array("images"), postController.createPost);
 router.get('/', postController.getAllPosts);
 router.get('/user/:userId', postController.getAllPostsByAuthor);
-
+router.get("/search/:keyword", postController.searchByKeyword);
 router.get('/:id', postController.getPostById);
 router.put('/:id',authenticate, upload.array('images'), postController.updatePost);
 router.delete('/:id',authenticateAdmin, postController.deletePost);

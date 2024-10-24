@@ -73,6 +73,38 @@ exports.getAllGroups = async (req, res) => {
   }
 };
 
+exports.getAllGroupsListing = async (req, res) => {
+  try {
+    const groups = await Group.findAll({
+      include: [
+        {
+          model: Post,
+          attributes: [],
+        },
+      ],
+      attributes: {
+        include: [
+          [Sequelize.fn("COUNT", Sequelize.col("Posts.id")), "postsCount"],
+          // Get the date of the latest post
+          [
+            Sequelize.fn("MAX", Sequelize.col("Posts.createdAt")),
+            "lastActivity",
+          ],
+        ],
+      },
+      group: ["Group.id"],
+      order: [["createdAt", "DESC"]],
+
+    });
+
+    res.status(200).json(groups);
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Failed to fetch groups" });
+  }
+};
+
 exports.getGroupById = [
   param("id").isInt().withMessage("Group ID must be an integer"),
   async (req, res) => {

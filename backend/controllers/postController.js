@@ -1,5 +1,8 @@
 const { body, param, validationResult } = require("express-validator");
 const { Post, PostImage, Comment, User, Group ,PostLike} = require("../models");
+const { Sequelize } = require('sequelize');
+
+const { Op } = require("sequelize");
 
 // Middleware to validate input
 const validatePost = (req, res, next) => {
@@ -54,7 +57,7 @@ exports.getAllPosts = async (req, res) => {
     const posts = await Post.findAll({
       include: [
         { model: PostImage },
-        { model: Comment, include: [User] },
+        { model: Comment, include: [{ model: User, attributes: ["id", "firstName", "lastName", "email"] }] },
         {
           model: User,
           as: "user",
@@ -62,6 +65,7 @@ exports.getAllPosts = async (req, res) => {
         },
         { model: Group },
       ],
+      order: [["createdAt", "DESC"]],
     });
     res.status(200).json(posts);
   } catch (error) {
@@ -77,7 +81,7 @@ exports.getAllPostsByAuthor = async (req, res) => {
       where: { userId },
       include: [
         { model: PostImage },
-        { model: Comment, include: [User] },
+        { model: Comment, include: [{ model: User, attributes: ["id", "firstName", "lastName", "email"] }] },
         {
           model: User,
           as: "user",
@@ -85,6 +89,7 @@ exports.getAllPostsByAuthor = async (req, res) => {
         },
         { model: Group },
       ],
+      order: [["createdAt", "DESC"]],
     });
     res.status(200).json(posts);
   } catch (error) {
@@ -102,7 +107,7 @@ exports.getPostById = [
       const post = await Post.findByPk(id, {
         include: [
           { model: PostImage },
-          { model: Comment, include: [User] },
+          { model: Comment, include: [{ model: User, attributes: ["id", "firstName", "lastName", "email"] }] },
           {
             model: User,
             as: "user",
@@ -256,5 +261,63 @@ exports.hasUserLikedPost = async (req, res) => {
   } catch (error) {
     console.error("Error checking if user liked the post", error);
     return res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
+
+exports.searchByKeyword = async (req, res) => {
+  const { keyword } = req.params; 
+
+  try {
+    // Search for groups where name matches the keyword
+    const groups = await Group.findAll({
+      where: {
+        name: {
+          [Op.like]: `%${keyword}%`, // Case-insensitive partial match
+        },
+      },
+      include: [
+        {
+          model: Post,
+          attributes: [],
+        },
+      ],
+      attributes: {
+        include: [
+          [Sequelize.fn("COUNT", Sequelize.col("Posts.id")), "postsCount"],
+          [
+            Sequelize.fn("MAX", Sequelize.col("Posts.createdAt")),
+            "lastActivity",
+          ],
+        ],
+      },
+      group: ["Group.id"],
+    });
+
+    // Search for posts where title matches the keyword
+    const posts = await Post.findAll({
+      where: {
+        title: {
+          [Op.like]: `%${keyword}%`, // Case-insensitive partial match
+        },
+      },
+      include: [
+        { model: PostImage },
+        { model: Comment, include: [User] },
+        {
+          model: User,
+          as: "user",
+          attributes: ["id", "firstName", "lastName", "email"],
+        },
+        { model: Group },
+      ],
+      order: [["createdAt", "DESC"]],
+    });
+
+    // Return both groups and posts in the response
+    res.status(200).json({ groups, posts });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Failed to search by keyword" });
   }
 };
